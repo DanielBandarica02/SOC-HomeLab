@@ -12,7 +12,7 @@ Oriented toward Blue Team and SOC analyst roles.
 - **Ubuntu (Splunk)** — SIEM frontend, dashboards and visualization
 
 ## Phases
-- [ ] Phase 1 — Infrastructure setup
+- [X] Phase 1 — Infrastructure setup
 - [ ] Phase 2 — Wazuh deployment
 - [ ] Phase 3 — Splunk deployment
 - [ ] Phase 4 — Snort IDS
