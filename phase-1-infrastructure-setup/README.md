@@ -19,7 +19,7 @@ internal network connectivity between them.
 
 ## Screenshots
 ### 1. Virtual Machines Overview and VMs Configuration
-<img width="449" height="229" alt="image" src="https://github.com/user-attachments/assets/ac84fd8b-41ce-4c13-b8bc-7f6553e7c3a0" />
+<img width="400" height="200" alt="image" src="https://github.com/user-attachments/assets/ac84fd8b-41ce-4c13-b8bc-7f6553e7c3a0" />
 All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Windows Target.
 
 ## Kali Attack — VM Configuration
