@@ -3,7 +3,7 @@
 ## Objective
 The goal of this phase is to deploy and configure the four virtual machines 
 that form the foundation of the SOC lab environment. Each VM is assigned a 
-specific role within the infrastructure: attacker, victim, SIEM backend and 
+specific role within the infrastructure: attacker, target, SIEM backend and 
 SIEM frontend. All machines are connected through a shared Internal Network 
 in VirtualBox, with static IPs assigned to each one to ensure stable 
 connectivity across reboots. This phase establishes the base infrastructure 
