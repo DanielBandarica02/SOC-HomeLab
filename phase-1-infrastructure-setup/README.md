@@ -25,7 +25,7 @@ will be built.
 
 ## Screenshots
 ### 1. Virtual Machines Overview and VMs Configuration
-![Descripcion](screenshots/4vms.png)
+![4vms](screenshots/4vms.png)
 All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Windows Target.
 
 #### Kali Attack — VM Configuration
