@@ -119,4 +119,19 @@ fixed IP address and subnet mask.
 The command `ip a` confirms the static IP has been successfully applied 
 to the enp0s8 interface.
 
+### 5. Connectivity Verification
+To verify that all static IPs have been correctly assigned and that all VMs 
+can communicate through the Internal Network, ping tests are performed from 
+the Kali Attack machine to each of the other VMs. This confirms that the 
+network configuration is working as expected and that the lab environment 
+is ready for the next phases. A successful ping response from each machine 
+demonstrates full connectivity across the 192.168.10.0/24 subnet.
+
+#### Linux > Windows 
+<img width="501" height="134" alt="image" src="https://github.com/user-attachments/assets/e482df4c-07cd-4a59-8217-a92e32ef92cf" />
+#### Linux > Wazuh
+<img width="508" height="185" alt="image" src="https://github.com/user-attachments/assets/39ced1a7-e123-4562-9a67-5e159e43d0a3" />
+#### Linux > Splunk
+<img width="508" height="186" alt="image" src="https://github.com/user-attachments/assets/886602c6-91c2-4ea1-a9c6-1c82fec6fb42" />
+
 
