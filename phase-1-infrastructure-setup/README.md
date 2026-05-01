@@ -86,7 +86,7 @@ manually via terminal. The file /etc/network/interfaces is modified to set
 a fixed IP address, subnet mask and interface for the Internal Network adapter.
 <img width="600" height="333" alt="image" src="https://github.com/user-attachments/assets/776a0a06-1f59-4c5d-906d-cec26e482dd6" />
 Once the configuration is applied and the network service restarted, the 
-command `ip a` is used to verify that the static IP has been correctly assigned 
+command ip a is used to verify that the static IP has been correctly assigned 
 to the interface.
 
 
@@ -96,7 +96,7 @@ To assign a static IP in Windows 11, the network adapter settings are
 accessed through Control Panel. The Internal Network adapter is configured 
 with a fixed IP address and subnet mask under IPv4 properties.
 <img width="400" height="380" alt="image" src="https://github.com/user-attachments/assets/57b57d15-a3a6-4d0b-85d1-252ba19d46cc" />
-The command `ipconfig` in CMD confirms the static IP has been successfully 
+The command ipconfig in CMD confirms the static IP has been successfully 
 assigned to the Internal Network adapter.
 
 
@@ -106,7 +106,7 @@ To assign a static IP in Ubuntu Desktop, the network settings are accessed
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
 <img width="571" height="280" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
-The command `ip a` confirms the static IP has been successfully applied 
+The command ip a confirms the static IP has been successfully applied 
 to the enp0s8 interface.
 
 
@@ -116,7 +116,7 @@ To assign a static IP in Ubuntu Desktop, the network settings are accessed
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
 <img width="571" height="280" alt="image" src="https://github.com/user-attachments/assets/27b48f75-ecf8-4127-be19-5b4fde5a5742" />
-The command `ip a` confirms the static IP has been successfully applied 
+The command ip a confirms the static IP has been successfully applied 
 to the enp0s8 interface.
 
 ### 5. Connectivity Verification
