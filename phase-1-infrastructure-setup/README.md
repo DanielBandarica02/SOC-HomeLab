@@ -82,7 +82,7 @@ correctly assigned.
 #### Kali Attack
 <img width="500" height="283" alt="image" src="https://github.com/user-attachments/assets/38781ffd-8aca-4462-8281-188eb7d466b3" />
 To assign a static IP in Linux, the network configuration file must be edited 
-manually via terminal. The file `/etc/network/interfaces` is modified to set 
+manually via terminal. The file /etc/network/interfaces is modified to set 
 a fixed IP address, subnet mask and interface for the Internal Network adapter.
 <img width="600" height="333" alt="image" src="https://github.com/user-attachments/assets/776a0a06-1f59-4c5d-906d-cec26e482dd6" />
 Once the configuration is applied and the network service restarted, the 
