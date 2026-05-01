@@ -103,7 +103,7 @@ assigned to the Internal Network adapter.
 
 
 #### Wazuh
-<img width="1285" height="801" alt="wazuh-config-stat" src="https://github.com/user-attachments/assets/f48b2a7a-afde-4c40-84d5-5c03bdcb17c8" />
+<img width="1281" height="799" alt="image" src="https://github.com/user-attachments/assets/f2fa30a3-a8bc-46d9-9929-e84e75b4e67f" />
 To assign a static IP in Ubuntu Desktop, the network settings are accessed 
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
