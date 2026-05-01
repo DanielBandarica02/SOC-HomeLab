@@ -23,7 +23,7 @@ internal network connectivity between them.
 All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Windows Target.
 
 ## Kali Attack — VM Configuration
-<img width="400" height="350" alt="image" src="https://github.com/user-attachments/assets/47a8ea34-fbfe-458a-b0d8-4ef27f5ef2cd" />
+<img width="400" height="500" alt="image" src="https://github.com/user-attachments/assets/47a8ea34-fbfe-458a-b0d8-4ef27f5ef2cd" />
 - OS: Ubuntu 64-bit (Kali Linux)
 - RAM: 4096 MB | CPUs: 2
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
