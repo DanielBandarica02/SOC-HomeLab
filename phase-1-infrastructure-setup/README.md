@@ -86,8 +86,8 @@ correctly assigned.
 
  Target Windows
  Wazuh
-<img width="500" height="283" alt="image" src="https://github.com/user-attachments/assets/f4884e31-5b8b-46a5-858d-a9f2ab9c6213" />
-<img width="500" height="283" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
+<img width="771" height="481" alt="image" src="https://github.com/user-attachments/assets/f4884e31-5b8b-46a5-858d-a9f2ab9c6213" />
+<img width="771" height="481" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
 
 
  Splunk
