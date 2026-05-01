@@ -81,12 +81,12 @@ correctly assigned.
 
 #### Kali Attack
 <img width="500" height="283" alt="image" src="https://github.com/user-attachments/assets/38781ffd-8aca-4462-8281-188eb7d466b3" />
-<img width="600" height="283" alt="image" src="https://github.com/user-attachments/assets/776a0a06-1f59-4c5d-906d-cec26e482dd6" />
+<img width="600" height="333" alt="image" src="https://github.com/user-attachments/assets/776a0a06-1f59-4c5d-906d-cec26e482dd6" />
 
 
 #### Target Windows
-<img width="501" height="632" alt="image" src="https://github.com/user-attachments/assets/03d912a0-a613-4c1d-97c5-67d78917e5a6" />
-<img width="983" height="509" alt="image" src="https://github.com/user-attachments/assets/57b57d15-a3a6-4d0b-85d1-252ba19d46cc" />
+<img width="320" height="400" alt="image" src="https://github.com/user-attachments/assets/03d912a0-a613-4c1d-97c5-67d78917e5a6" />
+<img width="400" height="380" alt="image" src="https://github.com/user-attachments/assets/57b57d15-a3a6-4d0b-85d1-252ba19d46cc" />
 
 
 #### Wazuh
@@ -95,7 +95,7 @@ correctly assigned.
 
 
 #### Splunk
-<img width="1285" height="801" alt="image" src="https://github.com/user-attachments/assets/c2a89176-c0f2-433d-8642-78838fbabe31" />
-<img width="1038" height="573" alt="image" src="https://github.com/user-attachments/assets/27b48f75-ecf8-4127-be19-5b4fde5a5742" />
+<img width="571" height="280" alt="image" src="https://github.com/user-attachments/assets/c2a89176-c0f2-433d-8642-78838fbabe31" />
+<img width="571" height="280" alt="image" src="https://github.com/user-attachments/assets/27b48f75-ecf8-4127-be19-5b4fde5a5742" />
 
 
