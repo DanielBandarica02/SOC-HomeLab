@@ -101,11 +101,11 @@ assigned to the Internal Network adapter.
 
 
 #### Wazuh
-<img width="671" height="381" alt="image" src="https://github.com/user-attachments/assets/f4884e31-5b8b-46a5-858d-a9f2ab9c6213" />
+<img width="571" height="280" alt="image" src="https://github.com/user-attachments/assets/f4884e31-5b8b-46a5-858d-a9f2ab9c6213" />
 To assign a static IP in Ubuntu Desktop, the network settings are accessed 
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
-<img width="671" height="381" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
+<img width="571" height="280" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
 The command `ip a` confirms the static IP has been successfully applied 
 to the enp0s8 interface.
 
