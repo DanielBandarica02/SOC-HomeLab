@@ -21,7 +21,7 @@ will be built.
 
 ## Network Configuration
 - **Adapter 1:** NAT (internet access)
-- **Adapter 2:** Internal Network — `Interal`
+- **Adapter 2:** Internal Network — `Internal`
 
 ## Screenshots
 ### 1. Virtual Machines Overview and VMs Configuration
@@ -127,13 +127,13 @@ network configuration is working as expected and that the lab environment
 is ready for the next phases. A successful ping response from each machine 
 demonstrates full connectivity across the 192.168.10.0/24 subnet.
 
-#### Linux > Windows 
+#### Linux > Windows Target
 <img width="501" height="134" alt="image" src="https://github.com/user-attachments/assets/e482df4c-07cd-4a59-8217-a92e32ef92cf" />
-
+Successful ping to 192.168.10.20 confirming connectivity with the victim machine.
 #### Linux > Wazuh
 <img width="508" height="185" alt="image" src="https://github.com/user-attachments/assets/39ced1a7-e123-4562-9a67-5e159e43d0a3" />
-
+Successful ping to 192.168.10.30 confirming connectivity with the Wazuh Manager.
 #### Linux > Splunk
 <img width="508" height="186" alt="image" src="https://github.com/user-attachments/assets/886602c6-91c2-4ea1-a9c6-1c82fec6fb42" />
-
+Successful ping to 192.168.10.40 confirming connectivity with the Splunk SIEM.
 
