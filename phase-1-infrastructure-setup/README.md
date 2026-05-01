@@ -28,25 +28,25 @@ will be built.
 <img width="400" height="200" alt="image" src="https://github.com/user-attachments/assets/ac84fd8b-41ce-4c13-b8bc-7f6553e7c3a0" />
 All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Windows Target.
 
-# Kali Attack — VM Configuration
+#### Kali Attack — VM Configuration
 <img width="450" height="500" alt="image" src="https://github.com/user-attachments/assets/47a8ea34-fbfe-458a-b0d8-4ef27f5ef2cd" />
 - OS: Ubuntu 64-bit (Kali Linux)
 - RAM: 4096 MB | CPUs: 2
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
- # Windows Target — VM Configuration
+ #### Windows Target — VM Configuration
 <img width="450" height="500" alt="image" src="https://github.com/user-attachments/assets/5cf1fbe7-f026-48bf-be9a-8ec5fc9ecaac" />
 - OS: Windows 11 64-bit
 - RAM: 4096 MB | CPUs: 2
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
-# Wazuh — VM Configuration
+#### Wazuh — VM Configuration
 <img width="450" height="500" alt="image" src="https://github.com/user-attachments/assets/579afdf2-2182-430b-9c68-ab002cf7bc81" />
 - OS: Ubuntu 64-bit
 - RAM: 6144 MB | CPUs: 4
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
-# Splunk — VM Configuration
+#### Splunk — VM Configuration
 <img width="450" height="500" alt="image" src="https://github.com/user-attachments/assets/e03df726-8466-401c-8e98-bfd7b1a292b8" />
 - OS: Ubuntu 64-bit
 - RAM: 6144 MB | CPUs: 4
@@ -79,18 +79,18 @@ a fixed IP on the 192.168.10.0/24 subnet. Below is the configuration applied
 to each machine followed by a verification screenshot confirming the IP was 
 correctly assigned.
 
-# Kali Attack
+#### Kali Attack
 <img width="500" height="283" alt="image" src="https://github.com/user-attachments/assets/38781ffd-8aca-4462-8281-188eb7d466b3" />
 <img width="500" height="283" alt="image" src="https://github.com/user-attachments/assets/776a0a06-1f59-4c5d-906d-cec26e482dd6" />
 
 
-# Target Windows
-# Wazuh
+#### Target Windows
+#### Wazuh
 <img width="771" height="481" alt="image" src="https://github.com/user-attachments/assets/f4884e31-5b8b-46a5-858d-a9f2ab9c6213" />
 <img width="771" height="481" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
 
 
-# Splunk
+#### Splunk
 <img width="1285" height="801" alt="image" src="https://github.com/user-attachments/assets/c2a89176-c0f2-433d-8642-78838fbabe31" />
 <img width="1038" height="573" alt="image" src="https://github.com/user-attachments/assets/27b48f75-ecf8-4127-be19-5b4fde5a5742" />
 
