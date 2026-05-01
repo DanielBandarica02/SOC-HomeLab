@@ -53,10 +53,45 @@ All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Win
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
 ### 2. Network — Configuration Adapter 1 NAT
-<img width="400" height="180" alt="image" src="https://github.com/user-attachments/assets/22356757-6377-4543-a09c-601fe9f88474" />
-
+<img width="400" height="190" alt="image" src="https://github.com/user-attachments/assets/51924df4-bdc4-415b-a46e-f6ce406cdd69" />
 Adapter 1 is set to NAT mode to provide internet access inside each VM. 
 This is necessary to be able to update the system, install packages and 
 download tools throughout the project. Without this adapter, the VMs would 
 be completely isolated with no ability to reach external repositories or 
 download software.
+
+### 3. Network — Configuration Adapter 2 Internal Network
+<img width="400" height="190" alt="image" src="https://github.com/user-attachments/assets/dfb92db1-00f1-4c75-80b9-8022c77c4944" />
+Adapter 2 is set to Internal Network mode to enable direct communication 
+between all VMs within the lab environment. This creates an isolated internal 
+network where the attack machine, target, Wazuh and Splunk can reach each 
+other without going through the host machine or the internet. Combined with 
+the static IP configuration, this ensures that connectivity between VMs is 
+preserved across reboots, so Wazuh Agent always knows where the Manager is 
+and Splunk always receives data from the expected sources.
+
+### 4. Assigned Static IP
+Static IPs are manually assigned to each VM on the Internal Network adapter 
+to ensure stable communication across reboots. Without static IPs, DHCP could 
+assign a different IP each time a VM restarts, breaking the connection between 
+Wazuh Agent and Wazuh Manager, or between Wazuh and Splunk. Each VM receives 
+a fixed IP on the 192.168.10.0/24 subnet. Below is the configuration applied 
+to each machine followed by a verification screenshot confirming the IP was 
+correctly assigned.
+
+## Kali Attack
+<img width="648" height="283" alt="image" src="https://github.com/user-attachments/assets/38781ffd-8aca-4462-8281-188eb7d466b3" />
+<img width="698" height="515" alt="image" src="https://github.com/user-attachments/assets/776a0a06-1f59-4c5d-906d-cec26e482dd6" />
+
+
+## Target Windows
+## Wazuh
+<img width="1281" height="799" alt="image" src="https://github.com/user-attachments/assets/f4884e31-5b8b-46a5-858d-a9f2ab9c6213" />
+<img width="1024" height="458" alt="image" src="https://github.com/user-attachments/assets/f780330c-3759-4571-84c8-6b8594a644f0" />
+
+
+## Splunk
+<img width="1285" height="801" alt="image" src="https://github.com/user-attachments/assets/c2a89176-c0f2-433d-8642-78838fbabe31" />
+<img width="1038" height="573" alt="image" src="https://github.com/user-attachments/assets/27b48f75-ecf8-4127-be19-5b4fde5a5742" />
+
+
