@@ -129,8 +129,10 @@ demonstrates full connectivity across the 192.168.10.0/24 subnet.
 
 #### Linux > Windows 
 <img width="501" height="134" alt="image" src="https://github.com/user-attachments/assets/e482df4c-07cd-4a59-8217-a92e32ef92cf" />
+
 #### Linux > Wazuh
 <img width="508" height="185" alt="image" src="https://github.com/user-attachments/assets/39ced1a7-e123-4562-9a67-5e159e43d0a3" />
+
 #### Linux > Splunk
 <img width="508" height="186" alt="image" src="https://github.com/user-attachments/assets/886602c6-91c2-4ea1-a9c6-1c82fec6fb42" />
 
