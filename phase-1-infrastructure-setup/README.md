@@ -52,3 +52,11 @@ All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Win
 - RAM: 6144 MB | CPUs: 4
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
+### 2. Network — Configuration Adapter 1 NAT
+<img width="563" height="308" alt="image" src="https://github.com/user-attachments/assets/22356757-6377-4543-a09c-601fe9f88474" />
+
+Adapter 1 is set to NAT mode to provide internet access inside each VM. 
+This is necessary to be able to update the system, install packages and 
+download tools throughout the project. Without this adapter, the VMs would 
+be completely isolated with no ability to reach external repositories or 
+download software.
