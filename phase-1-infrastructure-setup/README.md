@@ -130,9 +130,11 @@ demonstrates full connectivity across the 192.168.10.0/24 subnet.
 #### Linux > Windows Target
 <img width="505" height="189" alt="image" src="https://github.com/user-attachments/assets/d4cdc29b-c3b7-4bce-ae5d-118a539e0435" />
 Successful ping to 192.168.10.20 confirming connectivity with the victim machine.
+
 #### Linux > Wazuh
 <img width="508" height="185" alt="image" src="https://github.com/user-attachments/assets/39ced1a7-e123-4562-9a67-5e159e43d0a3" />
 Successful ping to 192.168.10.30 confirming connectivity with the Wazuh Manager.
+
 #### Linux > Splunk
 <img width="508" height="186" alt="image" src="https://github.com/user-attachments/assets/886602c6-91c2-4ea1-a9c6-1c82fec6fb42" />
 Successful ping to 192.168.10.40 confirming connectivity with the Splunk SIEM.
