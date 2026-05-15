@@ -119,6 +119,7 @@ assigned to the Internal Network adapter.
 To assign a static IP in Ubuntu Desktop, the network settings are accessed 
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
+
 <img width="512" height="285" alt="wazuh-config-w" src="https://github.com/user-attachments/assets/7b011143-a163-479b-9b78-9aca1e5f2930" />
 
 The command ip a confirms the static IP has been successfully applied 
@@ -156,5 +157,6 @@ Successful ping to 192.168.10.30 confirming connectivity with the Wazuh Manager.
 
 #### Linux > Splunk
 <img width="508" height="186" alt="ping-splunk" src="https://github.com/user-attachments/assets/c8e96787-6322-4641-86a4-cdfd9b6bdfa1" />
+
 Successful ping to 192.168.10.40 confirming connectivity with the Splunk SIEM.
 
