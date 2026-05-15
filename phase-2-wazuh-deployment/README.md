@@ -31,7 +31,7 @@ The official Wazuh installation script is downloaded directly from the
 Wazuh repository.
 
 ```bash
-curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
+curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh -a
 ```
 
 ### 3. Run the Installer
@@ -55,3 +55,6 @@ sudo systemctl status wazuh-manager
 ### 5. Access Wazuh Dashboard
 The Wazuh web interface is accessible at:
 https://192.168.10.30
+
+<img width="1191" height="770" alt="image" src="https://github.com/user-attachments/assets/023aaa1b-fee8-4dfa-a7db-7be6c34480f6" />
+
