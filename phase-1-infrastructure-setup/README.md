@@ -126,13 +126,13 @@ to the enp0s8 interface.
 
 
 #### Splunk
-<img width="1285" height="801" alt="wazuh-config-stat" src="https://github.com/user-attachments/assets/68ceeb0d-d9fd-4e9a-acd7-53177bd05ce0" />
+<img width="637" height="400" alt="wazuh-config-stat" src="https://github.com/user-attachments/assets/68ceeb0d-d9fd-4e9a-acd7-53177bd05ce0" />
 
 To assign a static IP in Ubuntu Desktop, the network settings are accessed 
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
 
-<img width="1038" height="573" alt="splunk-config-w" src="https://github.com/user-attachments/assets/a9cfaa35-a82a-460a-820b-9ed94cd71a49" />
+<img width="519" height="280" alt="splunk-config-w" src="https://github.com/user-attachments/assets/a9cfaa35-a82a-460a-820b-9ed94cd71a49" />
 
 The command ip a confirms the static IP has been successfully applied to the enp0s8 interface.
 
