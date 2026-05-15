@@ -15,3 +15,43 @@ processes alerts from all agents.
 security events and forwards them to the Manager.
 - **Wazuh Dashboard** — Web interface accessible at https://192.168.10.30 
 for alert visualization and management.
+
+## Installation
+
+### 1. System Update
+Before starting the installation, the system is updated to ensure all packages 
+are up to date.
+
+```bash
+sudo apt-get update && sudo apt-get upgrade -y
+```
+
+### 2. Download Wazuh Installation Script
+The official Wazuh installation script is downloaded directly from the 
+Wazuh repository.
+
+```bash
+curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
+```
+
+### 3. Run the Installer
+The script is executed with the `-a` flag to install all Wazuh components 
+(Manager, Indexer and Dashboard) in a single node deployment. The `-i` flag 
+is used to skip the OS compatibility check since Ubuntu 24.04 is not yet 
+on the official supported list but works correctly.
+
+```bash
+sudo bash wazuh-install.sh -a -i
+```
+
+### 4. Verify Wazuh Manager Status
+Once the installation completes, the Wazuh Manager service is verified 
+to be running correctly.
+
+```bash
+sudo systemctl status wazuh-manager
+```
+
+### 5. Access Wazuh Dashboard
+The Wazuh web interface is accessible at:
+https://192.168.10.30
