@@ -56,5 +56,6 @@ sudo systemctl status wazuh-manager
 The Wazuh web interface is accessible at:
 https://192.168.10.30
 
-<img width="1191" height="770" alt="image" src="https://github.com/user-attachments/assets/023aaa1b-fee8-4dfa-a7db-7be6c34480f6" />
+<img width="1008" height="578" alt="image" src="https://github.com/user-attachments/assets/1b366430-4f70-4e21-9d7e-85474838fcc6" />
+
 
