@@ -88,10 +88,13 @@ correctly assigned.
 
 #### Kali Attack
 <img width="648" height="283" alt="kali-config-stat" src="https://github.com/user-attachments/assets/f9fad031-0ab7-498f-9b39-6657cfa8648d" />
+
 To assign a static IP in Linux, the network configuration file must be edited 
 manually via terminal. The file /etc/network/interfaces is modified to set 
 a fixed IP address, subnet mask and interface for the Internal Network adapter.
+
 <img width="698" height="515" alt="kali-config-w" src="https://github.com/user-attachments/assets/cdca544b-4f1c-4c58-9b31-a49029799678" />
+
 Once the configuration is applied and the network service restarted, the 
 command ip a is used to verify that the static IP has been correctly assigned 
 to the interface.
@@ -99,20 +102,25 @@ to the interface.
 
 #### Target Windows
 <img width="501" height="632" alt="windows-config-stat" src="https://github.com/user-attachments/assets/1866db66-2b56-4778-9956-0aaf455fc0fb" />
+
 To assign a static IP in Windows 11, the network adapter settings are 
 accessed through Control Panel. The Internal Network adapter is configured 
 with a fixed IP address and subnet mask under IPv4 properties.
+
 <img width="983" height="509" alt="windows-config-w" src="https://github.com/user-attachments/assets/25edc3b0-f9d7-4da4-b66c-a7ad0545dd3a" />
+
 The command ipconfig in CMD confirms the static IP has been successfully 
 assigned to the Internal Network adapter.
 
 
 #### Wazuh
 <img width="1281" height="799" alt="image" src="https://github.com/user-attachments/assets/f2fa30a3-a8bc-46d9-9929-e84e75b4e67f" />
+
 To assign a static IP in Ubuntu Desktop, the network settings are accessed 
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
 <img width="1024" height="458" alt="wazuh-config-w" src="https://github.com/user-attachments/assets/7b011143-a163-479b-9b78-9aca1e5f2930" />
+
 The command ip a confirms the static IP has been successfully applied 
 to the enp0s8 interface.
 
@@ -123,9 +131,10 @@ to the enp0s8 interface.
 To assign a static IP in Ubuntu Desktop, the network settings are accessed 
 through the GUI. The Internal Network adapter is set to Manual mode with a 
 fixed IP address and subnet mask.
+
 <img width="1038" height="573" alt="splunk-config-w" src="https://github.com/user-attachments/assets/a9cfaa35-a82a-460a-820b-9ed94cd71a49" />
-The command ip a confirms the static IP has been successfully applied 
-to the enp0s8 interface.
+
+The command ip a confirms the static IP has been successfully applied to the enp0s8 interface.
 
 ### 5. Connectivity Verification
 To verify that all static IPs have been correctly assigned and that all VMs 
@@ -137,10 +146,12 @@ demonstrates full connectivity across the 192.168.10.0/24 subnet.
 
 #### Linux > Windows Target
 <img width="505" height="189" alt="ping-windows" src="https://github.com/user-attachments/assets/bc852a86-a05c-444e-895c-019e57e1429d" />
+
 Successful ping to 192.168.10.20 confirming connectivity with the Windows Target machine.
 
 #### Linux > Wazuh
 <img width="508" height="185" alt="ping-wazuh" src="https://github.com/user-attachments/assets/decb153d-e915-4ac6-95f9-3ca902486f47" />
+
 Successful ping to 192.168.10.30 confirming connectivity with the Wazuh Manager.
 
 #### Linux > Splunk
