@@ -87,13 +87,13 @@ to each machine followed by a verification screenshot confirming the IP was
 correctly assigned.
 
 #### Kali Attack
-<img width="648" height="283" alt="kali-config-stat" src="https://github.com/user-attachments/assets/f9fad031-0ab7-498f-9b39-6657cfa8648d" />
+<img width="420" height="283" alt="kali-config-stat" src="https://github.com/user-attachments/assets/f9fad031-0ab7-498f-9b39-6657cfa8648d" />
 
 To assign a static IP in Linux, the network configuration file must be edited 
 manually via terminal. The file /etc/network/interfaces is modified to set 
 a fixed IP address, subnet mask and interface for the Internal Network adapter.
 
-<img width="340" height="250" alt="kali-config-w" src="https://github.com/user-attachments/assets/cdca544b-4f1c-4c58-9b31-a49029799678" />
+<img width="440" height="350" alt="kali-config-w" src="https://github.com/user-attachments/assets/cdca544b-4f1c-4c58-9b31-a49029799678" />
 
 Once the configuration is applied and the network service restarted, the 
 command ip a is used to verify that the static IP has been correctly assigned 
