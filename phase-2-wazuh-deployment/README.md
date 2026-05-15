@@ -36,7 +36,7 @@ curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh -a
 
 ### 3. Run the Installer
 The script is executed with the `-a` flag to install all Wazuh components 
-(Manager, Indexer and Dashboard) in a single node deployment. The `-i` flag 
+(Manager, Indexer and Dashboard) in a single node deployment.  The `-i` flag 
 is used to skip the OS compatibility check since Ubuntu 24.04 is not yet 
 on the official supported list but works correctly.
 
