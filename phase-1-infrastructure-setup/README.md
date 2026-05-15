@@ -31,24 +31,28 @@ All 4 virtual machines created in VirtualBox: Kali Attack, Wazuh, Splunk and Win
 
 #### Kali Attack — VM Configuration
 <img width="630" height="721" alt="Kali-vm-config" src="https://github.com/user-attachments/assets/50cf1da2-918b-4364-bd2f-dba4f211d579" />
+
 - OS: Ubuntu 64-bit (Kali Linux)
 - RAM: 4096 MB | CPUs: 2
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
  #### Windows Target — VM Configuration
 <img width="601" height="772" alt="windows-target-vm-config" src="https://github.com/user-attachments/assets/dec23bf9-7865-4d8b-b31d-ff66ff53d3a3" />
+
 - OS: Windows 11 64-bit
 - RAM: 4096 MB | CPUs: 2
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
 #### Wazuh — VM Configuration
 <img width="608" height="714" alt="wazuh-vm-config" src="https://github.com/user-attachments/assets/f89c0104-49f0-4a9f-bdcf-c1d9d6681467" />
+
 - OS: Ubuntu 64-bit
 - RAM: 6144 MB | CPUs: 4
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
 
 #### Splunk — VM Configuration
 <img width="604" height="731" alt="splunk-vm-config" src="https://github.com/user-attachments/assets/9d38cc56-3ff7-43dd-a7a0-b00970034a9a" />
+
 - OS: Ubuntu 64-bit
 - RAM: 6144 MB | CPUs: 4
 - Network: Adapter 1 NAT + Adapter 2 Internal Network
