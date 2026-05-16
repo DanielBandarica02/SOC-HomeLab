@@ -52,6 +52,9 @@ to be running correctly.
 sudo systemctl status wazuh-manager
 ```
 
+<img width="730" height="132" alt="image" src="https://github.com/user-attachments/assets/4243fcc6-d1f7-47db-be6e-5e4a5d0b9e2f" />
+
+
 ### 5. Access Wazuh Dashboard
 The Wazuh web interface is accessible at:
 https://192.168.10.30
@@ -97,8 +100,14 @@ netsh advfirewall firewall add rule name="Wazuh Agent" dir=out action=allow prot
 The Wazuh Dashboard confirms 1 active agent successfully connected 
 to the Manager.
 
+<img width="1215" height="179" alt="image" src="https://github.com/user-attachments/assets/84d6a8df-8dae-42d8-afb1-c547393909b6" />
+
+
 ### 9. Security Events Received
 Wazuh begins collecting and processing security events from the Windows 
 target machine, confirming the full pipeline is operational.
+
+<img width="809" height="430" alt="image" src="https://github.com/user-attachments/assets/84b59767-269f-4e3b-a72e-cf7743f33d3c" />
+
 
 
