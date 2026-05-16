@@ -26,6 +26,9 @@ are up to date.
 sudo apt-get update && sudo apt-get upgrade -y
 ```
 
+<img width="730" height="56" alt="image" src="https://github.com/user-attachments/assets/28770769-0373-4bd3-8a89-7556b486fc30" />
+
+
 ### 2. Download Wazuh Installation Script
 The official Wazuh installation script is downloaded directly from the 
 Wazuh repository.
@@ -33,6 +36,9 @@ Wazuh repository.
 ```bash
 curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh -a
 ```
+
+<img width="831" height="41" alt="image" src="https://github.com/user-attachments/assets/f77300c6-0c0a-4b49-89ab-02c1ec426ab2" />
+
 
 ### 3. Run the Installer
 The script is executed with the `-a` flag to install all Wazuh components 
