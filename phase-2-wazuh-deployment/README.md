@@ -74,7 +74,13 @@ agent automatically, connecting it to the Wazuh Manager.
 
 ### 7. Install and Start the Agent
 The generated command is run in PowerShell as Administrator on the Windows 
-target machine. Once installed, the agent service is started with:
+target machine to download and install the agent:
+
+```powershell
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.7.5-1.msi -OutFile ${env.tmp}\wazuh-agent; msiexec.exe /i ${env.tmp}\wazuh-agent /q WAZUH_MANAGER='192.168.10.30' WAZUH_REGISTRATION_SERVER='192.168.10.30'
+```
+
+Once installed, the agent service is started with:
 
 ```powershell
 NET START WazuhSvc
