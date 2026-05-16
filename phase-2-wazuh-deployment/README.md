@@ -100,7 +100,7 @@ netsh advfirewall firewall add rule name="Wazuh Agent" dir=out action=allow prot
 The Wazuh Dashboard confirms 1 active agent successfully connected 
 to the Manager.
 
-<img width="1215" height="179" alt="image" src="https://github.com/user-attachments/assets/84d6a8df-8dae-42d8-afb1-c547393909b6" />
+<img width="815" height="129" alt="image" src="https://github.com/user-attachments/assets/84d6a8df-8dae-42d8-afb1-c547393909b6" />
 
 
 ### 9. Security Events Received
