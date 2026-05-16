@@ -31,7 +31,7 @@ The official Wazuh installation script is downloaded directly from the
 Wazuh repository.
 
 ```bash
-curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh -a
+curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
 ```
 
 ### 3. Run the Installer
