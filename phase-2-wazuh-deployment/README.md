@@ -56,7 +56,7 @@ sudo systemctl status wazuh-manager
 The Wazuh web interface is accessible at:
 https://192.168.10.30
 
-<img width="808" height="378" alt="image" src="https://github.com/user-attachments/assets/1b366430-4f70-4e21-9d7e-85474838fcc6" />
+<img width="808" height="438" alt="image" src="https://github.com/user-attachments/assets/1b366430-4f70-4e21-9d7e-85474838fcc6" />
 
 ## Wazuh Agent Deployment — Windows 11 Pro
 
