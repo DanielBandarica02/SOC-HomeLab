@@ -13,7 +13,7 @@ Oriented toward Blue Team and SOC analyst roles.
 
 ## Phases
 - [X] Phase 1 — Infrastructure setup
-- [ ] Phase 2 — Wazuh deployment
+- [X] Phase 2 — Wazuh deployment
 - [ ] Phase 3 — Splunk deployment
 - [ ] Phase 4 — Snort IDS
 - [ ] Phase 5 — Detection rules (15+)
