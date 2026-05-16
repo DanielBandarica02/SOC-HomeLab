@@ -75,6 +75,9 @@ was applied:
 The wizard generates a PowerShell command that downloads and installs the 
 agent automatically, connecting it to the Wazuh Manager.
 
+<img width="484" height="488" alt="image" src="https://github.com/user-attachments/assets/1d26f8c1-32b7-4144-b27e-0716a4f1b9a0" />
+
+
 ### 7. Install and Start the Agent
 The generated command is run in PowerShell as Administrator on the Windows 
 target machine to download and install the agent:
