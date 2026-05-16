@@ -58,4 +58,41 @@ https://192.168.10.30
 
 <img width="1008" height="578" alt="image" src="https://github.com/user-attachments/assets/1b366430-4f70-4e21-9d7e-85474838fcc6" />
 
+## Wazuh Agent Deployment — Windows 11 Pro
+
+### 6. Deploy Wazuh Agent
+The Wazuh Agent is deployed on the Windows 11 Pro target machine using the 
+Deploy new agent wizard from the Wazuh Dashboard. The following configuration 
+was applied:
+
+- **Package:** Windows MSI 32/64 bits
+- **Server address:** 192.168.10.30
+- **Agent name:** Windows-Target
+
+The wizard generates a PowerShell command that downloads and installs the 
+agent automatically, connecting it to the Wazuh Manager.
+
+### 7. Install and Start the Agent
+The generated command is run in PowerShell as Administrator on the Windows 
+target machine. Once installed, the agent service is started with:
+
+```powershell
+NET START WazuhSvc
+```
+
+A firewall rule is also added to allow outbound communication on ports 
+1514 and 1515:
+
+```powershell
+netsh advfirewall firewall add rule name="Wazuh Agent" dir=out action=allow protocol=TCP remoteport=1514,1515
+```
+
+### 8. Agent Connected
+The Wazuh Dashboard confirms 1 active agent successfully connected 
+to the Manager.
+
+### 9. Security Events Received
+Wazuh begins collecting and processing security events from the Windows 
+target machine, confirming the full pipeline is operational.
+
 
