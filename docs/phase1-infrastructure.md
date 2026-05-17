@@ -164,10 +164,10 @@ ping -c 3 192.168.10.40   # Splunk
 
 | Screenshot | Description |
 |------------|-------------|
-| <img width="525" height="144" alt="image" src="https://github.com/user-attachments/assets/148f323a-0305-475c-84b0-50cdf4a0b976" /> | `ip a` output showing 192.168.10.10 |
-| <img width="614" height="144" alt="image" src="https://github.com/user-attachments/assets/b0f6c224-c675-4afa-9745-9529215cc689" /> | `ipconfig` showing 192.168.10.20 |
-| <img width="812" height="110" alt="image" src="https://github.com/user-attachments/assets/fec37eca-7cd1-478d-9ad0-863108745add" /> | `ip a` showing 192.168.10.30 |
-| <img width="810" height="110" alt="image" src="https://github.com/user-attachments/assets/64879143-ef23-4c95-acb8-20c46df59951" /> | `ip a` showing 192.168.10.40 |
+| `screenshots/phase1/ipkali.jpg` | `ip a` output showing 192.168.10.10 |
+| `screenshots/phase1/ipwindows.jpg` | `ipconfig` showing 192.168.10.20 |
+| `screenshots/phase1/ipwazuh.jpg` | `ip a` showing 192.168.10.30 |
+| `screenshots/phase1/ipsplunk.jpg` | `ip a` showing 192.168.10.40 |
 | `screenshots/phase1/ping-test.png` | Ping from Kali to all other VMs |
 
 ---
