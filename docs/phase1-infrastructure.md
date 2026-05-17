@@ -157,8 +157,10 @@ ping -c 3 192.168.10.40   # Splunk
 **From Wazuh Manager — ping target and SIEM:**
 ```bash
 ping -c 3 192.168.10.20   # Windows 11
+![Kali IP](../screenshots/phase1/pingwazuhwin.png)
 ping -c 3 192.168.10.40   # Splunk
 ```
+
 
 ## Screenshots
 
@@ -168,7 +170,6 @@ ping -c 3 192.168.10.40   # Splunk
 | ![Windows IP](../screenshots/phase1/ipwindows.png) | `ipconfig` showing 192.168.10.20 |
 | ![Wazuh IP](../screenshots/phase1/ipwazuh.png) | `ip a` showing 192.168.10.30 |
 | ![Splunk IP](../screenshots/phase1/ipsplunk.png) | `ip a` showing 192.168.10.40 |
-| ![Ping Test](../screenshots/phase1/ping-test.png) | Ping from Kali to all other VMs |
 
 ---
 
