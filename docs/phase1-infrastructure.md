@@ -53,7 +53,6 @@ Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 Interface: eth1 (Adapter 2)
 IP:        192.168.10.10
 Netmask:   255.255.255.0
-Gateway:   (none — internal only)
 ```
 
 ---
@@ -74,11 +73,7 @@ Gateway:   (none — internal only)
 Interface: Ethernet (Adapter 1)
 IP:        192.168.10.20
 Netmask:   255.255.255.0
-Gateway:   (none)
-DNS:       (none)
 ```
-
-> **Note:** Windows Defender and the firewall are left **enabled** intentionally. This makes the environment realistic — the goal is to detect attacks through logs, not to make attacks easier.
 
 ---
 
@@ -177,11 +172,8 @@ ping -c 3 192.168.10.40   # Splunk
 | Ubuntu Splunk | 8 GB | 2 cores | 60 GB |
 | **Total** | **24 GB** | **8 cores** | **220 GB** |
 
-With 32 GB of host RAM, 8 GB remains for the host OS — enough to run everything simultaneously without issues.
 
 ## Screenshots
-
-> *(Add screenshots here as you complete each step)*
 
 | Screenshot | Description |
 |------------|-------------|
