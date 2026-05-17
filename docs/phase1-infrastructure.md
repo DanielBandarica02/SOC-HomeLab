@@ -158,19 +158,6 @@ ping -c 3 192.168.10.20   # Windows 11
 ping -c 3 192.168.10.40   # Splunk
 ```
 
----
-
-## Resource Allocation Summary
-
-| VM | RAM | CPU | Disk |
-|----|-----|-----|------|
-| Kali Linux | 4 GB | 2 cores | 50 GB |
-| Windows 11 Pro | 4 GB | 2 cores | 60 GB |
-| Ubuntu Wazuh | 8 GB | 2 cores | 50 GB |
-| Ubuntu Splunk | 8 GB | 2 cores | 60 GB |
-| **Total** | **24 GB** | **8 cores** | **220 GB** |
-
-
 ## Screenshots
 
 | Screenshot | Description |
