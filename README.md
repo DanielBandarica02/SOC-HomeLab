@@ -16,7 +16,7 @@ Oriented toward Blue Team and SOC analyst roles.
 Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 
 ## Phases
-- [ ] Phase 1 — Infrastructure setup
+- [X] Phase 1 — Infrastructure setup
 - [ ] Phase 2 — Wazuh deployment
 - [ ] Phase 3 — Splunk deployment + Wazuh integration via HEC
 - [ ] Phase 4 — Snort IDS
