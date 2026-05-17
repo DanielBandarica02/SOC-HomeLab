@@ -157,9 +157,11 @@ ping -c 3 192.168.10.40   # Splunk
 **From Wazuh Manager — ping target and SIEM:**
 ```bash
 ping -c 3 192.168.10.20   # Windows 11
-![Kali IP](../screenshots/phase1/pingwazuhwin.png)
 ping -c 3 192.168.10.40   # Splunk
 ```
+![Ping Wazuh-Windows](../screenshots/phase1/pingwazuhwin.png)
+
+![Ping Wazuh-Splunk](../screenshots/phase1/pingwazuhsplun.png)
 
 
 ## Screenshots
