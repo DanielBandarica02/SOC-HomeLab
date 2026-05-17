@@ -93,10 +93,11 @@ Netmask:   255.255.255.0
 ```yaml
 network:
   version: 2
+  renderer: networkd
   ethernets:
-    enp0s3:           # Adapter 1 - NAT (DHCP for internet)
+    enp0s3:
       dhcp4: true
-    enp0s8:           # Adapter 2 - Internal
+    enp0s8:
       dhcp4: false
       addresses:
         - 192.168.10.30/24
@@ -125,10 +126,11 @@ sudo netplan apply
 ```yaml
 network:
   version: 2
+  renderer: networkd
   ethernets:
-    enp0s3:           # Adapter 1 - NAT (DHCP for internet)
+    enp0s3:
       dhcp4: true
-    enp0s8:           # Adapter 2 - Internal
+    enp0s8:
       dhcp4: false
       addresses:
         - 192.168.10.40/24
