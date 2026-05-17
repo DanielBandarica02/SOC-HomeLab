@@ -158,8 +158,6 @@ ping -c 3 192.168.10.20   # Windows 11
 ping -c 3 192.168.10.40   # Splunk
 ```
 
-> **Note:** Windows 11 blocks ICMP by default. If the ping fails, verify the internal adapter IP is set correctly using `ipconfig` inside the Windows VM. You can also temporarily allow ICMP via Windows Firewall to test — but it is not required for the lab to function.
-
 ---
 
 ## Resource Allocation Summary
