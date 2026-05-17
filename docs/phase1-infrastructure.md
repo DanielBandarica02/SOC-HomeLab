@@ -48,7 +48,7 @@ Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 | Adapter 2 | Internal Network — `SOC-Homelab` |
 | Role | Attack machine (Nmap, Hydra, Metasploit, Burp Suite) |
 
-**Static IP configuration** (`/etc/network/interfaces` or via NetworkManager):
+**Static IP configuration** (`/etc/network/interfaces`):
 ```
 Interface: eth1 (Adapter 2)
 IP:        192.168.10.10
