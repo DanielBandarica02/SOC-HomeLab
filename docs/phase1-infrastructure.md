@@ -20,14 +20,14 @@ This phase covers the full setup of the virtualized SOC lab environment. All mac
 ## Network Design
 
 All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.  
-Machines that need internet access (to install packages) also have a **NAT adapter**.
 
-| VM | Internal IP | NAT (internet) |
-|----|-------------|----------------|
-| Kali Linux | 192.168.10.10 |  Yes |
-| Windows 11 Pro | 192.168.10.20 |  No |
-| Ubuntu — Wazuh Manager | 192.168.10.30 |  Yes |
-| Ubuntu — Splunk | 192.168.10.40 |  Yes |
+
+| VM | Internal IP | 
+|----|-------------|
+| Kali Linux | 192.168.10.10 |
+| Windows 11 Pro | 192.168.10.20 |
+| Ubuntu — Wazuh Manager | 192.168.10.30 |
+| Ubuntu — Splunk | 192.168.10.40 |
 
 **Data flow:**  
 `Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM`
