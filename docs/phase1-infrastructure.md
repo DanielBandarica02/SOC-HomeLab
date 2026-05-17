@@ -179,22 +179,6 @@ ping -c 3 192.168.10.40   # Splunk
 
 With 32 GB of host RAM, 8 GB remains for the host OS — enough to run everything simultaneously without issues.
 
----
-
-## Phase 1 — Completion Checklist
-
-- [ ] VirtualBox installed on host
-- [ ] Internal Network `SOC-Homelab` created
-- [ ] Kali Linux VM created and configured (NAT + Internal)
-- [ ] Windows 11 Pro VM created and configured (Internal only)
-- [ ] Ubuntu Wazuh VM created and configured (NAT + Internal)
-- [ ] Ubuntu Splunk VM created and configured (NAT + Internal)
-- [ ] Static IPs assigned on all VMs
-- [ ] Connectivity verified between all machines
-- [ ] Screenshots taken of each VM running and showing correct IP (`ip a` / `ipconfig`)
-
----
-
 ## Screenshots
 
 > *(Add screenshots here as you complete each step)*
