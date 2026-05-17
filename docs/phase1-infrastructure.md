@@ -157,7 +157,7 @@ ping -c 3 192.168.10.40   # Splunk
 
 ![Ping Kali-Wazuh](../screenshots/phase1/pingkaliwaz.png)
 
-![Ping Kali-Splunk](../screenshots/phase1/pingkalisplun.png)
+![Ping Kali-Splunk](../screenshots/phase1/pingkalisplu.png)
 
 
 **From Wazuh Manager — ping target and SIEM:**
