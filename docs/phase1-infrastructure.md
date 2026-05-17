@@ -24,10 +24,10 @@ Machines that need internet access (to install packages) also have a **NAT adapt
 
 | VM | Internal IP | NAT (internet) |
 |----|-------------|----------------|
-| Kali Linux | 192.168.10.10 | ✅ Yes |
-| Windows 11 Pro | 192.168.10.20 | ❌ No |
-| Ubuntu — Wazuh Manager | 192.168.10.30 | ✅ Yes |
-| Ubuntu — Splunk | 192.168.10.40 | ✅ Yes |
+| Kali Linux | 192.168.10.10 |  Yes |
+| Windows 11 Pro | 192.168.10.20 |  No |
+| Ubuntu — Wazuh Manager | 192.168.10.30 |  Yes |
+| Ubuntu — Splunk | 192.168.10.40 |  Yes |
 
 **Data flow:**  
 `Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM`
