@@ -148,11 +148,11 @@ Once all VMs are running and IPs are assigned, verify connectivity from each mac
 
 **From Kali — ping all hosts:**
 ```bash
-ping -c 3 192.168.10.20   # Windows 11
+ping -c 3 192.168.10.20   # Ubuntu Desktop
 ping -c 3 192.168.10.30   # Wazuh Manager
 ping -c 3 192.168.10.40   # Splunk
 ```
-![Ping Kali-Windows](../screenshots/phase1/pingkaliwin.png)
+![Ping Kali-Windows](../screenshots/phase1/pingkaliubu.png)
 
 ![Ping Kali-Wazuh](../screenshots/phase1/pingkaliwaz.png)
 
@@ -164,7 +164,7 @@ ping -c 3 192.168.10.40   # Splunk
 ping -c 3 192.168.10.20   # Windows 11
 ping -c 3 192.168.10.40   # Splunk
 ```
-![Ping Wazuh-Windows](../screenshots/phase1/pingwazuhwin.png)
+![Ping Wazuh-Windows](../screenshots/phase1/pingwazuhubu.png)
 
 ![Ping Wazuh-Splunk](../screenshots/phase1/pingwazuhsplun.png)
 
@@ -174,7 +174,7 @@ ping -c 3 192.168.10.40   # Splunk
 | Screenshot | Description |
 |------------|-------------|
 | ![Kali IP](../screenshots/phase1/ipkali.png) | `ip a` output showing 192.168.10.10 |
-| ![Windows IP](../screenshots/phase1/ipwindows.png) | `ipconfig` showing 192.168.10.20 |
+| ![Windows IP](../screenshots/phase1/ipubuntu.png) | `ip a` showing 192.168.10.20 |
 | ![Wazuh IP](../screenshots/phase1/ipwazuh.png) | `ip a` showing 192.168.10.30 |
 | ![Splunk IP](../screenshots/phase1/ipsplunk.png) | `ip a` showing 192.168.10.40 |
 
