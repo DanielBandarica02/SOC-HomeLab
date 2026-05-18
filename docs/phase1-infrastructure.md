@@ -61,7 +61,7 @@ Netmask:   255.255.255.0
 
 | Setting | Value |
 |---|---|
-| OS | Ubuntu Desktop 24.04.3 (64-bit) |
+| OS | Ubuntu Desktop 24.04.3 (amd64) |
 | RAM | 4 GB |
 | CPU | 2 cores |
 | Disk | 50 GB (dynamically allocated) |
