@@ -80,7 +80,7 @@ Netmask:   255.255.255.0 / CIDR: 24
 
 | Setting | Value |
 |---------|-------|
-| OS | Ubuntu 26.04 LTS Server |
+| OS | Ubuntu 24.04 LTS Server |
 | RAM | 8 GB |
 | CPU | 2 cores |
 | Disk | 50 GB (dynamically allocated) |
@@ -113,7 +113,7 @@ sudo netplan apply
 
 | Setting | Value |
 |---------|-------|
-| OS | Ubuntu 26.04 LTS Server |
+| OS | Ubuntu 24.04 LTS Server |
 | RAM | 8 GB |
 | CPU | 2 cores |
 | Disk | 60 GB (dynamically allocated) |
@@ -152,7 +152,7 @@ ping -c 3 192.168.10.20   # Ubuntu Desktop
 ping -c 3 192.168.10.30   # Wazuh Manager
 ping -c 3 192.168.10.40   # Splunk
 ```
-![Ping Kali-Windows](../screenshots/phase1/pingkaliubu.png)
+![Ping Kali-Ubuntu](../screenshots/phase1/pingkaliubu.png)
 
 ![Ping Kali-Wazuh](../screenshots/phase1/pingkaliwaz.png)
 
@@ -164,7 +164,7 @@ ping -c 3 192.168.10.40   # Splunk
 ping -c 3 192.168.10.20   # Windows 11
 ping -c 3 192.168.10.40   # Splunk
 ```
-![Ping Wazuh-Windows](../screenshots/phase1/pingwazuhubu.png)
+![Ping Wazuh-Ubuntu](../screenshots/phase1/pingwazuhubu.png)
 
 ![Ping Wazuh-Splunk](../screenshots/phase1/pingwazuhsplun.png)
 
@@ -174,7 +174,7 @@ ping -c 3 192.168.10.40   # Splunk
 | Screenshot | Description |
 |------------|-------------|
 | ![Kali IP](../screenshots/phase1/ipkali.png) | `ip a` output showing 192.168.10.10 |
-| ![Windows IP](../screenshots/phase1/ipubuntu.png) | `ip a` showing 192.168.10.20 |
+| ![Ubuntu IP](../screenshots/phase1/ipubuntu.png) | `ip a` showing 192.168.10.20 |
 | ![Wazuh IP](../screenshots/phase1/ipwazuh.png) | `ip a` showing 192.168.10.30 |
 | ![Splunk IP](../screenshots/phase1/ipsplunk.png) | `ip a` showing 192.168.10.40 |
 
