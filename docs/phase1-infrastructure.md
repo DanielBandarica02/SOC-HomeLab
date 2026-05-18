@@ -30,7 +30,7 @@ All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.
 | Ubuntu — Splunk | 192.168.10.40 |
 
 **Data flow:**  
-Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
+Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 
 ---
 
