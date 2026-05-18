@@ -25,7 +25,7 @@ All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.
 | VM | Internal IP | 
 |----|-------------|
 | Kali Linux | 192.168.10.10 |
-| Windows 11 Pro | 192.168.10.20 |
+| Ubuntu Desktop | 192.168.10.20 |
 | Ubuntu — Wazuh Manager | 192.168.10.30 |
 | Ubuntu — Splunk | 192.168.10.40 |
 
