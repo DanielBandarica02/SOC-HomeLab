@@ -82,7 +82,7 @@ sudo systemctl start wazuh-agent
 |------------|-------------|
 | ![Wazuh Dashboard](../screenshots/phase2/wazuhdashboard.png) | Wazuh Dashboard overview |
 | ![Agent Active](../screenshots/phase2/agentactive.png) | Agent ubuntu-target — Active status |
-| ![Events](../screenshots/phase2/eventosssh.png) | Security events visible in Threat Hunting |
+| ![Events](../screenshots/phase2/eventsssh.png) | Security events visible in Threat Hunting |
 
 ---
 
