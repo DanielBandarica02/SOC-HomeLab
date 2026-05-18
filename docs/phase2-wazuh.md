@@ -94,9 +94,9 @@ hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://192.168.10.20 -t 4 -V
 
 Rule 2502 at level 10 confirms that Wazuh correctly correlated multiple failed authentication attempts into a brute force alert, validating the full pipeline from endpoint log collection to alert generation in the dashboard.
 
-![SSH brute force alerts](../screenshots/phase2/ssh-bruteforce-alerts.png)
-![SSH server setup on Ubuntu target](../screenshots/phase2/ssh-server-setup.png)
-![Hydra attack from Kali](../screenshots/phase2/hydra-attack.png)
+![SSH brute force alerts](../screenshots/phase2/eventssh.png)
+![SSH server setup on Ubuntu target](../screenshots/phase2/ssh.png)
+![Hydra attack from Kali](../screenshots/phase2/hydra.png)
 
 ---
 
