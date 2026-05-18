@@ -57,24 +57,23 @@ Netmask:   255.255.255.0
 
 ---
 
-### VM 2 — Windows 11 Pro (Target)
+### VM 2 – Ubuntu Desktop 24.04 (Target)
 
 | Setting | Value |
-|---------|-------|
-| OS | Windows 11 Pro (64-bit) |
+|---|---|
+| OS | Ubuntu Desktop 24.04.3 (64-bit) |
 | RAM | 4 GB |
 | CPU | 2 cores |
-| Disk | 60 GB (dynamically allocated) |
-| Adapter 1 | Internal Network — `SOC-Homelab` |
+| Disk | 50 GB (dynamically allocated) |
+| Adapter 1 | Internal Network – `SOC-Homelab` |
 | Role | Attack target + Wazuh Agent host |
 
-**Static IP configuration** (Control Panel → Network & Sharing → Adapter settings):
-```
-Interface: Ethernet (Adapter 1)
+**Static IP configuration** (Settings -> Network -> Wired):
+```text
+Interface: enp0s3 (or similar)
 IP:        192.168.10.20
-Netmask:   255.255.255.0
+Netmask:   255.255.255.0 / CIDR: 24
 ```
-
 ---
 
 ### VM 3 — Ubuntu Server — Wazuh Manager
