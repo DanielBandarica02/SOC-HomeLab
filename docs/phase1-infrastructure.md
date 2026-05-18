@@ -148,9 +148,9 @@ Once all VMs are running and IPs are assigned, verify connectivity from each mac
 
 **From Kali — ping all hosts:**
 ```bash
-ping -c 3 192.168.10.20   # Ubuntu Desktop
-ping -c 3 192.168.10.30   # Wazuh Manager
-ping -c 3 192.168.10.40   # Splunk
+ping -c 1 192.168.10.20   # Ubuntu Desktop
+ping -c 1 192.168.10.30   # Wazuh Manager
+ping -c 1 192.168.10.40   # Splunk
 ```
 ![Ping Kali-Ubuntu](../screenshots/phase1/pingkaliubu.png)
 
@@ -161,8 +161,8 @@ ping -c 3 192.168.10.40   # Splunk
 
 **From Wazuh Manager — ping target and SIEM:**
 ```bash
-ping -c 3 192.168.10.20   # Windows 11
-ping -c 3 192.168.10.40   # Splunk
+ping -c 1 192.168.10.20   # Windows 11
+ping -c 1 192.168.10.40   # Splunk
 ```
 ![Ping Wazuh-Ubuntu](../screenshots/phase1/pingwazuhubu.png)
 
