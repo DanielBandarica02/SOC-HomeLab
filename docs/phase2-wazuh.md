@@ -68,6 +68,38 @@ sudo systemctl start wazuh-agent
 
 ---
 
+## Validation — SSH Brute Force Test
+
+To verify end-to-end communication between the Wazuh Agent and the Wazuh Manager, an SSH brute force attack was simulated from the Kali Linux machine against the Ubuntu Desktop target.
+
+**Setup on Ubuntu Desktop** — SSH server enabled:
+
+```bash
+sudo systemctl enable ssh
+sudo systemctl start ssh
+```
+
+**Attack from Kali Linux** using Hydra with the rockyou wordlist:
+
+```bash
+hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://192.168.10.20 -t 4 -V
+```
+
+**Alerts generated in Wazuh Dashboard:**
+
+| Rule ID | Level | Description |
+|---------|-------|-------------|
+| 5760 | 5 | sshd: authentication failed |
+| 2502 | 10 | syslog: User missed the password more than one time |
+
+Rule 2502 at level 10 confirms that Wazuh correctly correlated multiple failed authentication attempts into a brute force alert, validating the full pipeline from endpoint log collection to alert generation in the dashboard.
+
+![SSH brute force alerts](../screenshots/phase2/ssh-bruteforce-alerts.png)
+![SSH server setup on Ubuntu target](../screenshots/phase2/ssh-server-setup.png)
+![Hydra attack from Kali](../screenshots/phase2/hydra-attack.png)
+
+---
+
 ## Result
 
 - Wazuh Manager, Indexer, and Dashboard running on 192.168.10.30
@@ -85,6 +117,5 @@ sudo systemctl start wazuh-agent
 | ![Events](../screenshots/phase2/eventsssh.png) | Security events visible in Threat Hunting |
 
 ---
-
 *Previous: [Phase 1 — Infrastructure Setup](phase1-infrastructure.md)*  
 *Next: [Phase 3 — Splunk Deployment](phase3-splunk.md)*
