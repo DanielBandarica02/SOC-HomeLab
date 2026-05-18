@@ -161,7 +161,7 @@ ping -c 1 192.168.10.40   # Splunk
 
 **From Wazuh Manager — ping target and SIEM:**
 ```bash
-ping -c 1 192.168.10.20   # Windows 11
+ping -c 1 192.168.10.20   # Ubuntu Desktop
 ping -c 1 192.168.10.40   # Splunk
 ```
 ![Ping Wazuh-Ubuntu](../screenshots/phase1/pingwazuhubu.png)
