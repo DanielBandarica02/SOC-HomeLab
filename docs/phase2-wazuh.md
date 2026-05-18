@@ -80,9 +80,9 @@ sudo systemctl start wazuh-agent
 
 | Screenshot | Description |
 |------------|-------------|
-| `screenshots/phase2/wazuh-dashboard.png` | Wazuh Dashboard overview |
-| `screenshots/phase2/agent-active.png` | Agent ubuntu-target — Active status |
-| `screenshots/phase2/first-alerts.png` | Security events visible in Threat Hunting |
+| (../screenshots/phase2/wazuhdashboard.png) | Wazuh Dashboard overview |
+| (screenshots/phase2/agentactive.png) | Agent ubuntu-target — Active status |
+| (screenshots/phase2/eventosssh.png) | Security events visible in Threat Hunting |
 
 ---
 
