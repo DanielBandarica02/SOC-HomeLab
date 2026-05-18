@@ -8,12 +8,12 @@ Oriented toward Blue Team and SOC analyst roles.
 
 ## Architecture
 - **Kali Linux** (192.168.10.10) — Attack machine
-- **Windows 11 Pro** (192.168.10.20) — Target machine + Wazuh Agent
+- **Ubuntu Desktop 24.04** (192.168.10.20) — Target machine + Wazuh Agent
 - **Ubuntu — Wazuh Manager** (192.168.10.30) — EDR backend, alert processing, forwards to Splunk via HEC
 - **Ubuntu — Splunk** (192.168.10.40) — SIEM frontend, dashboards, SPL queries, correlation rules
 
 ## Data Flow
-Windows 11 Pro → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
+Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 
 ## Phases
 - [X] Phase 1 — Infrastructure setup
