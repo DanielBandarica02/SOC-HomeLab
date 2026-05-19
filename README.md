@@ -19,7 +19,7 @@ Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 
 - [x] Phase 1 — Infrastructure setup
 - [x] Phase 2 — Wazuh deployment
-- [ ] Phase 3 — Splunk deployment + Wazuh integration via HEC
+- [X] Phase 3 — Splunk deployment + Wazuh integration via HEC
 - [ ] Phase 4 — Snort IDS
 - [ ] Phase 5 — Detection rules (15+)
 - [ ] Phase 6 — Attack simulations and remediation
