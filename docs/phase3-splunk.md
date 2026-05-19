@@ -96,12 +96,7 @@ Wazuh alert fields are available as structured JSON fields in Splunk, including 
 
 Example event received in Splunk from an SSH brute force attack originating from Kali Linux (192.168.10.10):
 
-```
-full_log: May 19 00:06:47 UbuntuDesktopHomeLab sshd[17275]:
-Failed password for root from 192.168.10.10 port 45422 ssh2
-manager.name: UbuntuWazuhHomeLab
-predecoder.program_name: sshd
-```
+![SSH Log](../screenshots/phase3/sshlog.png)
 
 ---
 
