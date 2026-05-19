@@ -114,10 +114,9 @@ Example event received in Splunk from an SSH brute force attack originating from
 
 | Screenshot | Description |
 |------------|-------------|
-| `screenshots/phase3/splunk-dashboard.png` | Splunk Enterprise dashboard overview |
-| `screenshots/phase3/splunk-hec-token.png` | HEC token created for Wazuh |
-| `screenshots/phase3/splunk-wazuh-index.png` | Dedicated wazuh index in Splunk |
-| `screenshots/phase3/splunk-wazuh-events.png` | Wazuh alerts visible in Splunk Search |
+| ![Splunk Dashboard](../screenshots/phase3/splunk-dashboard.png) | Splunk Enterprise dashboard overview |
+| ![HEC Token](../screenshots/phase3/splunk-hec-token.png) | HEC token created for Wazuh |
+| ![Wazuh Splunk](../screenshots/phase3/splunk-wazuh-events.png) | Wazuh alerts visible in Splunk Search |
 
 ---
 
