@@ -21,12 +21,13 @@ flowchart TD
 
 ---
 
-**Data flow:**
-```
-Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
-                                     │
-                               Suricata IDS
-                          (network traffic analysis)
+## Data Flow
+
+```mermaid
+flowchart LR
+    A["Ubuntu Desktop"] -->|"Wazuh Agent"| B["Wazuh Manager"]
+    B -->|"HEC"| C["Splunk SIEM"]
+    B -->|"Network analysis"| D["Suricata IDS"]
 ```
 
 ---
