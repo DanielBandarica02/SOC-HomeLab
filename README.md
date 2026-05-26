@@ -103,8 +103,8 @@ Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 
 ## Documentation
 
-| Phase | Description | Status |
-|-------|-------------|--------|
+| Phase | Description |
+|-------|-------------|
 | [Phase 1](docs/phase1-infrastructure.md) | Infrastructure setup |
 | [Phase 2](docs/phase2-wazuh.md) | Wazuh EDR deployment |
 | [Phase 3](docs/phase3-splunk.md) | Splunk SIEM + HEC integration |
