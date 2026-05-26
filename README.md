@@ -9,35 +9,17 @@
 This lab deploys a complete detection pipeline using industry-standard open-source tools across isolated virtual machines. Wazuh serves as the EDR for endpoint monitoring and alert generation. Splunk ingests those alerts as the SIEM, enabling SPL-based correlation and dashboarding. Suricata provides network-level intrusion detection. Kali Linux acts as the attacker, simulating real threat scenarios against an Ubuntu Desktop target.
 
 ---
-
 ## Architecture
 
+```mermaid
+flowchart TD
+    A["🖥️ Kali Linux\n192.168.10.10\nAttack Machine"] -->|"attacks"| B["💻 Ubuntu Desktop 24.04\n192.168.10.20\nTarget + Wazuh Agent"]
+    B -->|"Wazuh Agent"| C["🖧 Ubuntu Server 24.04\n192.168.10.30\nWazuh Manager + Suricata IDS"]
+    C -->|"HEC port 8088"| D["📊 Ubuntu Server 24.04\n192.168.10.40\nSplunk Enterprise SIEM"]
+    C -->|"Network traffic analysis"| C
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        SOC-Homelab Network                  │
-│                        192.168.10.0/24                      │
-│                                                             │
-│  ┌─────────────────┐         ┌─────────────────────────┐   │
-│  │   Kali Linux    │ ──────► │   Ubuntu Desktop 24.04  │   │
-│  │  192.168.10.10  │ attacks │     192.168.10.20        │   │
-│  │  Attack machine │         │  Target + Wazuh Agent   │   │
-│  └─────────────────┘         └────────────┬────────────┘   │
-│                                           │ Wazuh Agent     │
-│                               ┌───────────▼────────────┐   │
-│                               │  Ubuntu Server 24.04   │   │
-│                               │    192.168.10.30        │   │
-│                               │   Wazuh Manager + EDR  │   │
-│                               │   Suricata IDS          │   │
-│                               └───────────┬────────────┘   │
-│                                           │ HEC (port 8088) │
-│                               ┌───────────▼────────────┐   │
-│                               │  Ubuntu Server 24.04   │   │
-│                               │    192.168.10.40        │   │
-│                               │   Splunk Enterprise     │   │
-│                               │        SIEM             │   │
-│                               └────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-```
+
+---
 
 **Data flow:**
 ```
