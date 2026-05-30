@@ -1,24 +1,26 @@
 # Phase 2 — Wazuh Deployment
-
+ 
 ## Overview
-
-Wazuh was deployed as the EDR solution for the lab, providing endpoint visibility, log collection, and real-time alert generation. The deployment consists of three components running on the Wazuh Manager VM, and an agent installed on the target machine.
+ 
+Wazuh was deployed as the EDR solution for the lab, providing endpoint visibility, log collection, and real-time alert generation. The deployment consists of three components running on the Wazuh Manager VM, and an agent installed on the Ubuntu Desktop target. Additional agents for Windows endpoints are deployed in Phase 5.
 
 ---
-
+ 
 ## Environment
-
+ 
 | Component | Version | Host |
 |-----------|---------|------|
 | Wazuh Manager | 4.14.5 | Ubuntu Server 24.04 — 192.168.10.30 |
 | Wazuh Indexer | 4.14.5 | Ubuntu Server 24.04 — 192.168.10.30 |
 | Wazuh Dashboard | 4.14.5 | Ubuntu Server 24.04 — 192.168.10.30 |
 | Wazuh Agent | 4.14.5 | Ubuntu Desktop 24.04 — 192.168.10.20 |
-
+ 
+> Windows Server 2022 and Windows 10/11 agents are enrolled in [Phase 5 — Sysmon Deployment](phase5-sysmon.md).
+ 
 ---
-
+ 
 ## Architecture
-
+ 
 ```
 Ubuntu Desktop 24.04 (192.168.10.20)
         │  Wazuh Agent
@@ -28,22 +30,22 @@ Ubuntu Server 24.04 (192.168.10.30)
         ├── Wazuh Indexer   — OpenSearch-based log indexing
         └── Wazuh Dashboard — web UI (https://192.168.10.30)
 ```
-
+ 
 ---
-
+ 
 ## Deployment
-
+ 
 ### Wazuh Manager
-
+ 
 The Wazuh Manager was installed on Ubuntu Server 24.04 using the all-in-one installation script, which deploys the Manager, Indexer, and Dashboard in a single-node configuration:
-
+ 
 ```bash
 curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
 sudo bash ./wazuh-install.sh -a
 ```
-
+ 
 The `-a` flag performs a complete all-in-one installation. Upon completion, the installer outputs the admin credentials required to access the dashboard.
-
+ 
 The dashboard is accessible at `https://192.168.10.30` from any machine on the `SOC-Homelab` network.
 
 ### Wazuh Agent
