@@ -200,7 +200,7 @@ ping -c  192.168.10.60    # Windows Workstation
 
 ![Ping Kali-Windows-Server](../screenshots/phase1/pingkaliwinserver.png)
 
-![Ping Kali-Windows-Workstation](../screenshots/phase1/pingkaliwinwork.png)
+![Ping Kali-Windows11-Workstation](../screenshots/phase1/pingkaliwin11.png)
 
 
 **From Wazuh Manager — ping target and SIEM:**
