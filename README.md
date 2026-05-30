@@ -90,10 +90,6 @@ flowchart LR
 - Active Directory deployment and domain configuration
 - Windows telemetry enhancement with Sysmon
 - Threat detection rule writing (Wazuh rules + Splunk SPL)
-- Attack simulation and blue team response documentation
-- Forensic attack reconstruction and reporting
-- MITRE ATT&CK framework mapping
-- Log analysis and correlation across multiple security tools
 
 ---
 
