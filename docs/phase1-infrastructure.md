@@ -1,7 +1,7 @@
 # Phase 1 — Infrastructure Setup
-
+ 
 ## Overview
-
+ 
 This phase covers the full setup of the virtualized SOC lab environment. All machines run inside VirtualBox on a single host using an isolated internal network, simulating a real enterprise segment without exposing anything to the outside world.
 
 ---
@@ -18,26 +18,31 @@ This phase covers the full setup of the virtualized SOC lab environment. All mac
 ---
 
 ## Network Design
-
-All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.  
-
-
-| VM | Internal IP | 
-|----|-------------|
+ 
+All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.
+ 
+| VM | IP |
+|----|----|
 | Kali Linux | 192.168.10.10 |
-| Ubuntu Desktop | 192.168.10.20 |
+| Ubuntu Desktop 24.04 | 192.168.10.20 |
 | Ubuntu — Wazuh Manager | 192.168.10.30 |
 | Ubuntu — Splunk | 192.168.10.40 |
-
-**Data flow:**  
-Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
-
+| Windows Server 2022 | 192.168.10.50 |
+| Windows 10/11 | 192.168.10.60 |
+ 
+**Data flow:**
+```
+Ubuntu Desktop  ──┐
+Windows 10/11   ──┤  Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
+Windows Server  ──┘
+```
+ 
 ---
-
+ 
 ## Virtual Machines
-
+ 
 ### VM 1 — Kali Linux (Attacker)
-
+ 
 | Setting | Value |
 |---------|-------|
 | OS | Kali Linux (latest, 64-bit) |
@@ -47,47 +52,48 @@ Ubuntu Desktop → Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
 | Adapter 1 | NAT |
 | Adapter 2 | Internal Network — `SOC-Homelab` |
 | Role | Attack machine (Nmap, Hydra, Metasploit, Burp Suite) |
-
+ 
 **Static IP configuration** (`/etc/network/interfaces`):
 ```
 Interface: eth1 (Adapter 2)
 IP:        192.168.10.10
 Netmask:   255.255.255.0
 ```
-
+ 
 ---
-
-### VM 2 – Ubuntu Desktop 24.04 (Target)
-
+ 
+### VM 2 — Ubuntu Desktop 24.04 (Linux Target)
+ 
 | Setting | Value |
-|---|---|
+|---------|-------|
 | OS | Ubuntu Desktop 24.04.3 (amd64) |
 | RAM | 4 GB |
 | CPU | 2 cores |
 | Disk | 50 GB (dynamically allocated) |
-| Adapter 1 | Internal Network – `SOC-Homelab` |
-| Role | Attack target + Wazuh Agent host |
-
-**Static IP configuration** (Settings -> Network -> Wired):
-```text
+| Adapter 1 | Internal Network — `SOC-Homelab` |
+| Role | Linux attack target + Wazuh Agent host |
+ 
+**Static IP configuration** (Settings → Network → Wired):
+```
 Interface: enp0s3 (or similar)
 IP:        192.168.10.20
 Netmask:   255.255.255.0 / CIDR: 24
 ```
+ 
 ---
-
+ 
 ### VM 3 — Ubuntu Server — Wazuh Manager
-
+ 
 | Setting | Value |
 |---------|-------|
-| OS | Ubuntu 24.04 LTS Server |
-| RAM | 8 GB |
+| OS | Ubuntu Server 24.04 LTS |
+| RAM | 6 GB |
 | CPU | 2 cores |
 | Disk | 50 GB (dynamically allocated) |
 | Adapter 1 | NAT |
 | Adapter 2 | Internal Network — `SOC-Homelab` |
-| Role | Wazuh Manager (EDR backend) + alert forwarding to Splunk via HEC |
-
+| Role | Wazuh Manager (EDR backend) + Suricata IDS + alert forwarding to Splunk via HEC |
+ 
 **Static IP configuration** (`/etc/netplan/00-installer-config.yaml`):
 ```yaml
 network:
@@ -101,26 +107,21 @@ network:
       addresses:
         - 192.168.10.30/24
 ```
-
-Apply with:
-```bash
-sudo netplan apply
-```
-
+ 
 ---
-
+ 
 ### VM 4 — Ubuntu Server — Splunk
-
+ 
 | Setting | Value |
 |---------|-------|
-| OS | Ubuntu 24.04 LTS Server |
-| RAM | 8 GB |
+| OS | Ubuntu Server 24.04 LTS |
+| RAM | 6 GB |
 | CPU | 2 cores |
 | Disk | 60 GB (dynamically allocated) |
 | Adapter 1 | NAT |
 | Adapter 2 | Internal Network — `SOC-Homelab` |
 | Role | Splunk SIEM (dashboards, SPL queries, correlation rules) |
-
+ 
 **Static IP configuration** (`/etc/netplan/00-installer-config.yaml`):
 ```yaml
 network:
@@ -134,10 +135,47 @@ network:
       addresses:
         - 192.168.10.40/24
 ```
-
-Apply with:
-```bash
-sudo netplan apply
+ 
+---
+ 
+### VM 5 — Windows Server 2022 (Active Directory DC)
+ 
+| Setting | Value |
+|---------|-------|
+| OS | Windows Server 2022 Evaluation (Desktop Experience) |
+| RAM | 4 GB |
+| CPU | 2 cores |
+| Disk | 60 GB (dynamically allocated) |
+| Adapter 1 | Internal Network — `SOC-Homelab` |
+| Role | Active Directory Domain Controller + Sysmon + Wazuh Agent |
+ 
+**Static IP configuration** (Control Panel → Network → Adapter → IPv4 Properties):
+```
+IP:           192.168.10.50
+Subnet mask:  255.255.255.0
+Gateway:      (empty)
+DNS:          192.168.10.50 (self, after AD DS promotion)
+```
+ 
+---
+ 
+### VM 6 — Windows 10/11 (Windows Workstation)
+ 
+| Setting | Value |
+|---------|-------|
+| OS | Windows 10/11 (64-bit) |
+| RAM | 4 GB |
+| CPU | 2 cores |
+| Disk | 60 GB (dynamically allocated) |
+| Adapter 1 | Internal Network — `SOC-Homelab` |
+| Role | Windows workstation + Sysmon + Wazuh Agent + domain-joined to AD |
+ 
+**Static IP configuration** (Settings → Network → Ethernet → Edit):
+```
+IP:           192.168.10.60
+Subnet mask:  255.255.255.0
+Gateway:      (empty)
+DNS:          192.168.10.50 (Windows Server AD)
 ```
 
 ---
