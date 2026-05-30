@@ -30,11 +30,14 @@ All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.
 | Windows Server 2022 | 192.168.10.50 |
 | Windows 10/11 | 192.168.10.60 |
  
-**Data flow:**
-```
-Ubuntu Desktop  ──┐
-Windows 10/11   ──┤  Wazuh Agent → Wazuh Manager → Splunk HEC → Splunk SIEM
-Windows Server  ──┘
+## Data Flow
+
+```mermaid
+flowchart LR
+    A["Ubuntu Desktop"] -->|"Wazuh Agent"| D["Wazuh Manager"]
+    B["Windows 10/11"] -->|"Wazuh Agent"| D
+    C["Windows Server"] -->|"Wazuh Agent"| D
+    D -->|"HEC"| E["Splunk SIEM"]
 ```
  
 ---
