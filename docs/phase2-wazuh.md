@@ -21,14 +21,12 @@ Wazuh was deployed as the EDR solution for the lab, providing endpoint visibilit
  
 ## Architecture
  
-```
-Ubuntu Desktop 24.04 (192.168.10.20)
-        │  Wazuh Agent
-        ▼
-Ubuntu Server 24.04 (192.168.10.30)
-        ├── Wazuh Manager   — rule engine, alert processing
-        ├── Wazuh Indexer   — OpenSearch-based log indexing
-        └── Wazuh Dashboard — web UI (https://192.168.10.30)
+```mermaid
+flowchart TD
+    A["💻 Ubuntu Desktop 24.04\n192.168.10.20\nWazuh Agent"] -->|"Wazuh Agent"| B["🖧 Ubuntu Server 24.04\n192.168.10.30\nWazuh Manager"]
+    B --> C["Wazuh Manager — rule engine, alert processing"]
+    B --> D["Wazuh Indexer — OpenSearch-based log indexing"]
+    B --> E["Wazuh Dashboard — web UI (https://192.168.10.30)"]
 ```
  
 ---
