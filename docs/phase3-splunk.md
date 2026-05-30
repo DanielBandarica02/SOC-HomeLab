@@ -114,6 +114,5 @@ Example event received in Splunk from an SSH brute force attack originating from
 | ![Wazuh Splunk](../screenshots/phase3/splunk-wazuh-events.png) | Wazuh alerts visible in Splunk Search |
 
 ---
- 
 *Previous: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
 *Next: [Phase 4 — Suricata IDS](phase4-suricata.md)*
