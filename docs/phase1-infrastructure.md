@@ -193,7 +193,7 @@ ping -c 1 192.168.10.20   # Ubuntu Desktop
 ping -c 1 192.168.10.30   # Wazuh Manager
 ping -c 1 192.168.10.40   # Splunk
 ping -c 1 192.168.10.50   # Windows Server
-ping -c  192.168.10.60    # Windows Workstation
+ping -c 1 192.168.10.60    # Windows Workstation
 ```
 ![Ping Kali-Ubuntu](../screenshots/phase1/pingkaliubu.png)
 
