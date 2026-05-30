@@ -189,12 +189,18 @@ Once all VMs are running and IPs are assigned, verify connectivity from each mac
 ping -c 1 192.168.10.20   # Ubuntu Desktop
 ping -c 1 192.168.10.30   # Wazuh Manager
 ping -c 1 192.168.10.40   # Splunk
+ping -c 1 192.168.10.50   # Windows Server
+ping -c  192.168.10.60    # Windows Workstation
 ```
 ![Ping Kali-Ubuntu](../screenshots/phase1/pingkaliubu.png)
 
 ![Ping Kali-Wazuh](../screenshots/phase1/pingkaliwaz.png)
 
 ![Ping Kali-Splunk](../screenshots/phase1/pingkalisplu.png)
+
+![Ping Kali-Windows-Server](../screenshots/phase1/pingkaliwinserver.png)
+
+![Ping Kali-Windows-Workstation](../screenshots/phase1/pingkaliwinwork.png)
 
 
 **From Wazuh Manager — ping target and SIEM:**
@@ -215,7 +221,11 @@ ping -c 1 192.168.10.40   # Splunk
 | ![Ubuntu IP](../screenshots/phase1/ipubuntu.png) | `ip a` showing 192.168.10.20 |
 | ![Wazuh IP](../screenshots/phase1/ipwazuh.png) | `ip a` showing 192.168.10.30 |
 | ![Splunk IP](../screenshots/phase1/ipsplunk.png) | `ip a` showing 192.168.10.40 |
+| ![WinServer IP](../screenshots/phase1/ipwinsv.png) | `ip a` showing 192.168.10.50 |
+| ![Windows 11 IP](../screenshots/phase1/ipwin11.png) | `ip a` showing 192.168.10.60 |
 
 ---
+ 
+*Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
 
 *Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
