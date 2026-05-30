@@ -14,21 +14,16 @@ Splunk Enterprise was deployed as the SIEM solution for the lab, providing centr
 | Wazuh Manager | 4.14.5 | Ubuntu Server 24.04 — 192.168.10.30 |
 
 ---
-
+ 
 ## Architecture
-
+ 
+```mermaid
+flowchart TD
+    A["💻 Ubuntu Desktop 24.04\n192.168.10.20\nWazuh Agent"] -->|"Wazuh Agent"| B["🖧 Ubuntu Server 24.04\n192.168.10.30\nWazuh Manager"]
+    B -->|"HEC POST\nport 8088"| C["📊 Ubuntu Server 24.04\n192.168.10.40\nSplunk Enterprise"]
+    C --> D["index: wazuh\ndashboards · SPL queries · correlation rules"]
 ```
-Ubuntu Desktop 24.04 (192.168.10.20)
-        │  Wazuh Agent
-        ▼
-Ubuntu Server — Wazuh Manager (192.168.10.30)
-        │  HTTP Event Collector (HEC)
-        │  POST http://192.168.10.40:8088/services/collector/event
-        ▼
-Ubuntu Server — Splunk Enterprise (192.168.10.40)
-        └── index: wazuh — dashboards, SPL queries, correlation rules
-```
-
+ 
 ---
 
 ## Deployment
@@ -119,6 +114,9 @@ Example event received in Splunk from an SSH brute force attack originating from
 | ![Wazuh Splunk](../screenshots/phase3/splunk-wazuh-events.png) | Wazuh alerts visible in Splunk Search |
 
 ---
+ 
+*Previous: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
+*Next: [Phase 4 — Suricata IDS](phase4-suricata.md)*
 
 *Previous: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*  
 *Next: [Phase 4 — Snort IDS](phase4-snort.md)*
