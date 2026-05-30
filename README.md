@@ -56,7 +56,7 @@ flowchart LR
 - [x] Phase 2 — Wazuh deployment
 - [x] Phase 3 — Splunk deployment + Wazuh integration via HEC
 - [ ] Phase 4 — Suricata IDS
-- [ ] Phase 5 — Active Directory + Sysmon deployment
+- [ ] Phase 5 — Sysmon deployment
 - [ ] Phase 6 — Detection rules (15+)
 - [ ] Phase 7 — Attack simulations and remediation
 
@@ -78,20 +78,6 @@ flowchart LR
 | Burp Suite | Web | Web application attack simulation |
 | John the Ripper | Password cracking | Offline credential attacks |
 | Hashcat | Password cracking | GPU-accelerated hash cracking |
-
----
-
-## Attack Scenarios
-
-| # | Technique | MITRE ATT&CK | Description |
-|---|-----------|--------------|-------------|
-| 1 | Initial Access | T1190 | Exploit public-facing vulnerability on Ubuntu target |
-| 2 | Privilege Escalation | T1068 | Local privilege escalation on Linux |
-| 3 | Lateral Movement | T1021.004 | SSH-based lateral movement to Active Directory DC |
-| 4 | Persistence | T1053.005 | Scheduled task persistence on Windows |
-| 5 | Credential Access | T1003 | Credential dumping on Windows |
-| 6 | Reconnaissance | T1046 | Network service scanning with Nmap |
-| 7 | Brute Force | T1110.001 | SSH brute force with Hydra |
 
 ---
 
@@ -119,6 +105,6 @@ flowchart LR
 | [Phase 2](docs/phase2-wazuh.md) | Wazuh EDR deployment |
 | [Phase 3](docs/phase3-splunk.md) | Splunk SIEM + HEC integration |
 | [Phase 4](docs/phase4-suricata.md) | Suricata IDS |
-| [Phase 5](docs/phase5-active-directory-sysmon.md) | Active Directory + Sysmon |
+| [Phase 5](docs/phase5-sysmon.md) | Sysmon deployment |
 | [Phase 6](docs/phase6-detection-rules.md) | Custom detection rules (15+) |
 | [Phase 7](docs/phase7-attack-simulations.md) | Attack simulations + remediation |
