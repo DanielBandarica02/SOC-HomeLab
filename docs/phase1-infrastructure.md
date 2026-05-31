@@ -215,7 +215,19 @@ ping -c 1 192.168.10.40   # Splunk
 
 ![Ping Wazuh-Splunk](../screenshots/phase1/pingwazuhsplun.png)
 
+---
 
+## Troubleshooting & Lessons Learned
+
+### 1. Windows Firewall Blocking Inter-VM ICMP Telemetry (Ping)
+During initial connectivity validation, the Kali Linux machine could not ping the Windows Server (`192.168.10.50`) or the Windows Workstation (`192.168.10.60`), despite correct IP routing. The root cause was the default Windows Defender Firewall profile blocking inbound ICMPv4 echo requests.
+
+**Solution:** Enabled the pre-defined inbound rule for ICMPv4 via PowerShell on both Windows hosts to allow connectivity verification:
+```powershell
+Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)"
+```
+
+---
 ## Screenshots
 
 | Screenshot | Description |
