@@ -131,8 +131,8 @@ index="wazuh" rule.groups="suricata"
 
 | Screenshot | Description |
 |------------|-------------|
-| `screenshots/phase4/suricata-fast-log.png` | Suricata fast.log showing detected network scan |
-| `screenshots/phase4/suricata-splunk-alerts.png` | Suricata alerts visible in Splunk Search |
+| screenshots/phase4/suricata-fast-log.png | Suricata fast.log showing detected network scan |
+| screenshots/phase4/suricata-splunk-alerts.png | Suricata alerts visible in Splunk Search |
 
 ---
 
