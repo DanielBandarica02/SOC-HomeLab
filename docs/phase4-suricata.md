@@ -98,7 +98,7 @@ To validate the full pipeline, a network scan was launched from Kali Linux again
 **Attack from Kali Linux:**
 
 ```bash
-sudo nmap -sS -sV -O --script=default 192.168.10.20
+sudo nmap -sS -A 192.168.10.20
 ```
 
 **Alerts generated and visible in Splunk:**
