@@ -144,7 +144,7 @@ suppress gen_id 1, sig_id 2221036, track by_src, ip 192.168.10.40
 
 | Screenshot | Description |
 |------------|-------------|
-| ![Suricata Network Scan](../screenshots/phase4/suricata-fast-log.png) | Suricata fast.log showing detected network scan |
+| ![Suricata Network Scan](../screenshots/phase4/suricata-fas-log.png) | Suricata fast.log showing detected network scan |
 | ![Suricata Alerts Splunk](../screenshots/phase4/suricata-splunk-alerts.png) | Suricata alerts visible in Splunk Search |
 
 
