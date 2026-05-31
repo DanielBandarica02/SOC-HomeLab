@@ -59,7 +59,7 @@ The agent was enrolled directly from the Wazuh Dashboard using the **Deploy new 
 The wizard generated the following installation commands, executed on the Ubuntu Desktop target:
 
 ```bash
-wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.14.5-1_amd64.deb
+wget https://packages.wazuh.com/4.14/apt/pool/main/w/wazuh-agent/wazuh-agent_4.14.5-1_amd64.deb
 sudo WAZUH_MANAGER='192.168.10.30' WAZUH_AGENT_NAME='ubuntu-target' dpkg -i ./wazuh-agent_4.14.5-1_amd64.deb
 sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
