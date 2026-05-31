@@ -117,6 +117,18 @@ index="wazuh" rule.groups="suricata"
 
 ---
 
+## Troubleshooting & Lessons Learned
+
+### 1. HTTP Event Collector (HEC) Loop Mitigation
+During initial deployment, a severe log loop was encountered. The Wazuh integration script uses Python to forward alerts over HTTP to Splunk (`192.168.10.40:8088`). Since Suricata was monitoring all interface traffic, it flagged these outgoing forwarding events as unrecognized HTTP requests, generating a new alert, which Wazuh attempted to forward again, causing an infinite loop.
+
+**Solution:**
+Suppressed all Suricata signatures destined for the Splunk SIEM IP by modifying `/etc/suricata/threshold.config`:
+```text
+suppress gen_id 0, sig_id 0, track by_dst, ip 192.168.10.40
+
+---
+
 ## Result
 
 - Suricata 8.0.5 running on 192.168.10.30, monitoring interface `enp0s8`
