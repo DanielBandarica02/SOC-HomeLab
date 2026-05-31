@@ -55,7 +55,7 @@ flowchart LR
 - [x] Phase 1 — Infrastructure setup
 - [x] Phase 2 — Wazuh deployment
 - [x] Phase 3 — Splunk deployment + Wazuh integration via HEC
-- [ ] Phase 4 — Suricata IDS
+- [X] Phase 4 — Suricata IDS
 - [ ] Phase 5 — Sysmon deployment
 - [ ] Phase 6 — Detection rules (15+)
 - [ ] Phase 7 — Attack simulations and remediation
