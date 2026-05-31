@@ -241,7 +241,5 @@ Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - IC
 
 ---
 
-```markdown
-    *Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
-    *Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
-    ```
+*Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
+ 
