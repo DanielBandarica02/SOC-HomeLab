@@ -126,6 +126,7 @@ During initial deployment, a severe log loop was encountered. The Wazuh integrat
 Suppressed all Suricata signatures destined for the Splunk SIEM IP by modifying `/etc/suricata/threshold.config`:
 ```text
 suppress gen_id 0, sig_id 0, track by_dst, ip 192.168.10.40
+suppress gen_id 1, sig_id 2221036, track by_src, ip 192.168.10.40
 ```
 ---
 
