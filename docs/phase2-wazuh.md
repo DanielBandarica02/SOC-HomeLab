@@ -100,6 +100,33 @@ Rule 2502 at level 10 confirms that Wazuh correctly correlated multiple failed a
 
 ---
 
+## Troubleshooting & Lessons Learned
+
+### 1. Corrupted Installation Files (403 CloudFront)
+
+During the initial download attempt, both `wazuh-install.sh` and `config.yml` were downloaded as XML error files containing `Access Denied` responses from CloudFront instead of the actual content. This caused the installer to fail with syntax errors.
+
+**Solution:** The default URL `packages.wazuh.com/4.x/` was blocked by the CDN. Switching to the versioned URL resolved the issue:
+
+```bash
+wget https://packages.wazuh.com/4.14/wazuh-install.sh
+wget https://packages.wazuh.com/4.14/config.yml
+```
+
+### 2. Wazuh Indexer Failing to Start (Missing Log Directory)
+
+After installation, the Wazuh Indexer failed to start with a JVM error. The root cause was that the Java process attempted to write garbage collection logs to `/var/log/wazuh-indexer/gc.log`, but the directory did not exist.
+
+**Solution:** Manually creating the directory with correct ownership resolved the issue:
+
+```bash
+sudo mkdir -p /var/log/wazuh-indexer
+sudo chown -R wazuh-indexer:wazuh-indexer /var/log/wazuh-indexer
+sudo chmod 755 /var/log/wazuh-indexer
+sudo systemctl start wazuh-indexer
+```
+
+---
 ## Result
 
 - Wazuh Manager, Indexer, and Dashboard running on 192.168.10.30
