@@ -240,7 +240,8 @@ Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - IC
 | ![Windows 11 IP](../screenshots/phase1/ipwin11.png) | `ipconfig` showing 192.168.10.60 |
 
 ---
- 
-*Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
 
-*Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
+```markdown
+    *Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
+    *Next: [Phase 2 — Wazuh Deployment](phase2-wazuh.md)*
+    ```
