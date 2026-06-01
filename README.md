@@ -55,8 +55,8 @@ flowchart LR
 - [x] Phase 1 — Infrastructure setup
 - [x] Phase 2 — Wazuh deployment
 - [x] Phase 3 — Splunk deployment + Wazuh integration via HEC
-- [X] Phase 4 — Suricata IDS
-- [ ] Phase 5 — Sysmon deployment
+- [x] Phase 4 — Suricata IDS
+- [x] Phase 5 — Active Directory + Sysmon deployment
 - [ ] Phase 6 — Detection rules (15+)
 - [ ] Phase 7 — Attack simulations and remediation
 
@@ -83,13 +83,48 @@ flowchart LR
 
 ## Skills Demonstrated
 
+### Infrastructure & Systems
+- Virtualization design with VirtualBox (isolated multi-VM networks, NAT + Internal Networks, promiscuous mode configuration)
+- Linux server administration (Ubuntu Server 24.04 — Netplan, systemd, package management)
+- Windows Server administration (PowerShell-based configuration, service management)
+- Bash and PowerShell scripting for automation
+
+### Active Directory
+- AD DS deployment and forest creation (`lab.local`)
+- Domain Controller promotion and DNS integration
+- Bulk user provisioning with PowerShell
+- Domain join configuration on Windows endpoints
+
+### SIEM & EDR
 - End-to-end SIEM pipeline design and implementation
-- EDR deployment and endpoint agent management
-- Network segmentation and isolated lab design
-- IDS configuration and signature-based threat detection
-- Active Directory deployment and domain configuration
-- Windows telemetry enhancement with Sysmon
-- Threat detection rule writing (Wazuh rules + Splunk SPL)
+- Wazuh Manager, Indexer, and Dashboard deployment
+- Wazuh Agent enrollment on Linux and Windows endpoints
+- Splunk Enterprise installation and HEC token configuration
+- Custom integration scripting between Wazuh and Splunk
+- Shared agent configuration for centralized Windows telemetry collection
+
+### IDS / Network Security
+- Suricata installation and rule management
+- Network traffic analysis with `eve.json` and `fast.log`
+- Promiscuous mode configuration for multi-host network visibility
+- Integration of Suricata alerts into Wazuh and Splunk
+
+### Windows Telemetry
+- Sysmon deployment with Olaf Hartong's `sysmon-modular` configuration
+- MITRE ATT&CK technique mapping via Sysmon rules
+- Event Log forwarding through Wazuh's `eventchannel` log format
+
+### Threat Detection & Analysis
+- Wazuh rule structure and alert tuning
+- Splunk SPL query writing for cross-source correlation
+- Forensic alert interpretation and attack reconstruction
+- Log analysis across heterogeneous sources (Linux syslog, Windows Event Log, Suricata, Sysmon)
+
+### Troubleshooting & Problem Solving
+- Diagnosing JVM and OpenSearch startup failures
+- Debugging custom integration scripts and HEC connectivity
+- Resolving dual-adapter network conflicts during domain join operations
+- XML configuration validation and recovery from broken `ossec.conf` files
 
 ---
 
@@ -101,6 +136,6 @@ flowchart LR
 | [Phase 2](docs/phase2-wazuh.md) | Wazuh EDR deployment |
 | [Phase 3](docs/phase3-splunk.md) | Splunk SIEM + HEC integration |
 | [Phase 4](docs/phase4-suricata.md) | Suricata IDS |
-| [Phase 5](docs/phase5-sysmon.md) | Sysmon deployment |
+| [Phase 5](docs/phase5-sysmon.md) | Active Directory + Sysmon |
 | [Phase 6](docs/phase6-detection-rules.md) | Custom detection rules (15+) |
 | [Phase 7](docs/phase7-attack-simulations.md) | Attack simulations + remediation |
