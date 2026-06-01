@@ -113,19 +113,6 @@ wget https://packages.wazuh.com/4.14/wazuh-install.sh
 wget https://packages.wazuh.com/4.14/config.yml
 ```
 
-### 2. Wazuh Indexer Failing to Start (Missing Log Directory)
-
-After installation, the Wazuh Indexer failed to start with a JVM error. The root cause was that the Java process attempted to write garbage collection logs to `/var/log/wazuh-indexer/gc.log`, but the directory did not exist.
-
-**Solution:** Manually creating the directory with correct ownership resolved the issue:
-
-```bash
-sudo mkdir -p /var/log/wazuh-indexer
-sudo chown -R wazuh-indexer:wazuh-indexer /var/log/wazuh-indexer
-sudo chmod 755 /var/log/wazuh-indexer
-sudo systemctl start wazuh-indexer
-```
-
 ---
 ## Result
 
