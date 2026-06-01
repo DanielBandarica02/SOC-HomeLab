@@ -75,14 +75,6 @@ Wazuh was configured to read Suricata's JSON alert log by adding the following b
 </localfile>
 ```
 
-Read permissions were granted to the Wazuh user:
-
-```bash
-sudo usermod -aG suricata wazuh
-sudo chmod g+r /var/log/suricata/eve.json
-sudo chmod g+x /var/log/suricata/
-```
-
 Wazuh Manager was restarted to apply the changes:
 
 ```bash
