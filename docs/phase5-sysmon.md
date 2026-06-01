@@ -208,11 +208,11 @@ Windows 11 returned `The specified domain either does not exist or could not be 
 
 | Screenshot | Description |
 |------------|-------------|
-| [Active Directory users](../screenshots/phase5/ad-domain-users.png) | Active Directory users in `lab.local` |
-| [Sysmon service running on Windows Server](../screenshots/phase5/sysmon-running-server.png) | Sysmon service running on Windows Server |
-| [Sysmon service running on Windows 11](../screenshots/phase5/sysmon-running-win11.png) | Sysmon service running on Windows 11 |
-| [Sysmon-sourced alerts visible in Splunk](../screenshots/phase5/sysmon-splunk-events.png) | Sysmon-sourced alerts visible in Splunk |
-| [Sysmon rule 92205](../screenshots/phase5/sysmon-powershell-alert.png) | Sysmon rule 92205 — PowerShell executable creation detection |
+| ![Active Directory users](../screenshots/phase5/ad-domain-users.png) | Active Directory users in `lab.local` |
+| ![Sysmon service running on Windows Server](../screenshots/phase5/sysmon-running-server.png) | Sysmon service running on Windows Server |
+| ![Sysmon service running on Windows 11](../screenshots/phase5/sysmon-running-win11.png) | Sysmon service running on Windows 11 |
+| ![Sysmon-sourced alerts visible in Splunk](../screenshots/phase5/sysmon-splunk-events.png) | Sysmon-sourced alerts visible in Splunk |
+| ![Sysmon rule 92205](../screenshots/phase5/sysmon-powershell-alert.png) | Sysmon rule 92205 — PowerShell executable creation detection |
 
 ---
 
