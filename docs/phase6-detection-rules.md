@@ -71,8 +71,8 @@ Each rule is mapped to one or more MITRE ATT&CK techniques. The goal is to achie
 | 1 | SSH Brute Force | T1110.001 | Credential Access | High | Wazuh / Suricata |
 | 2 | Password Spraying | T1110.003 | Credential Access | High | Wazuh / AD |
 | 3 | RDP Brute Force | T1110.001 | Credential Access | High | Wazuh / Sysmon |
-| 4 | PowerShell Encoded Execution | T1059.001 | Execution | High | Sysmon |
-| 5 | Office Application Spawning Shell | T1059 | Execution | Critical | Sysmon |
+| 4 | PowerShell Encoded Execution | T1059.001 / T1566 | Execution / Initial Access | High | Sysmon |
+| 5 | Office Application Spawning Shell | T1059 / T1566.001 | Execution / Initial Access | Critical | Sysmon |
 | 6 | Scheduled Task Creation | T1053.005 | Persistence | Medium | Sysmon |
 | 7 | Registry Autorun Modification | T1547.001 | Persistence | High | Sysmon |
 | 8 | User Added to Domain Admins | T1098 | Privilege Escalation | Critical | AD / Wazuh |
@@ -92,7 +92,7 @@ Each rule is mapped to one or more MITRE ATT&CK techniques. The goal is to achie
 
 | Tactic | Rules |
 |--------|-------|
-| Initial Access | — |
+| Initial Access | Rules 4, 5 (detected via post-exploitation behavior) |
 | Execution | Rules 4, 5 |
 | Persistence | Rules 6, 7, 9 |
 | Privilege Escalation | Rule 8 |
@@ -105,18 +105,23 @@ Each rule is mapped to one or more MITRE ATT&CK techniques. The goal is to achie
 
 ## Scope Considerations
 
-### Why Initial Access Has No Rules
+### Initial Access Detection via Post-Exploitation Behavior
 
-The `SOC-Homelab` network is fully isolated from the internet, meaning the lab does not face external Initial Access vectors such as:
+The `SOC-Homelab` network is fully isolated from the internet, which limits visibility into traditional Initial Access vectors at their source:
 
-- **Phishing (T1566)** — no real email traffic enters the lab
+- **Phishing (T1566)** — no real email traffic enters the lab; no email security gateway telemetry available
 - **Exploit Public-Facing Application (T1190)** — no services exposed externally
 - **External Remote Services (T1133)** — no VPN or RDP exposed to the internet
 - **Supply Chain Compromise (T1195)** — software is installed in controlled conditions
 
-Writing detection rules for these techniques would not match the actual telemetry available in the environment. In production SOCs, detection coverage is always aligned with the organization's real attack surface — building detections for non-existent telemetry creates false confidence and wasted maintenance effort.
+This mirrors real-world SOC operations: the SOC team typically does **not** detect Initial Access at the email gateway level — that responsibility belongs to dedicated email security tooling (Proofpoint, Mimecast, Microsoft Defender for Office). The SOC's responsibility starts **after the user interacts with the malicious content**, by detecting the resulting endpoint behavior:
 
-Phase 7 simulates Initial Access through an **assumed-breach model**, where the attacker is presumed to already have an initial foothold. Detection focus then shifts to post-exploitation behavior: lateral movement, privilege escalation, persistence, and credential access — all of which are covered by the rules in this phase.
+- Office applications spawning shells (Rule 5)
+- Encoded PowerShell execution (Rule 4)
+- Suspicious child processes from user-opened documents
+- Outbound connections initiated by Office processes
+
+For this reason, Rules 4 and 5 are mapped to **both** Execution (T1059) and Initial Access (T1566), as they represent the detection point where a phishing attack becomes visible to the SOC. Phase 7 simulates this attack chain by delivering malicious Office documents directly to the Windows 11 workstation and validating that these rules trigger as expected.
 
 ---
 
