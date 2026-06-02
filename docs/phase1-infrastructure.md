@@ -162,7 +162,7 @@ DNS:          192.168.10.50 (self, after AD DS promotion)
  
 ---
  
-### VM 6 — Windows 10/11 (Windows Workstation)
+### VM 6 — Windows 11 PRO (Windows Workstation)
  
 | Setting | Value |
 |---------|-------|
