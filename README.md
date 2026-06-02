@@ -62,6 +62,15 @@ flowchart LR
 
 ---
 
+## Repository Structure
+
+- `docs/` — Phase-by-phase documentation of the lab build
+- `detection-engineering/` — Detection rules documentation with threat modeling, MITRE mapping, and validation
+- `rules/` — Ready-to-deploy rule code (Wazuh XML, Splunk SPL)
+- `screenshots/` — Visual evidence of attacks detected and rules triggered
+
+---
+
 ## Tools Used
 
 | Tool | Category | Purpose |
