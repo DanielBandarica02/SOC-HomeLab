@@ -121,7 +121,7 @@ This mirrors real-world SOC operations: the SOC team typically does **not** dete
 - Suspicious child processes from user-opened documents
 - Outbound connections initiated by Office processes
 
-For this reason, Rules 4 and 5 are mapped to **both** Execution (T1059) and Initial Access (T1566), as they represent the detection point where a phishing attack becomes visible to the SOC. Phase 7 simulates this attack chain by delivering malicious Office documents directly to the Windows 11 workstation and validating that these rules trigger as expected.
+For this reason, Rules 4 and 5 are mapped to **both** Execution (T1059) and Initial Access (T1566), as they represent the detection point where a phishing attack becomes visible to the SOC.
 
 ---
 
