@@ -28,14 +28,14 @@ All VMs communicate over a VirtualBox **Internal Network** named `SOC-Homelab`.
 | Ubuntu — Wazuh Manager | 192.168.10.30 |
 | Ubuntu — Splunk | 192.168.10.40 |
 | Windows Server 2022 | 192.168.10.50 |
-| Windows 10/11 | 192.168.10.60 |
+| Windows 11 PRO | 192.168.10.60 |
  
 ## Data Flow
 
 ```mermaid
 flowchart LR
     A["Ubuntu Desktop"] -->|"Wazuh Agent"| D["Wazuh Manager"]
-    B["Windows 10/11"] -->|"Wazuh Agent"| D
+    B["Windows 11"] -->|"Wazuh Agent"| D
     C["Windows Server"] -->|"Wazuh Agent"| D
     D -->|"HEC"| E["Splunk SIEM"]
 ```
@@ -166,7 +166,7 @@ DNS:          192.168.10.50 (self, after AD DS promotion)
  
 | Setting | Value |
 |---------|-------|
-| OS | Windows 10/11 (64-bit) |
+| OS | Windows 11 PRO (64-bit) |
 | RAM | 4 GB |
 | CPU | 2 cores |
 | Disk | 60 GB (dynamically allocated) |
@@ -193,7 +193,7 @@ ping -c 1 192.168.10.20   # Ubuntu Desktop
 ping -c 1 192.168.10.30   # Wazuh Manager
 ping -c 1 192.168.10.40   # Splunk
 ping -c 1 192.168.10.50   # Windows Server
-ping -c 1 192.168.10.60    # Windows Workstation
+ping -c 1 192.168.10.60   # Windows Workstation
 ```
 ![Ping Kali-Ubuntu](../screenshots/phase1/pingkaliubu.png)
 
