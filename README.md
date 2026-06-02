@@ -94,6 +94,11 @@ flowchart LR
 - Forensic attack reconstruction and reporting
 - MITRE ATT&CK framework mapping
 - Log analysis and correlation across multiple security tools
+- Detection engineering methodology and rule lifecycle management
+- Red Team attack simulation and TTPs execution
+- Purple Team validation — measuring detection coverage against real attacks
+- Forensic incident reporting and remediation recommendations
+- Anti-forensics awareness (log tampering, evidence destruction)
 
 ---
 
