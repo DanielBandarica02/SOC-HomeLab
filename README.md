@@ -1,6 +1,6 @@
 # SOC-HomeLab
 
-> A fully functional Security Operations Center home lab built from scratch, designed to simulate real-world threat detection, log analysis, and incident response workflows. Oriented toward Blue Team and SOC analyst roles.
+> A fully functional Security Operations Center home lab built from scratch, designed to simulate real-world threat detection, log analysis, and incident response workflows. Combines Blue Team detection engineering with Red Team attack simulation, oriented toward SOC Analyst, Detection Engineer, and Threat Hunter roles.
 
 ---
 
