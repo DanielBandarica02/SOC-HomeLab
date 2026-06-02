@@ -16,7 +16,7 @@ flowchart LR
     B --> C[" Implementation\nWazuh XML + Splunk SPL"]
     C --> D[" Atomic Testing"]
     D --> E[" Documentation"]
-    E --> F[" Tuning &amp; Maintenance"]
+    E --> F[" Tuning & Maintenance"]
     F -.->|"feedback loop"| B
 ```
 
