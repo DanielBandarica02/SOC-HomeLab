@@ -64,10 +64,10 @@ flowchart TD
 | **IDS** | Suricata |
 | **Windows Telemetry** | Sysmon (Olaf Hartong config) |
 | **Identity** | Active Directory (Windows Server 2022) |
-| **SOAR** | Shuffle, TheHive *(pending)* |
+| **SOAR** | Shuffle, TheHive |
 | **Threat Intelligence** | MISP, OpenCTI *(pending)* |
 | **Offensive** | Kali Linux, Nmap, Hydra, Metasploit, Burp Suite, John the Ripper, Hashcat |
-| **Forensics** | Volatility, Wireshark *(pending)* |
+| **Forensics** | Volatility, Wireshark |
 
 ---
 
