@@ -31,16 +31,16 @@ This lab covers all major pillars of modern SOC operations:
 
 | Capability | Location | Description |
 |------------|----------|-------------|
-| 🏗️ **Infrastructure** | [`docs/`](docs/) | Multi-VM lab design, network segmentation, hypervisor configuration |
-| 🛡️ **EDR & SIEM** | [`docs/phase2-wazuh.md`](docs/phase2-wazuh.md), [`docs/phase3-splunk.md`](docs/phase3-splunk.md) | Wazuh agent deployment, Splunk HEC integration |
-| 🌐 **Network IDS** | [`docs/phase4-suricata.md`](docs/phase4-suricata.md) | Suricata configuration, signature-based detection |
-| 🪟 **Windows Telemetry** | [`docs/phase5-sysmon.md`](docs/phase5-sysmon.md) | Sysmon deployment with Olaf Hartong's MITRE-mapped config |
-| 🎯 **Detection Engineering** | [`detection-engineering/`](detection-engineering/) | 15+ custom rules with threat modeling and atomic testing |
-| ⚔️ **Red Team Simulation** | [`attacks/`](attacks/) | Documented attack chains with full MITRE coverage |
-| 🔍 **Threat Hunting** | [`threat-hunting/`](threat-hunting/) | Hypothesis-driven hunts and baseline analysis |
-| 🚨 **Incident Response** | [`incident-response/`](incident-response/) | Forensic case studies with memory and PCAP analysis |
-| 🤖 **SOAR Automation** | [`automation/`](automation/) | Shuffle playbooks integrated with Wazuh and TheHive |
-| 🧠 **Threat Intelligence** | [`threat-intelligence/`](threat-intelligence/) | MISP integration with automated IOC enrichment |
+|  **Infrastructure** | [`docs/`](docs/) | Multi-VM lab design, network segmentation, hypervisor configuration |
+|  **EDR & SIEM** | [`docs/phase2-wazuh.md`](docs/phase2-wazuh.md), [`docs/phase3-splunk.md`](docs/phase3-splunk.md) | Wazuh agent deployment, Splunk HEC integration |
+|  **Network IDS** | [`docs/phase4-suricata.md`](docs/phase4-suricata.md) | Suricata configuration, signature-based detection |
+|  **Windows Telemetry** | [`docs/phase5-sysmon.md`](docs/phase5-sysmon.md) | Sysmon deployment with Olaf Hartong's MITRE-mapped config |
+|  **Detection Engineering** | [`detection-engineering/`](detection-engineering/) | 15+ custom rules with threat modeling and atomic testing |
+|  **Red Team Simulation** | [`attacks/`](attacks/) | Documented attack chains with full MITRE coverage |
+|  **Threat Hunting** | [`threat-hunting/`](threat-hunting/) | Hypothesis-driven hunts and baseline analysis |
+|  **Incident Response** | [`incident-response/`](incident-response/) | Forensic case studies with memory and PCAP analysis |
+|  **SOAR Automation** | [`automation/`](automation/) | Shuffle playbooks integrated with Wazuh and TheHive |
+|  **Threat Intelligence** | [`threat-intelligence/`](threat-intelligence/) | MISP integration with automated IOC enrichment |
 
 ---
 
@@ -59,18 +59,18 @@ This lab covers all major pillars of modern SOC operations:
 
 ## Project Phases
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| [Phase 1](docs/phase1-infrastructure.md) | Infrastructure setup | ✅ Complete |
-| [Phase 2](docs/phase2-wazuh.md) | Wazuh EDR deployment | ✅ Complete |
-| [Phase 3](docs/phase3-splunk.md) | Splunk SIEM + HEC integration | ✅ Complete |
-| [Phase 4](docs/phase4-suricata.md) | Suricata IDS | ✅ Complete |
-| [Phase 5](docs/phase5-sysmon.md) | Active Directory + Sysmon | ✅ Complete |
-| [Phase 6](docs/phase6-detection-rules.md) | Custom detection rules (15+) | 🔄 In Progress |
-| [Phase 7](docs/phase7-attack-simulations.md) | Attack simulations + writeups | ⏳ Pending |
-| [Phase 8](docs/phase8-soar-automation.md) | SOAR automation with Shuffle | ⏳ Pending |
-| [Phase 9](docs/phase9-threat-intelligence.md) | Threat Intelligence with MISP | ⏳ Pending |
-| [Phase 10](docs/phase10-threat-hunting-ir.md) | Threat hunting + incident response | ⏳ Pending |
+| Phase | Description |
+|-------|-------------|
+| [Phase 1](docs/phase1-infrastructure.md) | Infrastructure setup |
+| [Phase 2](docs/phase2-wazuh.md) | Wazuh EDR deployment |
+| [Phase 3](docs/phase3-splunk.md) | Splunk SIEM + HEC integration |
+| [Phase 4](docs/phase4-suricata.md) | Suricata IDS |
+| [Phase 5](docs/phase5-sysmon.md) | Active Directory + Sysmon |
+| [Phase 6](docs/phase6-detection-rules.md) | Custom detection rules (15+) |
+| [Phase 7](docs/phase7-attack-simulations.md) | Attack simulations + writeups |
+| [Phase 8](docs/phase8-soar-automation.md) | SOAR automation with Shuffle |
+| [Phase 9](docs/phase9-threat-intelligence.md) | Threat Intelligence with MISP |
+| [Phase 10](docs/phase10-threat-hunting-ir.md) | Threat hunting + incident response |
 
 ---
 
