@@ -25,25 +25,6 @@ flowchart TD
 
 ---
 
-## Capabilities
-
-This lab covers all major pillars of modern SOC operations:
-
-| Capability | Location | Description |
-|------------|----------|-------------|
-|  **Infrastructure** | [`docs/`](docs/) | Multi-VM lab design, network segmentation, hypervisor configuration |
-|  **EDR & SIEM** | [`docs/phase2-wazuh.md`](docs/phase2-wazuh.md), [`docs/phase3-splunk.md`](docs/phase3-splunk.md) | Wazuh agent deployment, Splunk HEC integration |
-|  **Network IDS** | [`docs/phase4-suricata.md`](docs/phase4-suricata.md) | Suricata configuration, signature-based detection |
-|  **Windows Telemetry** | [`docs/phase5-sysmon.md`](docs/phase5-sysmon.md) | Sysmon deployment with Olaf Hartong's MITRE-mapped config |
-|  **Detection Engineering** | [`detection-engineering/`](detection-engineering/) | 15+ custom rules with threat modeling and atomic testing |
-|  **Red Team Simulation** | [`attacks/`](attacks/) | Documented attack chains with full MITRE coverage |
-|  **Threat Hunting** | [`threat-hunting/`](threat-hunting/) | Hypothesis-driven hunts and baseline analysis |
-|  **Incident Response** | [`incident-response/`](incident-response/) | Forensic case studies with memory and PCAP analysis |
-|  **SOAR Automation** | [`automation/`](automation/) | Shuffle playbooks integrated with Wazuh and TheHive |
-|  **Threat Intelligence** | [`threat-intelligence/`](threat-intelligence/) | MISP integration with automated IOC enrichment |
-
----
-
 ## Lab Components
 
 | VM | IP | OS | Role |
