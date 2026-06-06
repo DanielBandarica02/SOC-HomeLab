@@ -72,41 +72,25 @@ flowchart TD
 ---
 
 ## Skills Demonstrated
-
-### Infrastructure & Systems
-- Multi-VM lab design with VirtualBox (NAT + Internal Network, promiscuous mode)
-- Linux server administration (Ubuntu Server 24.04, Netplan, systemd)
-- Windows Server administration (PowerShell, Active Directory, GPOs)
-
-### SIEM & EDR Engineering
-- Wazuh Manager, Indexer, and Dashboard deployment
-- Splunk Enterprise installation and HEC integration
-- Custom integration scripting between Wazuh and Splunk
-- Cross-platform agent management (Linux + Windows)
-
+ 
+### Core SOC Skills
+SIEM operation (Splunk) · EDR management (Wazuh) · Network IDS (Suricata) ·
+Alert triage and investigation · Log analysis and correlation ·
+Incident response fundamentals · MITRE ATT&CK framework
+ 
 ### Detection Engineering
-- Threat modeling and MITRE ATT&CK mapping
-- Custom rule writing for Wazuh (XML) and Splunk (SPL)
-- Atomic testing methodology
-- False positive analysis and rule tuning
-
-### Threat Detection & Analysis
-- Network traffic analysis with Suricata
-- Windows process telemetry analysis with Sysmon
-- Log correlation across heterogeneous sources
-- Active Directory attack detection
-
-### Red Team & Attack Simulation
-- Reconnaissance and enumeration with Nmap
-- Credential attacks with Hydra
-- Lateral movement and privilege escalation
-- Documented attack writeups following industry standards
-
-### Troubleshooting & Problem Solving
-- JVM and OpenSearch debugging
-- HEC integration troubleshooting
-- Network adapter and DNS resolution issues
-- Configuration file validation and recovery
+Custom rule development · SPL query writing · Wazuh rule syntax (XML) ·
+Threat modeling · Atomic testing methodology · False positive analysis ·
+Detection-as-Code
+ 
+### Systems & Infrastructure
+Active Directory administration · Linux (Ubuntu Server) · Windows Server 2022 ·
+PowerShell scripting · Bash scripting · Virtualization (VirtualBox) ·
+Network segmentation
+ 
+### Continuous Learning
+TryHackMe (SOC, AD, Network Security paths) · Active engagement with
+open-source security tools and methodologies
 
 ---
 
