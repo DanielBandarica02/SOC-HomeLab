@@ -15,7 +15,7 @@ This lab implements a production-grade SOC architecture across six isolated virt
 ```mermaid
 flowchart TD
     A["🖥️ Kali Linux\n192.168.10.10\nAttack Machine"] -->|"attacks"| B["💻 Ubuntu Desktop 24.04\n192.168.10.20\nLinux Target + Wazuh Agent"]
-    A -->|"attacks"| E["🪟 Windows 10/11\n192.168.10.60\nWindows Target + Sysmon + Wazuh Agent"]
+    A -->|"attacks"| E["🪟 Windows 11\n192.168.10.60\nWindows Target + Sysmon + Wazuh Agent"]
     A -->|"attacks"| F["🏢 Windows Server 2022\n192.168.10.50\nActive Directory DC + Sysmon + Wazuh Agent"]
     B -->|"Wazuh Agent"| C["🖧 Ubuntu Server 24.04\n192.168.10.30\nWazuh Manager + Suricata IDS"]
     E -->|"Wazuh Agent"| C
@@ -34,7 +34,7 @@ flowchart TD
 | Ubuntu Wazuh | 192.168.10.30 | Ubuntu Server 24.04 | Wazuh Manager + Suricata IDS |
 | Ubuntu Splunk | 192.168.10.40 | Ubuntu Server 24.04 | Splunk SIEM |
 | Windows Server 2022 | 192.168.10.50 | Windows Server 2022 (Eval) | Active Directory DC + Sysmon + Wazuh Agent |
-| Windows 10/11 | 192.168.10.60 | Windows 10/11 | Windows workstation + Sysmon + Wazuh Agent |
+| Windows 11 | 192.168.10.60 | Windows 11 | Windows workstation + Sysmon + Wazuh Agent |
 
 ---
 
