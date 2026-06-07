@@ -146,7 +146,7 @@ The Wazuh custom rule `100001` fires multiple times (one alert per block of 10 c
  
 | data.srcip | agent.name | failed_attempts | unique_users_targeted | attempts_per_minute | severity |
 |------------|------------|-----------------|----------------------|---------------------|----------|
-| 192.168.10.10 | ubuntu-target | ~250 | 1 (root) | ~250-300 | Critical |
+| 192.168.10.10 | ubuntu-target | 192 | 1 (root) | 69.09 | Critical |
  
 ### Validation Commands
  
