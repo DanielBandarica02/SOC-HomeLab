@@ -14,13 +14,13 @@ This lab implements a production-grade SOC architecture across six isolated virt
 
 ```mermaid
 flowchart TD
-    A["🖥️ Kali Linux\n192.168.10.10\nAttack Machine"] -->|"attacks"| B["💻 Ubuntu Desktop 24.04\n192.168.10.20\nLinux Target + Wazuh Agent"]
-    A -->|"attacks"| E["🪟 Windows 11 Pro\n192.168.10.60\nWindows Target + Sysmon + Wazuh Agent"]
-    A -->|"attacks"| F["🏢 Windows Server 2022\n192.168.10.50\nActive Directory DC + Sysmon + Wazuh Agent"]
-    B -->|"Wazuh Agent"| C["🖧 Ubuntu Server 24.04\n192.168.10.30\nWazuh Manager + Suricata IDS"]
+    A[" Kali Linux\n192.168.10.10\nAttack Machine"] -->|"attacks"| B[" Ubuntu Desktop 24.04\n192.168.10.20\nLinux Target + Wazuh Agent"]
+    A -->|"attacks"| E[" Windows 11 Pro\n192.168.10.60\nWindows Target + Sysmon + Wazuh Agent"]
+    A -->|"attacks"| F[" Windows Server 2022\n192.168.10.50\nActive Directory DC + Sysmon + Wazuh Agent"]
+    B -->|"Wazuh Agent"| C[" Ubuntu Server 24.04\n192.168.10.30\nWazuh Manager + Suricata IDS"]
     E -->|"Wazuh Agent"| C
     F -->|"Wazuh Agent"| C
-    C -->|"HEC port 8088"| D["📊 Ubuntu Server 24.04\n192.168.10.40\nSplunk Enterprise SIEM"]
+    C -->|"HEC port 8088"| D[" Ubuntu Server 24.04\n192.168.10.40\nSplunk Enterprise SIEM"]
 ```
 
 ---
