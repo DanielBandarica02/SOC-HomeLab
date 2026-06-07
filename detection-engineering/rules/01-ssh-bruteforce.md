@@ -205,12 +205,6 @@ In production environments, this rule should be one layer of defense — not the
  
 ---
  
-## Field Naming Note
- 
-Wazuh decodes SSH authentication failures with the target user mapped to `data.dstuser`, not `data.srcuser`. The `srcuser` field is reserved for events where the source system explicitly identifies a user (e.g., `su` or `sudo` events). Field names must always be validated against actual indexed events before deploying detection logic — assumptions about Wazuh's field schema are a common source of silent rule failures.
- 
----
- 
 ## References
  
 - [MITRE ATT&CK T1110.001 — Password Guessing](https://attack.mitre.org/techniques/T1110/001/)
