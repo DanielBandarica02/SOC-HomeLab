@@ -142,11 +142,9 @@ hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://192.168.10.20 -t 4 -V
 Run for 60-90 seconds, then terminate with `Ctrl+C`. Generates approximately 200-300 failed authentication attempts.
  
 ### Expected Result
-The Wazuh custom rule `100001` fires multiple times (one alert per block of 10 correlated failures). The Splunk enrichment query returns a row similar to:
+The Wazuh custom rule `100001` fires multiple times (one alert per block of 10 correlated failures). The Splunk enrichment query returns a row like this:
  
-| data.srcip | agent.name | failed_attempts | unique_users_targeted | attempts_per_minute | severity |
-|------------|------------|-----------------|----------------------|---------------------|----------|
-| 192.168.10.10 | ubuntu-target | 192 | 1 (root) | 69.09 | Critical |
+[Query Returns SSH](../screenshots/phase6/query-returns-ssh.png)
  
 ### Validation Commands
  
