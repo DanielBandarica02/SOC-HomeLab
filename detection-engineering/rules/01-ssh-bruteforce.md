@@ -145,7 +145,7 @@ Run for 60-90 seconds, then terminate with `Ctrl+C`. Generates approximately 200
 The Wazuh custom rule `100001` fires multiple times (one alert per block of 10 correlated failures). The Splunk enrichment query returns a row like this:
  
 ![Query Returns SSH](../screenshots/phase6/query-returns-ssh.png)
- 
+
 ### Validation Commands
  
 In the Wazuh Manager:
