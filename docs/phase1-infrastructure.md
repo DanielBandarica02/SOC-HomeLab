@@ -238,6 +238,7 @@ Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - IC
 | ![Splunk IP](../screenshots/phase1/ipsplunk.png) | `ip a` showing 192.168.10.40 |
 | ![WinServer IP](../screenshots/phase1/ipwinsv.png) | `ipconfig` showing 192.168.10.50 |
 | ![Windows 11 IP](../screenshots/phase1/ipwin11.png) | `ipconfig` showing 192.168.10.60 |
+![Query Returns SSH](screenshots/phase6/queryreturnsssh.png)
 
 ---
 
