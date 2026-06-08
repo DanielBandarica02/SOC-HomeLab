@@ -151,11 +151,6 @@ The Wazuh custom rule `100001` fires multiple times (one alert per block of 10 c
 
 ### Validation Commands
  
-In the Wazuh Manager:
-```bash
-sudo grep -c "Rule: 100001" /var/ossec/logs/alerts/alerts.log
-```
- 
 In Splunk:
 ```spl
 index=wazuh rule.id=100001 earliest=-15m
