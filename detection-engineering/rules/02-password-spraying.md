@@ -250,26 +250,6 @@ The Wazuh element `<same_source_ip />` is shorthand for correlating events that 
 
 `<same_field>` is the generic form that explicitly references the field path to use for correlation. Always validate which decoder populates which fields before using shorthand correlation elements.
 
-### 2. Splunk SPL field references for nested JSON
-
-Splunk indexes nested JSON fields with dot-separated paths (e.g., `data.win.eventdata.ipAddress`). However, depending on context, the SPL parser may interpret these paths in different ways:
-
-| Context | Working Pattern |
-|---------|----------------|
-| `| eval new_field = 'a.b.c.field'` | Single quotes around the entire path |
-| `| stats ... by field` | Use pre-renamed clean field |
-| `| where field = "value"` | Use pre-renamed clean field |
-
-**Professional pattern recommended:** at the start of any SPL query handling nested JSON, use `eval` with single-quoted paths to extract the fields you need into clean variable names. Then operate on those clean names throughout the rest of the query.
-
-```spl
-| eval source_ip = 'data.win.eventdata.ipAddress'
-| eval target_user = 'data.win.eventdata.targetUserName'
-| stats count by source_ip, agent.name
-```
-
-This pattern avoids parser ambiguity issues and makes queries significantly more readable.
-
 ---
 
 ## References
