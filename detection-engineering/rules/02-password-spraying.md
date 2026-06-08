@@ -167,11 +167,6 @@ EOF
 crackmapexec smb 192.168.10.50 -u /tmp/users.txt -p 'WrongPassword2026!' --continue-on-success
 ```
 
-**Alternative tool — kerbrute** (stealthier, uses AS-REQ directly without SMB):
-```bash
-kerbrute passwordspray -d lab.local --dc 192.168.10.50 /tmp/users.txt 'WrongPassword2026!'
-```
-
 ### Expected Result
 
 The Wazuh custom rule `100002` fires multiple times (one alert per correlation block of 5 events). The Splunk SPL query returns a row similar to:
@@ -184,11 +179,6 @@ The defining characteristic is `attempts_per_user ≈ 1.0-3.0` — each user was
 
 ### Validation Commands
 
-In the Wazuh Manager:
-```bash
-sudo grep -c "Rule: 100002" /var/ossec/logs/alerts/alerts.log
-```
-
 In Splunk:
 ```spl
 index=wazuh rule.id=100002 earliest=-30m
@@ -196,8 +186,10 @@ index=wazuh rule.id=100002 earliest=-30m
 ```
 
 ### Validation Screenshots
-- `screenshots/phase6/02-password-spraying-wazuh.png` — Wazuh alert log showing rule 100002 firing
-- `screenshots/phase6/02-password-spraying-splunk-classification.png` — Splunk SPL output showing automatic classification as "Password Spraying"
+
+Splunk SPL output showing automatic classification as "Password Spraying"
+
+![Splunk SPL Output](screenshots/phase6/02-password-spraying-splunk-classification.png)  
 
 ---
 
