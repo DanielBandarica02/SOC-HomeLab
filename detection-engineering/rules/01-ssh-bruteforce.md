@@ -163,8 +163,9 @@ index=wazuh rule.id=100001 earliest=-15m
 ```
  
 ### Validation Screenshots
-- `screenshots/phase6/01-ssh-bruteforce-wazuh-grep.png` — Output showing rule 100001 fired N times
+
 - ![Enriched SPL Query Result](/screenshots/phase6/01-ssh-bruteforce-splunk-table.png) — Enriched SPL query result
+  
 ---
  
 ## False Positives
@@ -213,10 +214,4 @@ In production environments, this rule should be one layer of defense — not the
 - [Atomic Red Team T1110.001](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1110.001/T1110.001.md)
 - [CISA AA20-302A — Ransomware activity targeting K-12 sector](https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-302a) — references brute force as initial access
 ---
- 
-## Change Log
- 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-06-07 | Daniel Bandarica | Initial version — rule deployed, validated via Hydra atomic test |
  
