@@ -83,7 +83,7 @@ index="wazuh" ...
 [What the alert should look like — fields, severity, count]
 
 ### Validation Screenshot
-`screenshots/phase6/[rule-number]-[name]-detection.png`
+
 
 ---
 
@@ -107,10 +107,3 @@ index="wazuh" ...
 - [Atomic Red Team test URL, if applicable]
 - [Other relevant documentation]
 
----
-
-## Change Log
-
-| Date | Author | Change |
-|------|--------|--------|
-| YYYY-MM-DD | Daniel Bandarica | Initial version |
