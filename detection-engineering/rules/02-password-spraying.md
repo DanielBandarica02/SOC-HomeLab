@@ -136,11 +136,6 @@ index=wazuh data.win.system.eventID=4625 earliest=-30m
 | table source_ip, agent.name, failed_attempts, unique_users_targeted, attempts_per_user, attack_pattern, users_list
 ```
 
-**Design notes:**
-- The two `eval` statements at the top extract nested JSON fields to clean variable names using single-quote syntax. This is the working pattern for fields with dots in their names in Splunk.
-- The classification logic in `case()` is the core of the detection: the ratio `attempts_per_user` mathematically distinguishes spraying from brute force regardless of total volume.
-- `users_list` is preserved in the output — this is the blast radius information the SOC analyst needs to identify whether privileged accounts were targeted.
-
 ---
 
 ## Atomic Testing
