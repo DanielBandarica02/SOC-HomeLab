@@ -187,9 +187,6 @@ This restored the full Wazuh → Splunk pipeline using only system-level network
 
 ### Windows 11 Failing to Join the Domain
 
-Windows 11 returned `The specified domain either does not exist or could not be contacted` when attempting to join `lab.local`, even though DNS resolution and the required AD ports (389, 88, 445) were reachable. The root cause was that both network adapters (Internal + NAT) were active and Windows was attempting domain communication through the wrong route.
-
-**Solution:** Temporarily disabled the NAT adapter during the domain join operation, forcing all traffic through the internal `SOC-Homelab` network. After the join succeeded, the NAT adapter was re-enabled.
 
 ---
 
