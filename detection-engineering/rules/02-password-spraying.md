@@ -187,7 +187,7 @@ index=wazuh rule.id=100002 earliest=-30m
 
 ### Validation Screenshots
 
-Splunk SPL output showing automatic classification as "Password Spraying"
+- Splunk SPL output showing automatic classification as "Password Spraying"
 
 ![Splunk SPL Output](/screenshots/phase6/02-password-spraying-splunk-classification.png)  
 
