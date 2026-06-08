@@ -164,7 +164,9 @@ index=wazuh rule.id=100001 earliest=-15m
  
 ### Validation Screenshots
 
-- ![Enriched SPL Query Result](/screenshots/phase6/01-ssh-bruteforce-splunk-table.png) — Enriched SPL query result
+Enriched SPL Query Result
+
+- ![Enriched SPL Query Result](/screenshots/phase6/01-ssh-bruteforce-splunk-table.png) 
   
 ---
  
