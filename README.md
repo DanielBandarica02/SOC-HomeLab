@@ -101,11 +101,6 @@ SOC-HomeLab/
 ├── docs/                       Phase-by-phase build documentation
 ├── detection-engineering/      Detection rules with full methodology
 ├── rules/                      Ready-to-deploy rule code (Wazuh XML, Splunk SPL)
-├── attacks/                    Red Team attack writeups
-├── threat-hunting/             Hypothesis-driven hunt documentation
-├── incident-response/          Forensic case studies
-├── automation/                 SOAR playbooks
-├── threat-intelligence/        MISP integration and enrichment
 └── screenshots/                Visual evidence per phase
 ```
 
