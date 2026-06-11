@@ -61,14 +61,14 @@ Ten departmental users were created via PowerShell to simulate a realistic corpo
 ```powershell
 $users = @(
     @{Name="John Smith"; Sam="jsmith"; Pass="Password123!"; Dept="IT"},
-    @{Name="Maria Garcia"; Sam="mgarcia"; Pass="Welcome2024!"; Dept="HR"},
-    @{Name="David Brown"; Sam="dbrown"; Pass="Spring2024!"; Dept="Finance"},
+    @{Name="Maria Garcia"; Sam="mgarcia"; Pass="Welcome2026!"; Dept="HR"},
+    @{Name="David Brown"; Sam="dbrown"; Pass="Spring2026!"; Dept="Finance"},
     @{Name="Sarah Wilson"; Sam="swilson"; Pass="Summer123!"; Dept="Marketing"},
     @{Name="Michael Davis"; Sam="mdavis"; Pass="Winter456!"; Dept="IT"},
     @{Name="Laura Martinez"; Sam="lmartinez"; Pass="Autumn789!"; Dept="Sales"},
     @{Name="James Johnson"; Sam="jjohnson"; Pass="Welcome1!"; Dept="IT"},
-    @{Name="Emma Anderson"; Sam="eanderson"; Pass="Qwerty2024!"; Dept="HR"},
-    @{Name="Robert Taylor"; Sam="rtaylor"; Pass="Admin2024!"; Dept="Finance"},
+    @{Name="Emma Anderson"; Sam="eanderson"; Pass="Qwerty2026!"; Dept="HR"},
+    @{Name="Robert Taylor"; Sam="rtaylor"; Pass="Admin2026!"; Dept="Finance"},
     @{Name="Linda Thomas"; Sam="lthomas"; Pass="Letmein123!"; Dept="Sales"}
 )
 
