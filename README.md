@@ -14,65 +14,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
 
-```mermaid
-graph TD
-    %% ==========================================
-    %% 1. DEFINICIÓN DE ESTILOS (classDef)
-    %% ==========================================
-    classDef default fill:#1e1e24,stroke:#333,stroke-width:1px,color:#fff;
-    classDef cInternet fill:#2d3748,stroke:#4a5568,stroke-width:2px,color:#fff,font-weight:bold;
-    classDef cPfSense fill:#2c3e50,stroke:#1a252f,stroke-width:2px,color:#fff,font-weight:bold;
-    classDef cVlan10 fill:#111926,stroke:#3182ce,stroke-width:2px,color:#fff;
-    classDef cVlan20 fill:#1a1226,stroke:#805ad5,stroke-width:2px,color:#fff;
-    classDef cVlan99 fill:#0f201d,stroke:#319795,stroke-width:2px,color:#fff;
-    classDef cVlan66 fill:#211212,stroke:#e53e3e,stroke-width:2px,color:#fff;
 
-    %% ==========================================
-    %% 2. ELEMENTOS PRINCIPALES DE BORDE
-    %% ==========================================
-    Internet["🌐 Internet <br> <small>NAT WAN simulation</small>"]
-    pfSense["🛡️ pfSense <br> <small>Router + Firewall<br>Suricata IDS<br>OpenVPN Server</small>"]
-
-    class Internet cInternet;
-    class pfSense cPfSense;
-
-    %% Flujo Principal
-    Internet --> pfSense
-
-    %% ==========================================
-    %% 3. SUBGRAPHS Y NODOS DE RED
-    %% ==========================================
-    
-    %% --- VLAN 10 ---
-    subgraph VLAN10 ["💻 VLAN 10 — Corporate (10.10.10.0/24)"]
-        direction LR
-        WS2022["🗄️ Windows Server 2022<br><b>10.10.10.10</b><br><small>AD DC - DNS - Sysmon - Wazuh Agent</small>"]
-        W11_Corp["💻 Windows 11 Pro<br><b>10.10.10.20</b><br><small>Workstation - Sysmon - Wazuh Agent</small>"]
-    end
-    style VLAN10 fill:#111926,stroke:#3182ce,stroke-width:2px,color:#fff
-
-    %% --- VLAN 20 ---
-    subgraph VLAN20 ["⚙️ VLAN 20 — Development (10.10.20.0/24)"]
-        direction LR
-        W11_Dev["💻 Windows 11 Pro<br><b>10.10.20.10</b><br><small>Dev workstation - Sysmon - Wazuh</small>"]
-        Ubuntu_Dev["🐧 Ubuntu Desktop 24.04<br><b>10.10.20.20</b><br><small>Dev workstation - Auditd - Wazuh</small>"]
-    end
-    style VLAN20 fill:#1a1226,stroke:#805ad5,stroke-width:2px,color:#fff
-
-    %% --- VLAN 99 ---
-    subgraph VLAN99 ["👁️ VLAN 99 — SOC Management (10.10.99.0/24 • out-of-band)"]
-        direction LR
-        Wazuh_SRV["🦊 Ubuntu Server — Wazuh<br><b>10.10.99.10</b><br><small>Manager - Indexer - Dashboard</small>"]
-        Splunk_SRV["📊 Ubuntu Server — Splunk<br><b>10.10.99.20</b><br><small>Enterprise SIEM - HTTP Event Collector</small>"]
-        Wazuh_SRV -- "HEC 8088" --> Splunk_SRV
-    end
-    style VLAN99 fill:#0f201d,stroke:#319795,stroke-width:2px,color:#fff
-
-    %% --- VLAN 66 ---
-    subgraph VLAN66 ["💀 VLAN 66 — Attacker DMZ (10.10.66.0/24 • simulated external)"]
-        direction LR
-        Kali
-```
 
 ---
  
