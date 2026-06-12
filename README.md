@@ -14,6 +14,89 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
 
+```mermaid
+graph TD
+    %% ==========================================
+    %% CONFIGURACIÓN DE ESTILOS Y COLORES (Estilo TFG)
+    %% ==========================================
+    classDef internalNet fill:#f0f4f8,stroke:#1f77b4,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef attackNet fill:#fdf0f0,stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
+    
+    classDef pfSense fill:#b30000,stroke:#333,stroke-width:1.5px,color:#fff;
+    classDef wazuh fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
+    classDef splunk fill:#f57c00,stroke:#e65100,stroke-width:1.5px,color:#fff;
+    classDef windows fill:#2b579a,stroke:#1e3a8a,stroke-width:1.2px,color:#fff;
+    classDef linux fill:#2ca02c,stroke:#1b5e20,stroke-width:1.2px,color:#fff;
+    classDef kali fill:#4d4d4d,stroke:#1a1a1a,stroke-width:1.5px,color:#fff;
+    classDef logs fill:#ffffff,stroke:#7f8c8d,stroke-width:1px;
+
+    %% ==========================================
+    %% BLOQUE SUPERIOR: CORE DE RED Y SEGURIDAD
+    %% ==========================================
+    Internet((Internet)) --> WAN_pf
+
+    subgraph LAB_CORE [Infraestructura de Red Central]
+        WAN_pf[pfSense CE<br>IP WAN / OpenVPN]:::pfSense
+        Suricata["Suricata IDS (pfSense)<br>eth0 (LANs): 10.10.X.1<br>eth1 (Attack): 10.10.66.1"]:::pfSense
+        WAN_pf --> Suricata
+    end
+
+    %% ==========================================
+    %% RED INTERNA (Equivalente a tfg_network)
+    %% ==========================================
+    subgraph INT_NET [red_interna — 10.10.0.0/16]
+        
+        %% Componentes SOC (VLAN 99)
+        subgraph SOC_ZONE [VLAN 99 — SOC Management]
+            Wazuh["Wazuh Server<br>10.10.99.10<br>Manager / Indexer<br>Ports: 1514, 55000"]:::wazuh
+            Splunk["Splunk Enterprise<br>10.10.99.20<br>SIEM Core / HEC<br>Port: 8000 / 8088"]:::splunk
+            Wazuh -->|Forwarding / HEC| Splunk
+        end
+
+        %% Componentes Corporativos (VLAN 10)
+        subgraph CORP_ZONE [VLAN 10 — Corporate Network]
+            WinServer["Windows Server 2022<br>10.10.10.10<br>AD DC / DNS<br>Sysmon + Agent"]:::windows
+            Win11Corp["Windows 11 Pro<br>10.10.10.20<br>Corp Workstation<br>Sysmon + Agent"]:::windows
+        end
+
+        %% Componentes Desarrollo (VLAN 20)
+        subgraph DEV_ZONE [VLAN 20 — Software Development]
+            Win11Dev["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Agent"]:::windows
+            UbuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Workstation<br>Auditd + Agent"]:::linux
+        end
+
+        %% Concentrador de Logs centralizado (Igual al gráfico)
+        LogCollector["Recolección de Telemetría<br>(Logs / Alertas de Agentes)"]:::logs
+    end
+
+    %% Conexiones de telemetría hacia el recolector lógico
+    WinServer -.-> LogCollector
+    Win11Corp -.-> LogCollector
+    Win11Dev -.-> LogCollector
+    UbuDesk -.-> LogCollector
+    LogCollector ==>|Ingestión de Eventos| Wazuh
+
+    %% Enrutamiento Interno pfSense hacia las VLANs
+    Suricata -->|GW 10.10.10.1| CORP_ZONE
+    Suricata -->|GW 10.10.20.1| DEV_ZONE
+    Suricata -->|GW 10.10.99.1| SOC_ZONE
+
+    %% ==========================================
+    %% RED DE ATAQUE (Equivalente a attack_network)
+    %% ==========================================
+    subgraph ATK_NET [attack_network — 10.10.66.0/24]
+        Kali["Kali Linux Attacker<br>10.10.66.10<br>Red Team / Pentesting<br>GW ➔ 10.10.66.1 (Suricata eth1)"]:::kali
+    end
+
+    %% Flujo de Inspección y Simulación de Ataques
+    Kali ==>|Simulación de Adversarios| Suricata
+    Suricata -.->|Inspección IDS e Inter-VLAN| CORP_ZONE
+    Suricata -.->|Inspección IDS e Inter-VLAN| DEV_ZONE
+
+    %% Aplicar estilos a los contenedores principales
+    style INT_NET class internalNet
+    style ATK_NET class attackNet
+```
 
 ---
  
