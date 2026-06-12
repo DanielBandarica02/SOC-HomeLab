@@ -14,41 +14,6 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
  
-```mermaid
-flowchart TD
-    A[" Kali Linux\n10.10.66.10\nAttack Machine"]
- 
-    PF[" pfSense\nRouter + Firewall\nSuricata IDS + OpenVPN"]
- 
-    subgraph VLAN10 ["VLAN 10 - Corporate (10.10.10.0/24)"]
-        B[" Windows Server 2022\n10.10.10.10\nActive Directory DC + Sysmon + Wazuh Agent"]
-        C[" Windows 11 Pro\n10.10.10.20\nCorporate Workstation + Sysmon + Wazuh Agent"]
-    end
- 
-    subgraph VLAN20 ["VLAN 20 - Development (10.10.20.0/24)"]
-        D[" Windows 11 Pro\n10.10.20.10\nDev Workstation + Sysmon + Wazuh Agent"]
-        E[" Ubuntu Desktop 24.04\n10.10.20.20\nDev Workstation + Wazuh Agent"]
-    end
- 
-    subgraph VLAN99 ["VLAN 99 - SOC Management (10.10.99.0/24)"]
-        F[" Ubuntu Server 24.04\n10.10.99.10\nWazuh Manager + Indexer + Dashboard"]
-        G[" Ubuntu Server 24.04\n10.10.99.20\nSplunk Enterprise SIEM"]
-    end
- 
-    A -->|"attacks"| PF
-    PF -->|"routes / filters"| VLAN10
-    PF -->|"routes / filters"| VLAN20
-    PF -->|"routes / filters"| VLAN99
- 
-    C -.->|"RDP / VPN"| D
-    C -.->|"RDP / VPN"| E
- 
-    B -->|"Wazuh Agent"| F
-    C -->|"Wazuh Agent"| F
-    D -->|"Wazuh Agent"| F
-    E -->|"Wazuh Agent"| F
-    F -->|"HEC port 8088"| G
-```
  
 ---
  
