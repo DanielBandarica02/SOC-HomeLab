@@ -17,7 +17,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ```mermaid
 graph TD
     %% ==========================================
-    %% CONFIGURACIÓN DE ESTILOS Y COLORES (Estilo TFG)
+    %% CONFIGURACIÓN DE ESTILOS Y COLORES (Estilo TFG Oficial)
     %% ==========================================
     classDef pfSense fill:#b30000,stroke:#333,stroke-width:1.5px,color:#fff;
     classDef wazuh fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
@@ -28,55 +28,69 @@ graph TD
     classDef logs fill:#ffffff,stroke:#7f8c8d,stroke-width:1px;
 
     %% ==========================================
-    %% BLOQUE SUPERIOR: CORE DE RED Y SEGURIDAD
+    %% BLOQUE PERIMETRAL / FIREWALL
     %% ==========================================
-    Internet((Internet)) --> WAN_pf
-
+    Internet((Internet)) --> pfSense
+    
     subgraph LAB_CORE [Infraestructura de Red Central]
-        WAN_pf[pfSense CE<br>IP WAN / OpenVPN]:::pfSense
-        Suricata["Suricata IDS (pfSense)<br>eth0 (LANs): 10.10.X.1<br>eth1 (Attack): 10.10.66.1"]:::pfSense
-        WAN_pf --> Suricata
+        pfSense[pfSense CE<br>IP WAN / OpenVPN]:::pfSense
+        Suricata["Suricata IDS (pfSense)<br>Interfaces Core: 10.10.X.1"]:::pfSense
+        pfSense --> Suricata
     end
 
     %% ==========================================
-    %% RED INTERNA (Equivalente a tfg_network)
+    %% SEGMENTOS DE RED INTERNA (Separados para evitar fallos de render)
     %% ==========================================
-    subgraph INT_NET [red_interna — 10.10.0.0/16]
-        
-        %% Componentes SOC (VLAN 99)
-        subgraph SOC_ZONE [VLAN 99 — SOC Management]
-            Wazuh["Wazuh Server<br>10.10.99.10<br>Manager / Indexer<br>Ports: 1514, 55000"]:::wazuh
-            Splunk["Splunk Enterprise<br>10.10.99.20<br>SIEM Core / HEC<br>Port: 8000 / 8088"]:::splunk
-            Wazuh -->|Forwarding / HEC| Splunk
-        end
-
-        %% Componentes Corporativos (VLAN 10)
-        subgraph CORP_ZONE [VLAN 10 — Corporate Network]
-            WinServer["Windows Server 2022<br>10.10.10.10<br>AD DC / DNS<br>Sysmon + Agent"]:::windows
-            Win11Corp["Windows 11 Pro<br>10.10.10.20<br>Corp Workstation<br>Sysmon + Agent"]:::windows
-        end
-
-        %% Componentes Desarrollo (VLAN 20)
-        subgraph DEV_ZONE [VLAN 20 — Software Development]
-            Win11Dev["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Agent"]:::windows
-            UbuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Workstation<br>Auditd + Agent"]:::linux
-        end
-
-        %% Concentrador de Logs centralizado
-        LogCollector["Recolección de Telemetría<br>(Logs / Alertas de Agentes)"]:::logs
+    
+    subgraph CORP_ZONE [VLAN 10 — Corporate Network]
+        WinServer["Windows Server 2022<br>10.10.10.10<br>AD DC / DNS<br>Sysmon + Agent"]:::windows
+        Win11Corp["Windows 11 Pro<br>10.10.10.20<br>Corp Workstation<br>Sysmon + Agent"]:::windows
     end
 
-    %% Conexiones de telemetría hacia el recolector lógico
+    subgraph DEV_ZONE [VLAN 20 — Software Development]
+        Win11Dev["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Agent"]:::windows
+        UbuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Workstation<br>Auditd + Agent"]:::linux
+    end
+
+    subgraph SOC_ZONE [VLAN 99 — SOC Management]
+        Wazuh["Wazuh Server<br>10.10.99.10<br>Manager / Indexer<br>Ports: 1514, 55000"]:::wazuh
+        Splunk["Splunk Enterprise<br>10.10.99.20<br>SIEM Core / HEC<br>Ports: 8000, 8088"]:::splunk
+        Wazuh -->|Forwarding / HEC| Splunk
+    end
+
+    %% ==========================================
+    %% SEGMENTO DE ATAQUE
+    %% ==========================================
+    subgraph ATK_NET [VLAN 66 — Attack Zone]
+        Kali["Kali Linux Attacker<br>10.10.66.10<br>Red Team / Pentesting<br>GW ➔ 10.10.66.1"]:::kali
+    end
+
+    %% ==========================================
+    %% CONCENTRADOR DE LOGS LÓGICO
+    %% ==========================================
+    LogCollector["Recolección de Telemetría<br>(Logs / Alertas de Agentes)"]:::logs
+
+    %% Enrutamiento y Flujos de Red desde el Core
+    Suricata -->|GW 10.10.10.1| CORP_ZONE
+    Suricata -->|GW 10.10.20.1| DEV_ZONE
+    Suricata -->|GW 10.10.99.1| SOC_ZONE
+
+    %% Flujo de Ataque
+    Kali ==>|Simulación de Adversarios| Suricata
+    
+    %% Flujos de Telemetría
     WinServer -.-> LogCollector
     Win11Corp -.-> LogCollector
     Win11Dev -.-> LogCollector
     UbuDesk -.-> LogCollector
     LogCollector ==>|Ingestión de Eventos| Wazuh
 
-    %% Enrutamiento Interno pfSense hacia las VLANs
-    Suricata -->|GW 10.10.10.1| CORP_ZONE
-    Suricata -->|GW 10.10.20.1| DEV_ZONE
-    Suricata -->|GW 10.10.99.1| SOC
+    %% Aplicar estilos limpios a las cajas contenedoras
+    style CORP_ZONE fill:#f5f9fc,stroke:#1f77b4,stroke-width:1px;
+    style DEV_ZONE fill:#f5fcf5,stroke:#2ca02c,stroke-width:1px;
+    style SOC_ZONE fill:#fffbf5,stroke:#ff7f0e,stroke-width:1px;
+    style ATK_NET fill:#fdf0f0,stroke:#d62728,stroke-width:1px;
+    style LAB_CORE fill:#fafafa,stroke:#b30000,stroke-width:1px;
 ```
 
 ---
