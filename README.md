@@ -15,6 +15,17 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ## Architecture
 
 ```mermaid
+Para hacer que el recuadro de la VLAN 99 (SOC Management) destaque visualmente y luzca mucho más profesional, podemos aplicar técnicas avanzadas de diseño en Mermaid:
+
+Jerarquía Visual Inversa: Le daremos un fondo oscuro profundo diferenciado (#0f1115) con un borde naranja neón brillante (#ff9100) de doble grosor (stroke-width:2.5px).
+
+Iconografía de Bloque: Utilizaremos un título formateado con carácteres limpios y una separación interna más elegante.
+
+Efecto de Enfoque: Al oscurecer sutilmente el resto de las VLANs de la red interna, la zona del SOC se convertirá automáticamente en el centro de atención visual del diagrama para cualquiera que visite tu GitHub.
+
+Aquí tienes el código de Mermaid optimizado y listo para tu README.md:
+
+Fragmento de código
 graph TD
     %% ==========================================
     %% GLOBAL CLASS DEFINITIONS & GRAPH THEME
@@ -47,11 +58,14 @@ graph TD
     end
 
     subgraph VLAN_20 [VLAN 20: Software Development]
-        CL_DEV_W["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Wazuh Agent"]:::winNode
-        CL_DEV_U["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Engineering Host<br>Auditd + Wazuh Agent"]:::nixNode
+        CL_DEV_W["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Agent"]:::winNode
+        CL_DEV_U["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Engineering Host<br>Auditd + Agent"]:::nixNode
     end
 
-    subgraph VLAN_99 [VLAN 99: SOC & Management Operations]
+    %% ==========================================
+    %% HIGH-VISIBILITY SOC ZONE
+    %% ==========================================
+    subgraph VLAN_99 [🛡️ MULTI-TENANT SOC PLATFORM — VLAN 99]
         SOC_WAZUH["Wazuh SIEM Manager<br>10.10.99.10<br>XDR Core / Indexer Node<br>TCP Ports: 1514, 55000"]:::ingest
         SOC_SPLUNK["Splunk Enterprise SIEM<br>10.10.99.20<br>Central Analytics Engine<br>TCP Ports: 8000, 8088"]:::siem
         SOC_WAZUH -->|HEC Event Stream| SOC_SPLUNK
@@ -85,13 +99,15 @@ graph TD
     LOG_BUS ==>|Structured JSON Ingestion| SOC_WAZUH
 
     %% ==========================================
-    %% CONTAINER RENDERING & COLOR COMPATIBILITY
+    %% ADVANCED CONTAINERS PRESETS (PREMIUM DARK)
     %% ==========================================
-    style VLAN_10 fill:#161b22,stroke:#1f77b4,stroke-width:1.5px,color:#fff;
-    style VLAN_20 fill:#161b22,stroke:#2ca02c,stroke-width:1.5px,color:#fff;
-    style VLAN_99 fill:#1c1e22,stroke:#ff7f0e,stroke-width:1.5px,color:#fff;
-    style VLAN_66 fill:#211a1a,stroke:#d62728,stroke-width:1.5px,color:#fff;
-    style SECURITY_EDGE fill:#1f1515,stroke:#b30000,stroke-width:1.5px,color:#fff;
+    style VLAN_10 fill:#111418,stroke:#1f77b4,stroke-width:1.2px,color:#999;
+    style VLAN_20 fill:#111418,stroke:#2ca02c,stroke-width:1.2px,color:#999;
+    style VLAN_66 fill:#1a1313,stroke:#d62728,stroke-width:1.2px,color:#fff;
+    style SECURITY_EDGE fill:#191111,stroke:#b30000,stroke-width:1.5px,color:#fff;
+    
+    %% Premium Cyber-SOC Neon Styling
+    style VLAN_99 fill:#0f1115,stroke:#ff9100,stroke-width:2.5px,color:#fff;
 ```
 
 ---
