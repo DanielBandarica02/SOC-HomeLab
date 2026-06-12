@@ -17,82 +17,81 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ```mermaid
 graph TD
     %% ==========================================
-    %% STYLE AND COLOR CONFIGURATION
+    %% GLOBAL CLASS DEFINITIONS & GRAPH THEME
     %% ==========================================
-    classDef pfSense fill:#b30000,stroke:#333,stroke-width:1.5px,color:#fff;
-    classDef wazuh fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
-    classDef splunk fill:#f57c00,stroke:#e65100,stroke-width:1.5px,color:#fff;
-    classDef windows fill:#2b579a,stroke:#1e3a8a,stroke-width:1.2px,color:#fff;
-    classDef linux fill:#2ca02c,stroke:#1b5e20,stroke-width:1.2px,color:#fff;
-    classDef kali fill:#4d4d4d,stroke:#1a1a1a,stroke-width:1.5px,color:#fff;
-    classDef logs fill:#22252a,stroke:#7f8c8d,stroke-width:1px,color:#fff;
+    classDef perimeter fill:#b30000,stroke:#222,stroke-width:1.5px,color:#fff;
+    classDef ingest fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
+    classDef siem fill:#f57c00,stroke:#e65100,stroke-width:1.5px,color:#fff;
+    classDef winNode fill:#2b579a,stroke:#1e3a8a,stroke-width:1.2px,color:#fff;
+    classDef nixNode fill:#2ca02c,stroke:#1b5e20,stroke-width:1.2px,color:#fff;
+    classDef redNode fill:#4d4d4d,stroke:#1a1a1a,stroke-width:1.5px,color:#fff;
+    classDef transit fill:#22252a,stroke:#7f8c8d,stroke-width:1px,color:#fff;
 
     %% ==========================================
-    %% PERIMETER / FIREWALL BLOCK
+    %% EDGE & BOUNDARY CONTROL
     %% ==========================================
-    Internet((Internet)) --> pfSense
+    WAN_IN((Internet / External)) --> FW_CORE
+
+    subgraph SECURITY_EDGE [Perimeter Edge Security]
+        FW_CORE[pfSense CE<br>Edge Router / VPN Gateway]:::perimeter
+        IDS_CORE["Suricata NIDS Engine<br>Inline Inspection Tier<br>Virtual Interface IP: 10.10.X.1"]:::perimeter
+        FW_CORE --> IDS_CORE
+    end
+
+    %% ==========================================
+    %% PRIVILEGED & ENDPOINT ZONE INFRASTRUCTURE
+    %% ==========================================
+    subgraph VLAN_10 [VLAN 10: Corporate Domain]
+        DC_2022["Windows Server 2022<br>10.10.10.10<br>Active Directory DC / DNS<br>Sysmon + Wazuh Agent"]:::winNode
+        CL_CORP["Windows 11 Pro<br>10.10.10.20<br>Corporate Workstation<br>Sysmon + Wazuh Agent"]:::winNode
+    end
+
+    subgraph VLAN_20 [VLAN 20: Software Development]
+        CL_DEV_W["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Wazuh Agent"]:::winNode
+        CL_DEV_U["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Engineering Host<br>Auditd + Wazuh Agent"]:::nixNode
+    end
+
+    subgraph VLAN_99 [VLAN 99: SOC & Management Operations]
+        SOC_WAZUH["Wazuh SIEM Manager<br>10.10.99.10<br>XDR Core / Indexer Node<br>TCP Ports: 1514, 55000"]:::ingest
+        SOC_SPLUNK["Splunk Enterprise SIEM<br>10.10.99.20<br>Central Analytics Engine<br>TCP Ports: 8000, 8088"]:::siem
+        SOC_WAZUH -->|HEC Event Stream| SOC_SPLUNK
+    end
+
+    %% ==========================================
+    %% UNTRUSTED DMZ ZONE
+    %% ==========================================
+    subgraph VLAN_66 [VLAN 66: Adversary Emulation DMZ]
+        ATK_KALI["Kali Linux Platform<br>10.10.66.10<br>Offensive Operations Host<br>Gateway Local: 10.10.66.1"]:::redNode
+    end
+
+    %% ==========================================
+    %% TELEMETRY BUS
+    %% ==========================================
+    LOG_BUS["Unified Telemetry Pipeline<br>Unidirectional Logging Bus"]:::transit
+
+    %% Inter-VLAN Routing Vectors
+    IDS_CORE -->|Subnet Transit| VLAN_10
+    IDS_CORE -->|Subnet Transit| VLAN_20
+    IDS_CORE -->|Subnet Transit| VLAN_99
+
+    %% Adversary Engagement Vector
+    ATK_KALI ==>|Targeted Adversary Traversal| IDS_CORE
     
-    subgraph LAB_CORE [Core Network Infrastructure]
-        pfSense[pfSense CE<br>WAN IP / OpenVPN]:::pfSense
-        Suricata["Suricata IDS (pfSense)<br>Core Interfaces: 10.10.X.1"]:::pfSense
-        pfSense --> Suricata
-    end
+    %% Telemetry Collection Mappings
+    DC_2022 -.-> LOG_BUS
+    CL_CORP -.-> LOG_BUS
+    CL_DEV_W -.-> LOG_BUS
+    CL_DEV_U -.-> LOG_BUS
+    LOG_BUS ==>|Structured JSON Ingestion| SOC_WAZUH
 
     %% ==========================================
-    %% INTERNAL NETWORK SEGMENTS
+    %% CONTAINER RENDERING & COLOR COMPATIBILITY
     %% ==========================================
-    
-    subgraph CORP_ZONE [VLAN 10: Corporate Network]
-        WinServer["Windows Server 2022<br>10.10.10.10<br>AD DC / DNS<br>Sysmon + Agent"]:::windows
-        Win11Corp["Windows 11 Pro<br>10.10.10.20<br>Corp Workstation<br>Sysmon + Agent"]:::windows
-    end
-
-    subgraph DEV_ZONE [VLAN 20: Software Development]
-        Win11Dev["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Agent"]:::windows
-        UbuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Workstation<br>Auditd + Agent"]:::linux
-    end
-
-    subgraph SOC_ZONE [VLAN 99: SOC Management]
-        Wazuh["Wazuh Server<br>10.10.99.10<br>Manager / Indexer<br>Ports: 1514, 55000"]:::wazuh
-        Splunk["Splunk Enterprise<br>10.10.99.20<br>SIEM Core / HEC<br>Ports: 8000, 8088"]:::splunk
-        Wazuh -->|Forwarding via HEC| Splunk
-    end
-
-    %% ==========================================
-    %% ATTACK SEGMENT
-    %% ==========================================
-    subgraph ATK_NET [VLAN 66: Attack Zone]
-        Kali["Kali Linux Attacker<br>10.10.66.10<br>Red Team / Pentesting<br>GW: 10.10.66.1"]:::kali
-    end
-
-    %% ==========================================
-    %% LOGICAL LOG CONCENTRATOR
-    %% ==========================================
-    LogCollector["Telemetry Collection<br>(Agent Logs and Alerts)"]:::logs
-
-    %% Routing and Network Flows from Core
-    Suricata -->|GW 10.10.10.1| CORP_ZONE
-    Suricata -->|GW 10.10.20.1| DEV_ZONE
-    Suricata -->|GW 10.10.99.1| SOC_ZONE
-
-    %% Attack Flow
-    Kali ==>|Adversary Emulation| Suricata
-    
-    %% Telemetry Flows
-    WinServer -.-> LogCollector
-    Win11Corp -.-> LogCollector
-    Win11Dev -.-> LogCollector
-    UbuDesk -.-> LogCollector
-    LogCollector ==>|Event Ingestion| Wazuh
-
-    %% ==========================================
-    %% DARK MODE STYLES FOR THE CONTAINERS
-    %% ==========================================
-    style CORP_ZONE fill:#161b22,stroke:#1f77b4,stroke-width:1.5px,color:#fff;
-    style DEV_ZONE fill:#161b22,stroke:#2ca02c,stroke-width:1.5px,color:#fff;
-    style SOC_ZONE fill:#1c1e22,stroke:#ff7f0e,stroke-width:1.5px,color:#fff;
-    style ATK_NET fill:#211a1a,stroke:#d62728,stroke-width:1.5px,color:#fff;
-    style LAB_CORE fill:#1f1515,stroke:#b30000,stroke-width:1.5px,color:#fff;
+    style VLAN_10 fill:#161b22,stroke:#1f77b4,stroke-width:1.5px,color:#fff;
+    style VLAN_20 fill:#161b22,stroke:#2ca02c,stroke-width:1.5px,color:#fff;
+    style VLAN_99 fill:#1c1e22,stroke:#ff7f0e,stroke-width:1.5px,color:#fff;
+    style VLAN_66 fill:#211a1a,stroke:#d62728,stroke-width:1.5px,color:#fff;
+    style SECURITY_EDGE fill:#1f1515,stroke:#b30000,stroke-width:1.5px,color:#fff;
 ```
 
 ---
