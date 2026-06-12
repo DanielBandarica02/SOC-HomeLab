@@ -60,7 +60,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 | **EDR** | Wazuh |
 | **IDS** | Suricata |
 | **Windows Telemetry** | Sysmon (Olaf Hartong config) |
-| **Identity** | Active Directory (Windows Server 2022) |
+| **Identity** | Active Directory (Windows Server 2019) |
 | **Offensive** | Kali Linux, Nmap, Hydra, Metasploit, Burp Suite, John the Ripper, Hashcat |
 | **Forensics** | Volatility, Wireshark |
 
