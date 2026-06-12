@@ -17,7 +17,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ```mermaid
 graph TD
     %% ==========================================
-    %% CONFIGURACIÓN DE ESTILOS Y COLORES (Estilo TFG Oficial)
+    %% STYLE AND COLOR CONFIGURATION (Official TFG Style)
     %% ==========================================
     classDef pfSense fill:#b30000,stroke:#333,stroke-width:1.5px,color:#fff;
     classDef wazuh fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
@@ -28,18 +28,18 @@ graph TD
     classDef logs fill:#22252a,stroke:#7f8c8d,stroke-width:1px,color:#fff;
 
     %% ==========================================
-    %% BLOQUE PERIMETRAL / FIREWALL
+    %% PERIMETER / FIREWALL BLOCK
     %% ==========================================
     Internet((Internet)) --> pfSense
     
-    subgraph LAB_CORE [Infraestructura de Red Central]
-        pfSense[pfSense CE<br>IP WAN / OpenVPN]:::pfSense
-        Suricata["Suricata IDS (pfSense)<br>Interfaces Core: 10.10.X.1"]:::pfSense
+    subgraph LAB_CORE [Core Network Infrastructure]
+        pfSense[pfSense CE<br>WAN IP / OpenVPN]:::pfSense
+        Suricata["Suricata IDS (pfSense)<br>Core Interfaces: 10.10.X.1"]:::pfSense
         pfSense --> Suricata
     end
 
     %% ==========================================
-    %% SEGMENTOS DE RED INTERNA
+    %% INTERNAL NETWORK SEGMENTS
     %% ==========================================
     
     subgraph CORP_ZONE [VLAN 10 — Corporate Network]
@@ -59,40 +59,10 @@ graph TD
     end
 
     %% ==========================================
-    %% SEGMENTO DE ATAQUE
+    %% ATTACK SEGMENT
     %% ==========================================
     subgraph ATK_NET [VLAN 66 — Attack Zone]
-        Kali["Kali Linux Attacker<br>10.10.66.10<br>Red Team / Pentesting<br>GW ➔ 10.10.66.1"]:::kali
-    end
-
-    %% ==========================================
-    %% CONCENTRADOR DE LOGS LÓGICO
-    %% ==========================================
-    LogCollector["Recolección de Telemetría<br>(Logs / Alertas de Agentes)"]:::logs
-
-    %% Enrutamiento y Flujos de Red desde el Core
-    Suricata -->|GW 10.10.10.1| CORP_ZONE
-    Suricata -->|GW 10.10.20.1| DEV_ZONE
-    Suricata -->|GW 10.10.99.1| SOC_ZONE
-
-    %% Flujo de Ataque
-    Kali ==>|Simulación de Adversarios| Suricata
-    
-    %% Flujos de Telemetría
-    WinServer -.-> LogCollector
-    Win11Corp -.-> LogCollector
-    Win11Dev -.-> LogCollector
-    UbuDesk -.-> LogCollector
-    LogCollector ==>|Ingestión de Eventos| Wazuh
-
-    %% ==========================================
-    %% ESTILOS OSCUROS PARA ELIMINAR CUADROS BLANCOS
-    %% ==========================================
-    style CORP_ZONE fill:#161b22,stroke:#1f77b4,stroke-width:1.5px,color:#fff;
-    style DEV_ZONE fill:#161b22,stroke:#2ca02c,stroke-width:1.5px,color:#fff;
-    style SOC_ZONE fill:#1c1e22,stroke:#ff7f0e,stroke-width:1.5px,color:#fff;
-    style ATK_NET fill:#211a1a,stroke:#d62728,stroke-width:1.5px,color:#fff;
-    style LAB_CORE fill:#1f1515,stroke:#b30000,stroke-width:1.5px,color:#fff;
+        Kali
 ```
 
 ---
