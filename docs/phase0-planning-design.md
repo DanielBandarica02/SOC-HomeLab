@@ -229,26 +229,6 @@ Detailed firewall rules are documented in [`phase2-network-backbone.md`](phase2-
 - **All denies are logged** and forwarded to Splunk for review.
 ---
  
-## 9. Acceptance Criteria per Phase
- 
-Each phase has a measurable definition of done. A phase is not considered complete until all criteria are met.
- 
-| Phase | Definition of done |
-|---|---|
-| 1 — VirtualBox Foundation | Four Internal Networks exist; all required ISOs downloaded and checksummed; base VM templates created with snapshots. |
-| 2 — Network Backbone | pfSense routes between all four VLANs; default-deny inter-VLAN policy in place; NAT outbound works; isolation verified from a live Ubuntu booted into each VLAN. |
-| 3 — SOC Stack | Wazuh manager reachable from any agent; Splunk HEC accepts events with `useACK`; both platforms ingest test events. |
-| 4 — Corporate Environment | AD domain operational; both Windows endpoints joined; Sysmon installed with the Olaf Hartong baseline; Wazuh agents reporting. |
-| 5 — Development Environment | Both dev workstations on VLAN 20; agents reporting; no inbound paths from VLAN 20 except via VPN/RDP. |
-| 6 — Attack Infrastructure | Kali on VLAN 66; baseline toolkit verified; outbound to corporate denied by default. |
-| 7 — Remote Access (OpenVPN) | OpenVPN server functional; certificate-based authentication; corporate user can reach dev workstations; non-corp source cannot. |
-| 8 — Detection Engineering | 15 rules deployed; each rule has a matching atomic test that fires it; each rule has a documented L1 runbook. |
-| 9 — SOC Operations | Four end-to-end attack scenarios executed; each has a complete incident report with timeline, IOCs, MITRE mapping, and recommendations. |
-| 10 — Portfolio Capstone | README polished; all phase docs cross-linked; LinkedIn posts published; demo material recorded. |
- 
----
- 
- 
 ## Next phase
  
 [Phase 1 — VirtualBox Foundation](phase1-virtualbox-foundation.md)
