@@ -17,7 +17,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ```mermaid
 graph TD
     %% ==========================================
-    %% STYLE AND COLOR CONFIGURATION (Official TFG Style)
+    %% STYLE AND COLOR CONFIGURATION
     %% ==========================================
     classDef pfSense fill:#b30000,stroke:#333,stroke-width:1.5px,color:#fff;
     classDef wazuh fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
@@ -42,27 +42,37 @@ graph TD
     %% INTERNAL NETWORK SEGMENTS
     %% ==========================================
     
-    subgraph CORP_ZONE [VLAN 10 — Corporate Network]
+    subgraph CORP_ZONE [VLAN 10: Corporate Network]
         WinServer["Windows Server 2022<br>10.10.10.10<br>AD DC / DNS<br>Sysmon + Agent"]:::windows
         Win11Corp["Windows 11 Pro<br>10.10.10.20<br>Corp Workstation<br>Sysmon + Agent"]:::windows
     end
 
-    subgraph DEV_ZONE [VLAN 20 — Software Development]
+    subgraph DEV_ZONE [VLAN 20: Software Development]
         Win11Dev["Windows 11 Pro<br>10.10.20.10<br>Dev Workstation<br>Sysmon + Agent"]:::windows
         UbuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Workstation<br>Auditd + Agent"]:::linux
     end
 
-    subgraph SOC_ZONE [VLAN 99 — SOC Management]
+    subgraph SOC_ZONE [VLAN 99: SOC Management]
         Wazuh["Wazuh Server<br>10.10.99.10<br>Manager / Indexer<br>Ports: 1514, 55000"]:::wazuh
         Splunk["Splunk Enterprise<br>10.10.99.20<br>SIEM Core / HEC<br>Ports: 8000, 8088"]:::splunk
-        Wazuh -->|Forwarding / HEC| Splunk
+        Wazuh -->|Forwarding via HEC| Splunk
     end
 
     %% ==========================================
     %% ATTACK SEGMENT
     %% ==========================================
-    subgraph ATK_NET [VLAN 66 — Attack Zone]
-        Kali
+    subgraph ATK_NET [VLAN 66: Attack Zone]
+        Kali["Kali Linux Attacker<br>10.10.66.10<br>Red Team / Pentesting<br>GW: 10.10.66.1"]:::kali
+    end
+
+    %% ==========================================
+    %% LOGICAL LOG CONCENTRATOR
+    %% ==========================================
+    LogCollector["Telemetry Collection<br>(Agent Logs and Alerts)"]:::logs
+
+    %% Routing and Network Flows from Core
+    Suricata -->|GW 10.10.10.1| CORP_ZONE
+    Sur
 ```
 
 ---
