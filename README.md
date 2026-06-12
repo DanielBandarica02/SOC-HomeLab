@@ -16,60 +16,55 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 
 ```mermaid
 graph TD
-    %% Estilos de Nodos y Subredes
+    %% Configuración de Orientación
+    direction TB
+
+    %% Estilos Globales y de Nodos
     classDef firewall fill:#b30000,stroke:#333,stroke-width:2px,color:#fff;
     classDef windows fill:#1f77b4,stroke:#333,stroke-width:1px,color:#fff;
     classDef linux fill:#2ca02c,stroke:#333,stroke-width:1px,color:#fff;
-    classDef soc fill:#ff7f0e,stroke:#333,stroke-width:2px,color:#fff;
-    classDef kali fill:#7f7f7f,stroke:#333,stroke-width:2px,color:#fff;
+    classDef soc fill:#ff7f0e,stroke:#333,stroke-width:1px,color:#fff;
+    classDef kali fill:#4d4d4d,stroke:#333,stroke-width:2px,color:#fff;
+    classDef zone fill:#f9f9f9,stroke:#666,stroke-width:1px,stroke-dasharray: 5 5;
 
-    %% Nodo de Internet / WAN
-    Internet((Internet)) --> pfSense
+    %% Perímetro / WAN
+    Internet((Internet)) <--> |WAN| pfSense
 
-    %% Router / Firewall Principal
-    pfSense[pfSense CE<br>10.10.X.1<br>Router / Firewall / Suricata / OpenVPN]:::firewall
+    %% Core de Red (Firewall Centralizado)
+    pfSense[pfSense CE<br>10.10.X.1<br>Core Router / Firewall / IDS]:::firewall
 
-    %% Segmento VLAN 10
-    subgraph VLAN_10 [VLAN 10: Corp Network]
-        WinServer["Windows Server 2022<br>(10.10.10.10)<br>AD DC / DNS<br>Sysmon + Wazuh Agent"]:::windows
-        Win11Corp["Windows 11 Pro (Corp)<br>(10.10.10.20)<br>Workstation<br>Sysmon + Wazuh Agent"]:::windows
-    end
-
-    %% Segmento VLAN 20
-    subgraph VLAN_20 [VLAN 20: Dev Network]
-        Win11Dev["Windows 11 Pro (Dev)<br>(10.10.20.10)<br>Workstation<br>Sysmon + Wazuh Agent"]:::windows
-        UbuntuDesk["Ubuntu Desktop 24.04<br>(10.10.20.20)<br>Workstation<br>Auditd + Wazuh Agent"]:::linux
-    end
-
-    %% Segmento VLAN 66
-    subgraph VLAN_66 [VLAN 66: Attack Zone]
-        Kali["Kali Linux (Latest)<br>(10.10.66.10)<br>Attack Machine"]:::kali
-    end
-
-    %% Segmento VLAN 99
-    subgraph VLAN_99 [VLAN 99: SOC / Management]
-        Wazuh["Ubuntu Wazuh<br>(10.10.99.10)<br>Wazuh Manager / Indexer / Dashboard"]:::soc
-        Splunk["Ubuntu Splunk<br>(10.10.99.20)<br>Splunk Enterprise SIEM"]:::soc
-    end
-
-    %% Conexiones de Red a través de pfSense
-    pfSense --- VLAN_10
-    pfSense --- VLAN_20
-    pfSense --- VLAN_66
-    pfSense --- VLAN_99
-
-    %% Flujos de Telemetría (Agentes enviando logs al SOC)
-    WinServer -.->|Logs / Alertas| Wazuh
-    Win11Corp -.->|Logs / Alertas| Wazuh
-    Win11Dev -.->|Logs / Alertas| Wazuh
-    UbuntuDesk -.->|Logs / Alertas| Wazuh
+    %% Segmentos de Red (Zonas Aisladas Lógicamente)
     
-    %% Envío de Logs entre sistemas SOC si aplica
-    Wazuh -.->|Forwarding opcional| Splunk
+    subgraph V10 [VLAN 10: Corp Network]
+        WinServer["Windows Server 2022<br>10.10.10.10<br>(AD DC / DNS)"]:::windows
+        Win11Corp["Windows 11 Pro<br>10.10.10.20<br>(Workstation)"]:::windows
+    end
 
-    %% Flujo de Ataque Simulado
-    Kali ==>|Simulación de Adversarios| VLAN_10
-    Kali ==>|Simulación de Adversarios| VLAN_20
+    subgraph V20 [VLAN 20: Dev Network]
+        Win11Dev["Windows 11 Pro<br>10.10.20.10<br>(Workstation)"]:::windows
+        UbuntuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>(Workstation)"]:::linux
+    end
+
+    subgraph V66 [VLAN 66: Attack Zone]
+        Kali["Kali Linux<br>10.10.66.10<br>(Pentest Machine)"]:::kali
+    end
+
+    subgraph V99 [VLAN 99: SOC / Management]
+        Wazuh["Wazuh Server<br>10.10.99.10<br>(Manager / Indexer)"]:::soc
+        Splunk["Splunk SIEM<br>10.10.99.20<br>(Enterprise SIEM)"]:::soc
+    end
+
+    %% Enlaces Troncales Únicos al pfSense (Representa el etiquetado 802.1Q)
+    pfSense <==> |Tráfico Inter-VLAN| V10
+    pfSense <==> |Tráfico Inter-VLAN| V20
+    pfSense <==> |Tráfico Inter-VLAN| V66
+    pfSense <==> |Tráfico Inter-VLAN| V99
+
+    %% Estilos de los contenedores para documentación limpia
+    style V10 fill:#f5f9fc,stroke:#1f77b4,stroke-width:1px;
+    style V20 fill:#f5fcf5,stroke:#2ca02c,stroke-width:1px;
+    style V66 fill:#fafafa,stroke:#4d4d4d,stroke-width:1px;
+    style V99 fill:#fffbf5,stroke:#ff7f0e,stroke-width:1px;
 ```
 
 ---
