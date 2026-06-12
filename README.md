@@ -14,7 +14,8 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
 
- graph TD
+```mermaid
+graph TD
     %% Estilos Globales y Configuración de Conectores
     classDef default fill:#1e1e24,stroke:#333,stroke-width:1px,color:#fff;
     classDef internet fill:#2d3748,stroke:#4a5568,stroke-width:2px,color:#fff,font-weight:bold;
@@ -61,19 +62,8 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
     %% --- SUBGRAPH VLAN 66 ---
     subgraph VLAN66 ["💀 VLAN 66 — Attacker DMZ (10.10.66.0/24 • simulated external)"]
         direction LR
-        Kali["🐉 Kali Linux<br><b>10.10.66.10</b><br><small>Adversary emulation - Nmap - Hydra - Metasploit - CrackMapExec</small>"]
-    end
-    style VLAN66 fill:#211212,stroke:#e53e3e,stroke-width:2px,color:#fff
-
-    %% Conexiones del Backbone del Firewall a las subredes
-    pfSense ----> VLAN10
-    pfSense ----> VLAN20
-    pfSense ----> VLAN99
-    pfSense ----> VLAN66
-
-    %% Relaciones inter-VLAN específicas de tu diseño original
-    W11_Corp -. "VPN / RDP" .-> W11_Dev
- 
+        Kali
+ ```
 ---
  
 ## Lab Components
