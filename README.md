@@ -42,8 +42,8 @@ graph TD
     %% PRIVILEGED AND ENDPOINT ZONE INFRASTRUCTURE
     %% ==========================================
     subgraph VLAN_10 [VLAN 10: Corporate Domain]
-        DC_2022["Windows Server 2022<br>10.10.10.10<br>Active Directory DC / DNS<br>Sysmon + Wazuh Agent"]:::winNode
-        CL_CORP["Windows 11 Pro<br>10.10.10.20<br>Corporate Workstation<br>Sysmon + Wazuh Agent"]:::winNode
+        DC_2022["Windows Server 2022<br>10.10.10.10<br>Active Directory DC / DNS<br>Sysmon + Agent"]:::winNode
+        CL_CORP["Windows 11 Pro<br>10.10.10.20<br>Corporate Workstation<br>Sysmon + Agent"]:::winNode
     end
 
     subgraph VLAN_20 [VLAN 20: Software Development]
@@ -51,9 +51,15 @@ graph TD
         CL_DEV_U["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Engineering Host<br>Auditd + Agent"]:::nixNode
     end
 
+    %% ==========================================
+    %% OPTIMIZED HORIZONTAL SOC ZONE
+    %% ==========================================
     subgraph VLAN_99 [VLAN 99: SOC Management Operations]
+        direction LR
         SOC_WAZUH["Wazuh SIEM Manager<br>10.10.99.10<br>XDR Core / Indexer Node<br>TCP Ports: 1514, 55000"]:::ingest
         SOC_SPLUNK["Splunk Enterprise SIEM<br>10.10.99.20<br>Central Analytics Engine<br>TCP Ports: 8000, 8088"]:::siem
+        
+        %% Horizontal connection
         SOC_WAZUH -->|HEC Event Stream| SOC_SPLUNK
     end
 
