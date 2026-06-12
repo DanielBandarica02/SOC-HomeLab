@@ -14,7 +14,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
 
-![SOC HomeLab Architecture](screenshots/architecture.svg)
+![SOC HomeLab Architecture](screenshots/readme/architecture.svg)
 
 ---
  
