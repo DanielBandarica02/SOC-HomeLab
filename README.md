@@ -25,7 +25,7 @@ graph TD
     classDef windows fill:#2b579a,stroke:#1e3a8a,stroke-width:1.2px,color:#fff;
     classDef linux fill:#2ca02c,stroke:#1b5e20,stroke-width:1.2px,color:#fff;
     classDef kali fill:#4d4d4d,stroke:#1a1a1a,stroke-width:1.5px,color:#fff;
-    classDef logs fill:#ffffff,stroke:#7f8c8d,stroke-width:1px;
+    classDef logs fill:#22252a,stroke:#7f8c8d,stroke-width:1px,color:#fff;
 
     %% ==========================================
     %% BLOQUE PERIMETRAL / FIREWALL
@@ -39,7 +39,7 @@ graph TD
     end
 
     %% ==========================================
-    %% SEGMENTOS DE RED INTERNA (Separados para evitar fallos de render)
+    %% SEGMENTOS DE RED INTERNA
     %% ==========================================
     
     subgraph CORP_ZONE [VLAN 10 — Corporate Network]
@@ -85,12 +85,14 @@ graph TD
     UbuDesk -.-> LogCollector
     LogCollector ==>|Ingestión de Eventos| Wazuh
 
-    %% Aplicar estilos limpios a las cajas contenedoras
-    style CORP_ZONE fill:#f5f9fc,stroke:#1f77b4,stroke-width:1px;
-    style DEV_ZONE fill:#f5fcf5,stroke:#2ca02c,stroke-width:1px;
-    style SOC_ZONE fill:#fffbf5,stroke:#ff7f0e,stroke-width:1px;
-    style ATK_NET fill:#fdf0f0,stroke:#d62728,stroke-width:1px;
-    style LAB_CORE fill:#fafafa,stroke:#b30000,stroke-width:1px;
+    %% ==========================================
+    %% ESTILOS OSCUROS PARA ELIMINAR CUADROS BLANCOS
+    %% ==========================================
+    style CORP_ZONE fill:#161b22,stroke:#1f77b4,stroke-width:1.5px,color:#fff;
+    style DEV_ZONE fill:#161b22,stroke:#2ca02c,stroke-width:1.5px,color:#fff;
+    style SOC_ZONE fill:#1c1e22,stroke:#ff7f0e,stroke-width:1.5px,color:#fff;
+    style ATK_NET fill:#211a1a,stroke:#d62728,stroke-width:1.5px,color:#fff;
+    style LAB_CORE fill:#1f1515,stroke:#b30000,stroke-width:1.5px,color:#fff;
 ```
 
 ---
