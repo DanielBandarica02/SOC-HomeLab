@@ -19,9 +19,6 @@ graph TD
     %% ==========================================
     %% CONFIGURACIÓN DE ESTILOS Y COLORES (Estilo TFG)
     %% ==========================================
-    classDef internalNet fill:#f0f4f8,stroke:#1f77b4,stroke-width:2px,stroke-dasharray: 5 5;
-    classDef attackNet fill:#fdf0f0,stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
-    
     classDef pfSense fill:#b30000,stroke:#333,stroke-width:1.5px,color:#fff;
     classDef wazuh fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
     classDef splunk fill:#f57c00,stroke:#e65100,stroke-width:1.5px,color:#fff;
@@ -65,7 +62,7 @@ graph TD
             UbuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Workstation<br>Auditd + Agent"]:::linux
         end
 
-        %% Concentrador de Logs centralizado (Igual al gráfico)
+        %% Concentrador de Logs centralizado
         LogCollector["Recolección de Telemetría<br>(Logs / Alertas de Agentes)"]:::logs
     end
 
@@ -79,23 +76,7 @@ graph TD
     %% Enrutamiento Interno pfSense hacia las VLANs
     Suricata -->|GW 10.10.10.1| CORP_ZONE
     Suricata -->|GW 10.10.20.1| DEV_ZONE
-    Suricata -->|GW 10.10.99.1| SOC_ZONE
-
-    %% ==========================================
-    %% RED DE ATAQUE (Equivalente a attack_network)
-    %% ==========================================
-    subgraph ATK_NET [attack_network — 10.10.66.0/24]
-        Kali["Kali Linux Attacker<br>10.10.66.10<br>Red Team / Pentesting<br>GW ➔ 10.10.66.1 (Suricata eth1)"]:::kali
-    end
-
-    %% Flujo de Inspección y Simulación de Ataques
-    Kali ==>|Simulación de Adversarios| Suricata
-    Suricata -.->|Inspección IDS e Inter-VLAN| CORP_ZONE
-    Suricata -.->|Inspección IDS e Inter-VLAN| DEV_ZONE
-
-    %% Aplicar estilos a los contenedores principales
-    style INT_NET class internalNet
-    style ATK_NET class attackNet
+    Suricata -->|GW 10.10.99.1| SOC
 ```
 
 ---
