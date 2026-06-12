@@ -57,7 +57,7 @@ The lab models a small enterprise with an internet-exposed perimeter, internal c
 - Supply chain compromises
 - Cloud account takeover
 - Insider threats holding legitimate administrative credentials by policy (only compromised insiders are modeled)
-- 
+  
 ### Trust boundaries
  
 | Boundary | Direction | Enforcement |
