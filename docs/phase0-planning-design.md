@@ -248,19 +248,6 @@ Each phase has a measurable definition of done. A phase is not considered comple
  
 ---
  
-## 10. Out of Scope, Recorded Explicitly
- 
-The lab does *not* aim to be a complete SOC. The following are deliberately deferred to keep the scope finite and shippable:
- 
-- **SOAR automation** — Shuffle and TheHive deployment, playbook authoring, automated containment workflows. Planned for a future iteration.
-- **Threat intelligence integration** — MISP, OpenCTI, IOC enrichment pipelines, Sigma-to-SIEM workflows.
-- **Cloud security** — CSPM tooling, cloud workload protection, identity federation.
-- **Container and orchestration security** — Docker / Kubernetes runtime monitoring, image scanning, admission policies.
-- **High availability** — Wazuh cluster, Splunk indexer cluster, pfSense CARP.
-- **Real malware analysis** — sandboxing, dynamic analysis. Simulations only.
-These items are tracked in the project roadmap and will be added as separate phases when capacity allows.
- 
----
  
 ## Next phase
  
