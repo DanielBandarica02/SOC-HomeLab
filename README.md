@@ -14,58 +14,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
 
-```mermaid
-graph TD
-    %% Configuración de Orientación
-    direction TB
 
-    %% Estilos Globales y de Nodos
-    classDef firewall fill:#b30000,stroke:#333,stroke-width:2px,color:#fff;
-    classDef windows fill:#1f77b4,stroke:#333,stroke-width:1px,color:#fff;
-    classDef linux fill:#2ca02c,stroke:#333,stroke-width:1px,color:#fff;
-    classDef soc fill:#ff7f0e,stroke:#333,stroke-width:1px,color:#fff;
-    classDef kali fill:#4d4d4d,stroke:#333,stroke-width:2px,color:#fff;
-    classDef zone fill:#f9f9f9,stroke:#666,stroke-width:1px,stroke-dasharray: 5 5;
-
-    %% Perímetro / WAN
-    Internet((Internet)) <--> |WAN| pfSense
-
-    %% Core de Red (Firewall Centralizado)
-    pfSense[pfSense CE<br>10.10.X.1<br>Core Router / Firewall / IDS]:::firewall
-
-    %% Segmentos de Red (Zonas Aisladas Lógicamente)
-    
-    subgraph V10 [VLAN 10: Corp Network]
-        WinServer["Windows Server 2022<br>10.10.10.10<br>(AD DC / DNS)"]:::windows
-        Win11Corp["Windows 11 Pro<br>10.10.10.20<br>(Workstation)"]:::windows
-    end
-
-    subgraph V20 [VLAN 20: Dev Network]
-        Win11Dev["Windows 11 Pro<br>10.10.20.10<br>(Workstation)"]:::windows
-        UbuntuDesk["Ubuntu Desktop 24.04<br>10.10.20.20<br>(Workstation)"]:::linux
-    end
-
-    subgraph V66 [VLAN 66: Attack Zone]
-        Kali["Kali Linux<br>10.10.66.10<br>(Pentest Machine)"]:::kali
-    end
-
-    subgraph V99 [VLAN 99: SOC / Management]
-        Wazuh["Wazuh Server<br>10.10.99.10<br>(Manager / Indexer)"]:::soc
-        Splunk["Splunk SIEM<br>10.10.99.20<br>(Enterprise SIEM)"]:::soc
-    end
-
-    %% Enlaces Troncales Únicos al pfSense (Representa el etiquetado 802.1Q)
-    pfSense <==> |Tráfico Inter-VLAN| V10
-    pfSense <==> |Tráfico Inter-VLAN| V20
-    pfSense <==> |Tráfico Inter-VLAN| V66
-    pfSense <==> |Tráfico Inter-VLAN| V99
-
-    %% Estilos de los contenedores para documentación limpia
-    style V10 fill:#f5f9fc,stroke:#1f77b4,stroke-width:1px;
-    style V20 fill:#f5fcf5,stroke:#2ca02c,stroke-width:1px;
-    style V66 fill:#fafafa,stroke:#4d4d4d,stroke-width:1px;
-    style V99 fill:#fffbf5,stroke:#ff7f0e,stroke-width:1px;
-```
 ---
  
 ## Lab Components
