@@ -13,7 +13,66 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ---
  
 ## Architecture
- 
+
+ graph TD
+    %% Estilos Globales y Configuración de Conectores
+    classDef default fill:#1e1e24,stroke:#333,stroke-width:1px,color:#fff;
+    classDef internet fill:#2d3748,stroke:#4a5568,stroke-width:2px,color:#fff,font-weight:bold;
+    classDef pfsense fill:#2c3e50,stroke:#1a252f,stroke-width:2px,color:#fff,font-weight:bold;
+    
+    %% Estilos de las VLANs
+    classDef vlan10 fill:#1a2a3a,stroke:#3182ce,stroke-width:2px,color:#fff;
+    classDef vlan20 fill:#2d223a,stroke:#805ad5,stroke-width:2px,color:#fff;
+    classDef vlan99 fill:#1a332e,stroke:#319795,stroke-width:2px,color:#fff;
+    classDef vlan66 fill:#3c1e1e,stroke:#e53e3e,stroke-width:2px,color:#fff;
+
+    %% Elementos Principales de Borde
+    Internet["🌐 Internet <br> <small>NAT WAN simulation</small>"] :::internet
+    pfSense["🛡️ pfSense <br> <small>Router + Firewall<br>Suricata IDS<br>OpenVPN Server</small>"] :::pfsense
+
+    %% Flujo Principal de Red
+    Internet --> pfSense
+
+    %% --- SUBGRAPH VLAN 10 ---
+    subgraph VLAN10 ["💻 VLAN 10 — Corporate (10.10.10.0/24)"]
+        direction LR
+        WS2022["🗄️ Windows Server 2022<br><b>10.10.10.10</b><br><small>AD DC - DNS - Sysmon - Wazuh Agent</small>"]
+        W11_Corp["💻 Windows 11 Pro<br><b>10.10.10.20</b><br><small>Workstation - Sysmon - Wazuh Agent</small>"]
+    end
+    style VLAN10 fill:#111926,stroke:#3182ce,stroke-width:2px,color:#fff
+
+    %% --- SUBGRAPH VLAN 20 ---
+    subgraph VLAN20 ["⚙️ VLAN 20 — Development (10.10.20.0/24)"]
+        direction LR
+        W11_Dev["💻 Windows 11 Pro<br><b>10.10.20.10</b><br><small>Dev workstation - Sysmon - Wazuh</small>"]
+        Ubuntu_Dev["🐧 Ubuntu Desktop 24.04<br><b>10.10.20.20</b><br><small>Dev workstation - Auditd - Wazuh</small>"]
+    end
+    style VLAN20 fill:#1a1226,stroke:#805ad5,stroke-width:2px,color:#fff
+
+    %% --- SUBGRAPH VLAN 99 ---
+    subgraph VLAN99 ["👁️ VLAN 99 — SOC Management (10.10.99.0/24 • out-of-band)"]
+        direction LR
+        Wazuh_SRV["🦊 Ubuntu Server — Wazuh<br><b>10.10.99.10</b><br><small>Manager - Indexer - Dashboard</small>"]
+        Splunk_SRV["📊 Ubuntu Server — Splunk<br><b>10.10.99.20</b><br><small>Enterprise SIEM - HTTP Event Collector</small>"]
+        Wazuh_SRV -- "HEC 8088" --> Splunk_SRV
+    end
+    style VLAN99 fill:#0f201d,stroke:#319795,stroke-width:2px,color:#fff
+
+    %% --- SUBGRAPH VLAN 66 ---
+    subgraph VLAN66 ["💀 VLAN 66 — Attacker DMZ (10.10.66.0/24 • simulated external)"]
+        direction LR
+        Kali["🐉 Kali Linux<br><b>10.10.66.10</b><br><small>Adversary emulation - Nmap - Hydra - Metasploit - CrackMapExec</small>"]
+    end
+    style VLAN66 fill:#211212,stroke:#e53e3e,stroke-width:2px,color:#fff
+
+    %% Conexiones del Backbone del Firewall a las subredes
+    pfSense ----> VLAN10
+    pfSense ----> VLAN20
+    pfSense ----> VLAN99
+    pfSense ----> VLAN66
+
+    %% Relaciones inter-VLAN específicas de tu diseño original
+    W11_Corp -. "VPN / RDP" .-> W11_Dev
  
 ---
  
