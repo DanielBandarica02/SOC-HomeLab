@@ -4,7 +4,7 @@
  
 ## Overview
  
-This phase produces no infrastructure. It consolidates the threat model, IP plan, hardware budget, and the rationale behind every architectural choice. Anyone reading this document should understand *why* the lab is structured the way it is — not just *what* gets built.
+This phase produces no infrastructure. It consolidates the threat model, IP plan, hardware budget, and the rationale behind every architectural choice. Anyone reading this document should understand why the lab is structured the way it is and not just what gets built.
  
 ---
  
