@@ -251,4 +251,4 @@ Each phase has a measurable definition of done. A phase is not considered comple
  
 ## Next phase
  
-[Phase 1 — VirtualBox Foundation](phase1-virtualbox-foundation.md): provision the host hypervisor, define the four Internal Networks in VirtualBox, download installation media with verified checksums, and create base VM templates with snapshots for fast rebuild.
+[Phase 1 — VirtualBox Foundation](phase1-virtualbox-foundation.md)
