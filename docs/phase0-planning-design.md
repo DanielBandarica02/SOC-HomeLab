@@ -75,33 +75,27 @@ Each decision is recorded with rationale, trade-offs, and alternatives considere
  
 **Decision:** Four isolated VLANs (10 Corporate, 20 Development, 66 Attacker, 99 SOC) routed through pfSense.
  
-**Rationale:** Models realistic enterprise segmentation. Enables non-trivial firewall policy and inter-VLAN lateral movement detection scenarios. Without segmentation, the problem space collapses to single-subnet packet inspection, which is not how modern SOCs operate. That was a mistake I made in my last HomeLab
+**Rationale:** Models realistic enterprise segmentation. Enables non-trivial firewall policy and inter-VLAN lateral movement detection scenarios. Without segmentation, the problem space collapses to single-subnet packet inspection, which is not how modern SOCs operate. That was a mistake I made in my last HomeLab.
  
 **Alternative considered:** Single flat network at `192.168.10.0/24`
+
 **Why rejected:** Eliminates the most important detection problem space — lateral movement across trust zones.
- 
-**Implementation note:** VirtualBox Internal Networks are used as virtual broadcast domains, one per VLAN. This is functionally equivalent to L3 isolation but is *not* real 802.1Q tag-based VLAN trunking. VLAN hopping attacks (Yersinia, double-tagging) cannot be practiced in this setup.
  
 ### 4.2 pfSense as the routing and firewall plane
  
 **Decision:** pfSense CE on a dedicated VM with five interfaces (WAN + four LAN, one per VLAN).
  
-**Rationale:** Free, well-documented, supports L3 inter-VLAN routing, has a mature package ecosystem (Suricata, OpenVPN, pfBlockerNG), and matches real-world SMB deployment patterns. Easier to demonstrate in a portfolio than `iptables` scripts.
+**Rationale:** Free, well-documented, supports L3 inter-VLAN routing, has a mature package ecosystem (Suricata, OpenVPN, pfBlockerNG), and matches real-world SMB deployment patterns.
  
-**Alternatives considered:**
-- **OPNsense** — functionally equivalent; pfSense chosen for documentation breadth.
-- **Linux router with `nftables`** — more control, more configuration overhead, less recognizable in interviews.
-- **Cisco vIOS / similar** — licensing complications.
 ### 4.3 Suricata IDS on pfSense, not as a separate VM
  
 **Decision:** Suricata runs as a pfSense package in IDS (passive) mode, monitoring all LAN interfaces.
  
 **Rationale:** Single VM, lower RAM cost (Suricata shares pfSense resources), sees all inter-VLAN traffic at the routing point. In a 32 GB RAM budget this is the only economical choice.
  
-**Trade-off:** Cannot run reliably in IPS (inline blocking) mode without risking lab availability. Accept IDS-only — detections fire but traffic is not dropped.
- 
 **Alternative considered:** Separate Suricata VM with a port mirror from pfSense LAN switch.
-**Why rejected:** Adds 4 GB RAM cost and significant configuration complexity (span ports in VirtualBox are non-trivial). Can revisit if the host is upgraded to 64 GB.
+
+**Why rejected:** Adds 4 GB RAM cost and significant configuration complexity. 
  
 ### 4.4 Out-of-band SOC management plane
  
@@ -109,27 +103,19 @@ Each decision is recorded with rationale, trade-offs, and alternatives considere
  
 **Rationale:** An attacker who compromises a corporate workstation cannot pivot into the monitoring infrastructure. If the SOC VLAN were reachable, the attacker could disable agents, tamper with logs, or pivot through the dashboard.
  
-**Trade-off:** Slightly asymmetric firewall rules. Management of Wazuh and Splunk requires connecting from a host with explicit allowance — in practice, a tightly-scoped jump rule from the analyst's primary workstation.
- 
 **Real-world parallel:** Standard SOC architecture; aligns with NIST SP 800-92 §4.3 (log management infrastructure isolation).
  
 ### 4.5 Dedicated attacker DMZ with NAT-simulated external access
  
 **Decision:** Kali in VLAN 66, behind pfSense NAT. All "external" attacks originate from this VLAN and traverse pfSense (and Suricata) to reach data-plane VLANs.
  
-**Rationale:** Forces realistic perimeter detection paths — Suricata edge alerts, NAT-translated source IPs, geolocation anomalies (if GeoIP rules are added), unauthorized RDP attempts. The lazy alternative ("Kali on the corporate VLAN") trivializes the problem.
- 
-**Trade-off:** Routing setup is more involved. Some attacks (DNS tunneling exfiltration) need extra plumbing to exit through pfSense's NAT.
+**Rationale:** Forces realistic perimeter detection paths — Suricata edge alerts, NAT-translated source IPs, unauthorized RDP attempts.
  
 ### 4.6 VirtualBox hypervisor
  
-**Decision:** VirtualBox 7.x on a Windows host. Each VLAN modeled as a VirtualBox Internal Network.
+**Decision:** VirtualBox 7.2.2 on a Windows host. Each VLAN modeled as a VirtualBox Internal Network.
  
-**Rationale:** Free, available, runs on the existing workstation OS without dual-boot. Continuity with the prior lab iteration's tooling.
- 
-**Trade-off:** Internal Networks are L2 broadcast domains, not 802.1Q tagged VLANs. This is fine for L3 isolation but cannot teach VLAN-layer attacks.
- 
-**Future option:** Proxmox VE on dual-boot would provide real 802.1Q trunking, better KVM-based performance, and bridge-VLAN-aware switching — at the cost of dedicating the workstation to lab work.
+**Rationale:** Free, available, runs on the existing workstation OS without dual-boot.
  
 ---
  
@@ -151,56 +137,7 @@ All VLANs use the `10.10.0.0/16` aggregate, subnetted by VLAN ID for memorabilit
  
 ---
  
-## 6. Hardware & Resource Budget
- 
-### Host platform
- 
-- CPU: Intel Core i7-14700KF (20 cores, 28 threads)
-- RAM: 32 GB DDR5
-- Storage: NVMe (~250 GB allocated to VM disks)
-- GPU: not used (lab is headless except for desktop sessions)
-### RAM allocation per VM
- 
-| VM | RAM | Notes |
-|---|---|---|
-| pfSense | 2 GB | Including Suricata package overhead with ET Open ruleset |
-| Windows Server 2022 (DC) | 4 GB | |
-| Windows 11 Pro (Corp) | 4 GB | |
-| Windows 11 Pro (Dev) | 4 GB | |
-| Ubuntu Desktop 24.04 (Dev) | 3 GB | |
-| Ubuntu Server (Wazuh) | 6 GB | Manager + Indexer + Dashboard on a single VM. Tight; 8 GB is the documented recommendation. |
-| Ubuntu Server (Splunk) | 4 GB | Sufficient for personal lab event volumes. |
-| Kali Linux | 4 GB | |
-| **Total** | **31 GB** | |
- 
-Host operating system overhead: ~4 GB.
-Combined demand if all VMs are powered on: ~35 GB → over budget by ~3 GB.
- 
-### Operating strategy
- 
-VMs are grouped by concurrent need:
- 
-- **Always on:** pfSense, Wazuh server, Splunk server, DC. **Total: 16 GB**
-- **On during corporate scenarios:** Windows 11 Corp, Windows 11 Dev or Ubuntu Dev (one of the dev hosts). **Total: +7–8 GB**
-- **On during attack scenarios:** Kali. **Total: +4 GB**
-- **On during VPN/cross-VLAN testing:** Both dev VMs simultaneously.
-The lab is designed so that no single attack scenario requires all eight VMs running concurrently. Upgrading to 64 GB is the medium-term solution if multi-scenario chaining becomes routine.
- 
-### Disk allocation (sparse-provisioned)
- 
-| VM | Allocated | Typical use |
-|---|---|---|
-| pfSense | 8 GB | 1–2 GB used |
-| Windows Server 2022 | 60 GB | 25–30 GB |
-| Windows 11 Pro × 2 | 50 GB each | 20–25 GB |
-| Ubuntu Desktop | 25 GB | 10–12 GB |
-| Ubuntu Server (Wazuh) | 40 GB | Grows with indices |
-| Ubuntu Server (Splunk) | 40 GB | Grows with indices |
-| Kali | 30 GB | 12–15 GB |
- 
----
- 
-## 7. VLAN Design Summary
+## 6. VLAN Design Summary
  
 | VLAN | Tag | Purpose | Hosts |
 |---|---|---|---|
@@ -213,7 +150,7 @@ The reasoning behind each VLAN is captured in the architecture decisions above.
  
 ---
  
-## 8. Firewall Policy Principles
+## 7. Firewall Policy Principles
  
 Detailed firewall rules are documented in [`phase2-network-backbone.md`](phase2-network-backbone.md). At the design level the policy is:
  
@@ -225,6 +162,7 @@ Detailed firewall rules are documented in [`phase2-network-backbone.md`](phase2-
 - **Attacker → anywhere** denied by default. Each attack scenario opens minimal scenario-specific rules.
 - **VLAN 99 → Internet** allowed (Wazuh CTI feeds, Suricata rule updates, Splunk app downloads).
 - **All denies are logged** and forwarded to Splunk for review.
+
 ---
  
 ## Next phase
