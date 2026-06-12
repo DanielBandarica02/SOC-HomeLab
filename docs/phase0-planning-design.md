@@ -75,7 +75,7 @@ Each decision is recorded with rationale, trade-offs, and alternatives considere
  
 **Decision:** Four isolated VLANs (10 Corporate, 20 Development, 66 Attacker, 99 SOC) routed through pfSense.
  
-**Rationale:** Models realistic enterprise segmentation. Enables non-trivial firewall policy and inter-VLAN lateral movement detection scenarios. Without segmentation, the problem space collapses to single-subnet packet inspection, which is not how modern SOCs operate.
+**Rationale:** Models realistic enterprise segmentation. Enables non-trivial firewall policy and inter-VLAN lateral movement detection scenarios. Without segmentation, the problem space collapses to single-subnet packet inspection, which is not how modern SOCs operate. That was a mistake I made in my last HomeLab
  
 **Alternative considered:** Single flat network at `192.168.10.0/24`
 **Why rejected:** Eliminates the most important detection problem space — lateral movement across trust zones.
