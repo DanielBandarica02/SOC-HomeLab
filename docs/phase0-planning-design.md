@@ -13,7 +13,7 @@ This phase produces no infrastructure. It consolidates the threat model, IP plan
 The lab supports four concrete outcomes:
  
 1. **Build a production-grade SOC** in miniature, with realistic network segmentation, telemetry pipelines, and out-of-band management.
-2. **Develop Blue Team skills** end-to-end: detection engineering, alert triage, incident response, and forensic investigation.
+2. **Develop Blue Team skills** end-to-end: detection engineering, threat detection, alert triage, incident response, and forensic investigation.
 3. **Practice the purple team workflow** by attacking the lab from the included Kali host and validating detections against generated events.
 4. **Demonstrate the above** in a portfolio repository structured for a Junior SOC Analyst hiring process.
 ---
