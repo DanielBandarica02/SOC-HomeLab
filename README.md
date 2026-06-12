@@ -15,20 +15,9 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 ## Architecture
 
 ```mermaid
-Para hacer que el recuadro de la VLAN 99 (SOC Management) destaque visualmente y luzca mucho más profesional, podemos aplicar técnicas avanzadas de diseño en Mermaid:
-
-Jerarquía Visual Inversa: Le daremos un fondo oscuro profundo diferenciado (#0f1115) con un borde naranja neón brillante (#ff9100) de doble grosor (stroke-width:2.5px).
-
-Iconografía de Bloque: Utilizaremos un título formateado con carácteres limpios y una separación interna más elegante.
-
-Efecto de Enfoque: Al oscurecer sutilmente el resto de las VLANs de la red interna, la zona del SOC se convertirá automáticamente en el centro de atención visual del diagrama para cualquiera que visite tu GitHub.
-
-Aquí tienes el código de Mermaid optimizado y listo para tu README.md:
-
-Fragmento de código
 graph TD
     %% ==========================================
-    %% GLOBAL CLASS DEFINITIONS & GRAPH THEME
+    %% GLOBAL CLASS DEFINITIONS AND GRAPH THEME
     %% ==========================================
     classDef perimeter fill:#b30000,stroke:#222,stroke-width:1.5px,color:#fff;
     classDef ingest fill:#007acc,stroke:#005a9e,stroke-width:1.5px,color:#fff;
@@ -39,7 +28,7 @@ graph TD
     classDef transit fill:#22252a,stroke:#7f8c8d,stroke-width:1px,color:#fff;
 
     %% ==========================================
-    %% EDGE & BOUNDARY CONTROL
+    %% EDGE AND BOUNDARY CONTROL
     %% ==========================================
     WAN_IN((Internet / External)) --> FW_CORE
 
@@ -50,7 +39,7 @@ graph TD
     end
 
     %% ==========================================
-    %% PRIVILEGED & ENDPOINT ZONE INFRASTRUCTURE
+    %% PRIVILEGED AND ENDPOINT ZONE INFRASTRUCTURE
     %% ==========================================
     subgraph VLAN_10 [VLAN 10: Corporate Domain]
         DC_2022["Windows Server 2022<br>10.10.10.10<br>Active Directory DC / DNS<br>Sysmon + Wazuh Agent"]:::winNode
@@ -62,10 +51,7 @@ graph TD
         CL_DEV_U["Ubuntu Desktop 24.04<br>10.10.20.20<br>Dev Engineering Host<br>Auditd + Agent"]:::nixNode
     end
 
-    %% ==========================================
-    %% HIGH-VISIBILITY SOC ZONE
-    %% ==========================================
-    subgraph VLAN_99 [🛡️ MULTI-TENANT SOC PLATFORM — VLAN 99]
+    subgraph VLAN_99 [VLAN 99: SOC Management Operations]
         SOC_WAZUH["Wazuh SIEM Manager<br>10.10.99.10<br>XDR Core / Indexer Node<br>TCP Ports: 1514, 55000"]:::ingest
         SOC_SPLUNK["Splunk Enterprise SIEM<br>10.10.99.20<br>Central Analytics Engine<br>TCP Ports: 8000, 8088"]:::siem
         SOC_WAZUH -->|HEC Event Stream| SOC_SPLUNK
@@ -99,14 +85,12 @@ graph TD
     LOG_BUS ==>|Structured JSON Ingestion| SOC_WAZUH
 
     %% ==========================================
-    %% ADVANCED CONTAINERS PRESETS (PREMIUM DARK)
+    %% CONTAINER RENDERING AND COLOR COMPATIBILITY
     %% ==========================================
     style VLAN_10 fill:#111418,stroke:#1f77b4,stroke-width:1.2px,color:#999;
     style VLAN_20 fill:#111418,stroke:#2ca02c,stroke-width:1.2px,color:#999;
     style VLAN_66 fill:#1a1313,stroke:#d62728,stroke-width:1.2px,color:#fff;
     style SECURITY_EDGE fill:#191111,stroke:#b30000,stroke-width:1.5px,color:#fff;
-    
-    %% Premium Cyber-SOC Neon Styling
     style VLAN_99 fill:#0f1115,stroke:#ff9100,stroke-width:2.5px,color:#fff;
 ```
 
