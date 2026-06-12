@@ -14,43 +14,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
  
 ## Architecture
 
-```mermaid
-graph TD
-    Internet((Internet)) -->|WAN| pfSense[pfSense CE<br>10.10.X.1]
 
-    subgraph V15 [VLAN 15: Server Zone]
-        DC["Windows Server 2022<br>10.10.15.10<br>(AD DC / DNS)"]
-    end
-
-    subgraph V10 [VLAN 10: Corporate]
-        Win11Corp["Windows 11 Pro<br>10.10.10.20<br>(Workstation)"]
-    end
-
-    subgraph V20 [VLAN 20: Development]
-        Win11Dev["Windows 11 Pro<br>10.10.20.10"]
-        UbuDesk["Ubuntu Desktop<br>10.10.20.20"]
-    end
-
-    subgraph V99 [VLAN 99: SOC Management]
-        Wazuh["Wazuh Server<br>10.10.99.10<br>(EDR Manager)"]
-        Splunk["Splunk Enterprise<br>10.10.99.20<br>(Central SIEM)"]
-    end
-
-    subgraph V66 [VLAN 66: Attacker DMZ]
-        Kali["Kali Linux<br>10.10.66.10"]
-    end
-
-    %% Enrutamiento Centralizado
-    pfSense <==> V15
-    pfSense <==> V10
-    pfSense <==> V20
-    pfSense <==> V99
-    pfSense <==> V66
-
-    %% Nota de Flujo lógico de control
-    Win11Corp -.->|Regra de Firewall: RDP Autorizado| pfSense 
-    pfSense -.->|Enruta RDP| V20
-```
 ---
  
 ## Lab Components
