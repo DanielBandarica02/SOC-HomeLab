@@ -72,7 +72,27 @@ graph TD
 
     %% Routing and Network Flows from Core
     Suricata -->|GW 10.10.10.1| CORP_ZONE
-    Sur
+    Suricata -->|GW 10.10.20.1| DEV_ZONE
+    Suricata -->|GW 10.10.99.1| SOC_ZONE
+
+    %% Attack Flow
+    Kali ==>|Adversary Emulation| Suricata
+    
+    %% Telemetry Flows
+    WinServer -.-> LogCollector
+    Win11Corp -.-> LogCollector
+    Win11Dev -.-> LogCollector
+    UbuDesk -.-> LogCollector
+    LogCollector ==>|Event Ingestion| Wazuh
+
+    %% ==========================================
+    %% DARK MODE STYLES FOR THE CONTAINERS
+    %% ==========================================
+    style CORP_ZONE fill:#161b22,stroke:#1f77b4,stroke-width:1.5px,color:#fff;
+    style DEV_ZONE fill:#161b22,stroke:#2ca02c,stroke-width:1.5px,color:#fff;
+    style SOC_ZONE fill:#1c1e22,stroke:#ff7f0e,stroke-width:1.5px,color:#fff;
+    style ATK_NET fill:#211a1a,stroke:#d62728,stroke-width:1.5px,color:#fff;
+    style LAB_CORE fill:#1f1515,stroke:#b30000,stroke-width:1.5px,color:#fff;
 ```
 
 ---
