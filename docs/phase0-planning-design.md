@@ -33,16 +33,7 @@ The lab supports four concrete outcomes:
 - Sysmon and Auditd telemetry on endpoints
 - 15+ custom detection rules mapped to MITRE ATT&CK
 - Four end-to-end attack scenarios with incident response reports
-### Explicitly out of scope (deferred)
- 
-- SOAR automation (Shuffle, TheHive) — planned for a future iteration
-- Threat intelligence platforms (MISP, OpenCTI) — planned for a future iteration
-- Cloud-native security (CSPM, CASB, cloud workload protection)
-- Container and Kubernetes runtime security
-- High availability or failover (Wazuh cluster, Splunk indexer cluster, pfSense CARP)
-- Multi-site routing
-- Real malware execution — only safe simulations are used
-- Physical-layer attacks (USB drops, hardware tampering, RF)
+
 ---
  
 ## 3. Threat Model
@@ -58,6 +49,7 @@ The lab models a small enterprise with an internet-exposed perimeter, internal c
 - Persistence via scheduled tasks, registry Run keys, new local accounts
 - Data exfiltration via HTTPS and DNS tunneling
 - Ransomware behavior — file rename + shadow copy deletion, simulated only
+  
 ### Threats explicitly not simulated
  
 - Real malware execution — all impact-stage activity uses Atomic Red Team tests or custom safe scripts
@@ -65,6 +57,7 @@ The lab models a small enterprise with an internet-exposed perimeter, internal c
 - Supply chain compromises
 - Cloud account takeover
 - Insider threats holding legitimate administrative credentials by policy (only compromised insiders are modeled)
+- 
 ### Trust boundaries
  
 | Boundary | Direction | Enforcement |
@@ -86,7 +79,7 @@ Each decision is recorded with rationale, trade-offs, and alternatives considere
  
 **Rationale:** Models realistic enterprise segmentation. Enables non-trivial firewall policy and inter-VLAN lateral movement detection scenarios. Without segmentation, the problem space collapses to single-subnet packet inspection, which is not how modern SOCs operate.
  
-**Alternative considered:** Single flat network at `192.168.10.0/24` (the structure of the prior lab iteration).
+**Alternative considered:** Single flat network at `192.168.10.0/24`
 **Why rejected:** Eliminates the most important detection problem space — lateral movement across trust zones.
  
 **Implementation note:** VirtualBox Internal Networks are used as virtual broadcast domains, one per VLAN. This is functionally equivalent to L3 isolation but is *not* real 802.1Q tag-based VLAN trunking. VLAN hopping attacks (Yersinia, double-tagging) cannot be practiced in this setup.
