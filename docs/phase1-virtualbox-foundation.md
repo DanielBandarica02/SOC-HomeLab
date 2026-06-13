@@ -27,7 +27,7 @@ Six ISO files are downloaded for the lab. Two ISOs (Ubuntu Server, Windows 11 Pr
  
 | OS | Edition | Source |
 |---|---|---|
-| pfSense CE (via Netgate Installer) | v1.2-RELEASE | https://www.pfsense.org/download/ → Netgate Store |
+| pfSense CE (via Netgate Installer) | v2.8.1 Release | https://www.pfsense.org/download/ → Netgate Store |
 | Windows Server 2022 | Eval (180 day) | https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022 |
 | Windows 11 Pro | Latest | https://www.microsoft.com/en-us/software-download/windows11 |
 | Ubuntu Server | 24.04 LTS | https://ubuntu.com/download/server |
