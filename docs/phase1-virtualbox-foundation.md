@@ -21,12 +21,12 @@ Phase 1 is pure preparation. It produces four deliverables:
 
 ---
  
-## 2. Installation media — download and verify
+## 2. Installation media
  
 Six ISO files are downloaded for the lab. Two ISOs (Ubuntu Server, Windows 11 Pro) are reused across multiple VMs to save bandwidth and storage.
  
 | OS | Edition | Source |
-|---|---|---|---|
+|---|---|---|
 | pfSense CE (via Netgate Installer) | v1.2-RELEASE | https://www.pfsense.org/download/ → Netgate Store |
 | Windows Server 2022 | Eval (180 day) | https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022 |
 | Windows 11 Pro | Latest | https://www.microsoft.com/en-us/software-download/windows11 |
