@@ -18,7 +18,6 @@ Phase 1 is pure preparation. It produces four deliverables:
 - Intel Core i7-14700KF (20 cores, 28 threads)
 - 32 GB DDR5 Minimum
 - NVMe storage with 250 GB+ free for VM disks
-- Hardware virtualization enabled in BIOS (Intel VT-x)
 
 ---
  
