@@ -38,9 +38,7 @@ Six ISO files are downloaded for the lab. Two ISOs (Ubuntu Server, Windows 11 Pr
  
 ## 3. VirtualBox preparation
  
-A VM Group named **`SOC HomeLab`** is created in VirtualBox to group all eight lab VMs in one collapsible folder. The group exists empty at the end of Phase 1; VMs are added to it as they are created in Phase 2 onward.
- 
-The four VirtualBox Internal Networks used to model the VLANs are *not* pre-created. They materialize automatically the first time a VM with a matching adapter is started (this happens in Phase 2 when pfSense boots for the first time). The names used are case-sensitive and whitespace-sensitive:
+A VM Group named **`SOC HomeLab`** is created in VirtualBox to group all eight lab VMs in one collapsible folder. 
  
 | Network name | VLAN | Purpose |
 |---|---|---|
@@ -51,23 +49,12 @@ The four VirtualBox Internal Networks used to model the VLANs are *not* pre-crea
  
 ---
  
-## 6. Conventions
+## 4. Conventions
  
 ### VM naming
  
 Format: `SOC-{VLAN-or-zone}-{Role}`. All VMs go inside the `SOC HomeLab` VM Group.
  
-| VM | Name |
-|---|---|
-| pfSense edge router | `SOC-Edge-pfSense` |
-| Active Directory DC | `SOC-10-DC` |
-| Windows 11 Pro Corporate | `SOC-10-Corp-WS` |
-| Windows 11 Pro Dev | `SOC-20-Dev-Win` |
-| Ubuntu Desktop Dev | `SOC-20-Dev-Ubuntu` |
-| Wazuh manager | `SOC-99-Wazuh` |
-| Splunk SIEM | `SOC-99-Splunk` |
-| Kali attacker | `SOC-66-Kali` |
-
 ![SOC HomeLab Group](../screenshots/phase1/soc-homelab-group.png)
 
 ---
