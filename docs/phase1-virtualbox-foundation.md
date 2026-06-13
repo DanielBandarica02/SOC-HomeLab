@@ -1,6 +1,6 @@
 # Phase 1 — VirtualBox Foundation
  
-> **Goal:** Prepare the hypervisor, installation media, and operating conventions so that all subsequent phases can provision VMs against a consistent baseline.
+> **Goal:** Prepare the hypervisor, installation media, and operating conventions so that all subsequent phases can provision.
  
 ## Overview
  
