@@ -9,6 +9,14 @@
 This lab implements a production-grade SOC architecture across eight virtual machines distributed in four isolated VLANs, routed and firewalled through pfSense. The full pipeline includes perimeter and inter-VLAN intrusion detection (Suricata on pfSense), endpoint monitoring (Wazuh), centralized log ingestion (Splunk via HEC), enhanced Windows telemetry (Sysmon), and an Active Directory environment for realistic attack simulation. Network segmentation enforces an out-of-band SOC management plane, a dedicated attacker DMZ, and controlled cross-VLAN access between corporate and development networks.
  
 Beyond infrastructure, the project covers all stages of the SOC analyst workflow — from rule writing and attack execution to forensic investigation, hunt operations, automated response, and threat intelligence enrichment.
+
+---
+
+### Architectural Evolution & Rationale
+
+This lab represents a major iteration over my previous HomeLab environment. Through ongoing research into enterprise network security, I identified that a flat network architecture (where all assets sit in a single subnet) constitutes a critical vulnerability and fails to reflect real-world corporate environments. 
+
+To address this gap and implement a true "Defense in Depth" strategy, this project leverages strict VLAN segmentation. By isolating corporate users, software development assets, and SOC management tools into distinct trust zones, the infrastructure restricts lateral movement. If an attacker compromises a single host or VLAN, network access policies prevent them from easily escalating privileges or gaining control over the entire organization.
  
 ---
  
