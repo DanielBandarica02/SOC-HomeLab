@@ -37,6 +37,8 @@
   </marker>
 </defs>
 
+<rect x="0" y="0" width="1100" height="1000" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+
 <text x="550" y="40" text-anchor="middle" class="title">SOC HomeLab — Network Architecture</text>
 <text x="550" y="66" text-anchor="middle" class="subtitle">VLAN-segmented security operations laboratory · pfSense routing · Wazuh + Splunk SIEM · out-of-band management</text>
 
@@ -69,46 +71,46 @@
 <text x="669" y="274" text-anchor="middle" class="arrow-label" fill="#DC2626">attack traffic</text>
 
 <line x1="410" y1="355" x2="410" y2="378" stroke="#94A3B8" stroke-width="1.5"/>
-<path d="M 410 378 L 290 378 L 290 405" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr-gray)"/>
-<path d="M 410 378 L 810 378 L 810 405" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr-gray)"/>
+<path d="M 410 378 L 255 378 L 255 405" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr-gray)"/>
+<path d="M 410 378 L 805 378 L 805 405" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr-gray)"/>
 
-<rect x="60" y="415" width="460" height="240" rx="14" fill="#DBEAFE" fill-opacity="0.45" stroke="#3B82F6" stroke-width="1.5"/>
-<text x="80" y="440" class="vlan-title" fill="#1E3A8A">VLAN 10 — Corporate Domain</text>
-<text x="80" y="458" class="vlan-cidr" fill="#1E40AF">10.10.10.0/24</text>
+<rect x="40" y="415" width="430" height="240" rx="14" fill="#DBEAFE" fill-opacity="0.45" stroke="#3B82F6" stroke-width="1.5"/>
+<text x="60" y="440" class="vlan-title" fill="#1E3A8A">VLAN 10 — Corporate Domain</text>
+<text x="60" y="458" class="vlan-cidr" fill="#1E40AF">10.10.10.0/24</text>
 
-<rect x="80" y="475" width="420" height="75" rx="6" fill="white" stroke="#BFDBFE" stroke-width="1"/>
-<rect x="80" y="475" width="4" height="75" fill="#3B82F6"/>
-<text x="96" y="496" class="host-name">Windows Server 2022</text>
-<text x="96" y="515" class="host-ip">10.10.10.10</text>
-<text x="96" y="537" class="host-role">Active Directory DC + Sysmon + Wazuh Agent</text>
+<rect x="60" y="475" width="390" height="75" rx="6" fill="white" stroke="#BFDBFE" stroke-width="1"/>
+<rect x="60" y="475" width="4" height="75" fill="#3B82F6"/>
+<text x="76" y="496" class="host-name">Windows Server 2022</text>
+<text x="76" y="515" class="host-ip">10.10.10.10</text>
+<text x="76" y="537" class="host-role">Active Directory DC + Sysmon + Wazuh Agent</text>
 
-<rect x="80" y="560" width="420" height="75" rx="6" fill="white" stroke="#BFDBFE" stroke-width="1"/>
-<rect x="80" y="560" width="4" height="75" fill="#3B82F6"/>
-<text x="96" y="581" class="host-name">Windows 11 Pro — Corporate</text>
-<text x="96" y="600" class="host-ip">10.10.10.20</text>
-<text x="96" y="622" class="host-role">Domain workstation + Sysmon + Wazuh Agent</text>
+<rect x="60" y="560" width="390" height="75" rx="6" fill="white" stroke="#BFDBFE" stroke-width="1"/>
+<rect x="60" y="560" width="4" height="75" fill="#3B82F6"/>
+<text x="76" y="581" class="host-name">Windows 11 Pro — Corporate</text>
+<text x="76" y="600" class="host-ip">10.10.10.20</text>
+<text x="76" y="622" class="host-role">Domain workstation + Sysmon + Wazuh Agent</text>
 
-<rect x="580" y="415" width="460" height="240" rx="14" fill="#EDE9FE" fill-opacity="0.5" stroke="#8B5CF6" stroke-width="1.5"/>
-<text x="600" y="440" class="vlan-title" fill="#4C1D95">VLAN 20 — Software Development</text>
-<text x="600" y="458" class="vlan-cidr" fill="#5B21B6">10.10.20.0/24</text>
+<rect x="590" y="415" width="430" height="240" rx="14" fill="#EDE9FE" fill-opacity="0.5" stroke="#8B5CF6" stroke-width="1.5"/>
+<text x="610" y="440" class="vlan-title" fill="#4C1D95">VLAN 20 — Software Development</text>
+<text x="610" y="458" class="vlan-cidr" fill="#5B21B6">10.10.20.0/24</text>
 
-<rect x="600" y="475" width="420" height="75" rx="6" fill="white" stroke="#DDD6FE" stroke-width="1"/>
-<rect x="600" y="475" width="4" height="75" fill="#8B5CF6"/>
-<text x="616" y="496" class="host-name">Windows 11 Pro — Dev</text>
-<text x="616" y="515" class="host-ip">10.10.20.10</text>
-<text x="616" y="537" class="host-role">Dev workstation + Sysmon + Wazuh Agent</text>
+<rect x="610" y="475" width="390" height="75" rx="6" fill="white" stroke="#DDD6FE" stroke-width="1"/>
+<rect x="610" y="475" width="4" height="75" fill="#8B5CF6"/>
+<text x="626" y="496" class="host-name">Windows 11 Pro — Dev</text>
+<text x="626" y="515" class="host-ip">10.10.20.10</text>
+<text x="626" y="537" class="host-role">Dev workstation + Sysmon + Wazuh Agent</text>
 
-<rect x="600" y="560" width="420" height="75" rx="6" fill="white" stroke="#DDD6FE" stroke-width="1"/>
-<rect x="600" y="560" width="4" height="75" fill="#8B5CF6"/>
-<text x="616" y="581" class="host-name">Ubuntu Desktop 24.04 — Dev</text>
-<text x="616" y="600" class="host-ip">10.10.20.20</text>
-<text x="616" y="622" class="host-role">Dev workstation + Auditd + Wazuh Agent</text>
+<rect x="610" y="560" width="390" height="75" rx="6" fill="white" stroke="#DDD6FE" stroke-width="1"/>
+<rect x="610" y="560" width="4" height="75" fill="#8B5CF6"/>
+<text x="626" y="581" class="host-name">Ubuntu Desktop 24.04 — Dev</text>
+<text x="626" y="600" class="host-ip">10.10.20.20</text>
+<text x="626" y="622" class="host-role">Dev workstation + Auditd + Wazuh Agent</text>
 
-<line x1="520" y1="597" x2="578" y2="597" stroke="#059669" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr-green)"/>
-<text x="549" y="588" text-anchor="middle" class="arrow-label" fill="#059669">VPN / RDP</text>
+<line x1="475" y1="597" x2="585" y2="597" stroke="#059669" stroke-width="2.5" stroke-dasharray="6 3" marker-end="url(#arr-green)"/>
+<text x="530" y="588" text-anchor="middle" class="arrow-label" fill="#059669">VPN / RDP</text>
 
-<path d="M 290 655 L 290 695 L 450 695 L 450 730" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-indigo)"/>
-<path d="M 810 655 L 810 695 L 650 695 L 650 730" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-indigo)"/>
+<path d="M 255 655 L 255 695 L 450 695 L 450 730" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-indigo)"/>
+<path d="M 805 655 L 805 695 L 650 695 L 650 730" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-indigo)"/>
 <text x="550" y="688" text-anchor="middle" class="arrow-label" fill="#6366F1">Wazuh agent telemetry · TCP 1514</text>
 
 <rect x="180" y="735" width="740" height="195" rx="14" fill="#CCFBF1" fill-opacity="0.5" stroke="#0D9488" stroke-width="1.5"/>
