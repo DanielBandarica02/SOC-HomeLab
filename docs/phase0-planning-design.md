@@ -127,8 +127,8 @@ All VLANs use the `10.10.0.0/16` aggregate, subnetted by VLAN ID for memorabilit
 |---|---|---|---|---|---|
 | 10 | Corporate | `10.10.10.0/24` | `10.10.10.1` | `.100–.200` | `.10` (DC), `.20` (workstation) |
 | 20 | Development | `10.10.20.0/24` | `10.10.20.1` | `.100–.200` | `.10` (Win11 dev), `.20` (Ubuntu dev) |
-| 66 | Attacker DMZ | `10.10.66.0/24` | `10.10.66.1` | n/a (static) | `.10` (Kali) |
-| 99 | SOC Management | `10.10.99.0/24` | `10.10.99.1` | n/a (static) | `.10` (Wazuh), `.20` (Splunk) |
+| 66 | Attacker DMZ | `10.10.66.0/24` | `10.10.66.1` | static | `.10` (Kali) |
+| 99 | SOC Management | `10.10.99.0/24` | `10.10.99.1` | static | `.10` (Wazuh), `.20` (Splunk) |
 | 100 | OpenVPN clients | `10.10.100.0/24` | (pfSense) | `.2–.50` | — |
  
 **DNS:** pfSense forwards to the AD Domain Controller (`10.10.10.10`) for the internal `.lab` zone and falls back to `1.1.1.1` for external resolution.
