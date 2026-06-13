@@ -68,7 +68,7 @@ Format: `SOC-{VLAN-or-zone}-{Role}`. All VMs go inside the `SOC HomeLab` VM Grou
 | Splunk SIEM | `SOC-99-Splunk` |
 | Kali attacker | `SOC-66-Kali` |
 
-![SOC HomeLab Group](/screenshots/phase1/soc-homelab-group.md)
+![SOC HomeLab Group](../screenshots/phase1/soc-homelab-group.md)
 
 ---
  
