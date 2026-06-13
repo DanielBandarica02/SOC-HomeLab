@@ -67,60 +67,9 @@ Format: `SOC-{VLAN-or-zone}-{Role}`. All VMs go inside the `SOC HomeLab` VM Grou
 | Wazuh manager | `SOC-99-Wazuh` |
 | Splunk SIEM | `SOC-99-Splunk` |
 | Kali attacker | `SOC-66-Kali` |
- 
-### Default VM settings
- 
-Applied to every VM unless overridden in the phase that creates it:
- 
-| Setting | Value |
-|---|---|
-| Chipset | ICH9 |
-| Audio | Disabled |
-| USB Controller | USB 3.0 (xHCI) |
-| Shared Clipboard | Bidirectional (after Guest Additions) |
-| Drag & drop | Bidirectional |
-| Time sync (guest → host) | Enabled |
- 
-### Snapshot policy
- 
-Five named snapshot stages are used per VM:
- 
-| Snapshot name | When to take it |
-|---|---|
-| `clean-install` | Immediately after OS installation, before any configuration |
-| `base-config` | After timezone, hostname, network, and admin user are set |
-| `pre-tool` | Before installing the primary tool of that VM (Wazuh, Splunk, AD role, Sysmon, etc.) |
-| `working` | After the VM is verified functional |
-| `pre-attack` | Before each attack scenario in Phase 9, on the targeted Corp and Dev VMs |
- 
-Snapshots are reclaimed on delete. The discipline of snapshotting before every destructive operation saves hours of rebuild time over the life of the lab.
- 
----
- 
-## 7. Decisions recorded
- 
-Two non-obvious decisions were made during Phase 1 and are recorded here for traceability.
- 
-### 7.1 Windows Server 2022 over 2019
- 
-**Decision:** Windows Server 2022 Evaluation is used for the Active Directory Domain Controller, not 2019.
- 
-**Rationale:** The lab is a detection-engineering exercise, not an exploit-development exercise. The attacks targeted (Kerberoasting, AS-REP roasting, password spraying, LSASS dumping, lateral movement via SMB/PsExec) exploit Active Directory protocol behaviour and Windows authentication semantics — not OS-version-specific CVEs. They fire identically on both 2019 and 2022. Detection by Sysmon, Wazuh, and Splunk also behaves identically.
- 
-What actually matters for "more vulnerable" is the **hardening posture**, not the OS version. The lab uses default Windows Server 2022 configuration without hardening (no LAPS, no tiered admin, no AppLocker, no Credential Guard, no Protected Users group), and adds intentional AD misconfigurations during Phase 4 (Kerberoastable service accounts, AS-REP-eligible users, weak ACLs) to expose the attack surface deliberately.
- 
-**Trade-off:** None. Server 2022 has mainstream support through October 2026, is the current LTSC release in real enterprises, and reads as a stronger signal in a portfolio than the older 2019.
- 
-### 7.2 Netgate Installer (new pfSense distribution)
- 
-**Context:** Netgate (the company behind pfSense) no longer distributes pfSense CE as a standalone ISO. The current distribution is a unified **Netgate Installer** (v1.2-RELEASE at time of build) that handles both pfSense Plus and pfSense CE installs.
- 
-**How it works:** The installer detects whether the host hardware is eligible for pfSense Plus (Netgate appliances, paid accounts). On non-eligible hardware — including any VirtualBox VM — it presents the option to install pfSense CE.
- 
-**Implication for the lab:** The download is named `netgate-installer-v1.2-RELEASE-amd64.iso.gz` rather than the classic `pfSense-CE-2.x.x-RELEASE-amd64.iso.gz`. Older tutorials referencing the classic CE ISO are out of date. The actual CE version (2.8.1 at the time of this lab build) is selected during install, not at download time.
- 
-**Trade-off:** None operationally. The end result is a vanilla pfSense CE install. The only adjustment versus older guides is the artifact name and the extra "select CE" step during installation.
- 
+
+![SOC HomeLab Group](/screenshots/phase1/soc-homelab-group.md)
+
 ---
  
 ## Next phase
