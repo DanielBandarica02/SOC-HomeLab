@@ -53,7 +53,7 @@ A VM Group named **`SOC HomeLab`** is created in VirtualBox to group all eight l
  
 ### VM naming
  
-Format: `SOC-{VLAN-or-zone}-{Role}`. All VMs go inside the `SOC HomeLab` VM Group.
+Format: `SOC-{VLAN}-{Role}`. All VMs go inside the `SOC HomeLab` VM Group.
  
 ![SOC HomeLab Group](../screenshots/phase1/soc-homelab-group.png)
 
