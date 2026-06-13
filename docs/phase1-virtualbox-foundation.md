@@ -34,34 +34,9 @@ Six ISO files are downloaded for the lab. Two ISOs (Ubuntu Server, Windows 11 Pr
 | Ubuntu Desktop | 24.04 LTS | https://ubuntu.com/download/desktop |
 | Kali Linux | Installer (latest) | https://www.kali.org/get-kali/#kali-installer-images |
  
-### Decompressing .iso.gz files
- 
-The pfSense download arrives as `netgate-installer-v1.2-RELEASE-amd64.iso.gz` — a gzip-compressed ISO. VirtualBox cannot mount `.iso.gz` directly, so the file must be decompressed first. On Windows this is done with 7-Zip (right-click → Extract Here) or PowerShell:
- 
-```powershell
-$src = "D:\VirtualBox\ISOs\netgate-installer-v1.2-RELEASE-amd64.iso.gz"
-$dst = "D:\VirtualBox\ISOs\netgate-installer-v1.2-RELEASE-amd64.iso"
-$in  = [System.IO.File]::OpenRead($src)
-$out = [System.IO.File]::Create($dst)
-$gz  = New-Object System.IO.Compression.GZipStream($in, [IO.Compression.CompressionMode]::Decompress)
-$gz.CopyTo($out); $gz.Close(); $out.Close(); $in.Close()
-```
- 
-### Checksum verification
- 
-SHA256 checksums are verified against the values published by each project on their official download or checksum page. **Checksums for `.gz` files are computed against the compressed file**, not the extracted ISO — verify before decompressing.
- 
-```powershell
-Get-FileHash -Algorithm SHA256 "D:\VirtualBox\ISOs\*"
-```
- 
-For Microsoft ISOs (Windows Server 2022, Windows 11 Pro) the SHA256 is not always published. In those cases, digital signature verification is used instead: right-click the `.iso` → Properties → Digital Signatures → confirm the signer is `Microsoft Corporation` and the signature is valid.
- 
-Any checksum mismatch means the file is re-downloaded. No ISO proceeds to the install phase without a verified hash or valid signature.
- 
 ---
  
-## 5. VirtualBox preparation
+## 3. VirtualBox preparation
  
 A VM Group named **`SOC HomeLab`** is created in VirtualBox to group all eight lab VMs in one collapsible folder. The group exists empty at the end of Phase 1; VMs are added to it as they are created in Phase 2 onward.
  
