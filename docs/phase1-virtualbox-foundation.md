@@ -25,14 +25,14 @@ Phase 1 is pure preparation. It produces four deliverables:
  
 Six ISO files are downloaded for the lab. Two ISOs (Ubuntu Server, Windows 11 Pro) are reused across multiple VMs to save bandwidth and storage.
  
-| OS | Edition | Source | Approx. size |
+| OS | Edition | Source |
 |---|---|---|---|
-| pfSense CE (via Netgate Installer) | v1.2-RELEASE | https://www.pfsense.org/download/ → Netgate Store | ~330 MB compressed |
-| Windows Server 2022 | Eval (180 day) | https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022 | ~5 GB |
-| Windows 11 Pro | Latest | https://www.microsoft.com/en-us/software-download/windows11 | ~6 GB |
-| Ubuntu Server | 24.04 LTS | https://ubuntu.com/download/server | ~2.5 GB |
-| Ubuntu Desktop | 24.04 LTS | https://ubuntu.com/download/desktop | ~5 GB |
-| Kali Linux | Installer (latest) | https://www.kali.org/get-kali/#kali-installer-images | ~4 GB |
+| pfSense CE (via Netgate Installer) | v1.2-RELEASE | https://www.pfsense.org/download/ → Netgate Store |
+| Windows Server 2022 | Eval (180 day) | https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022 |
+| Windows 11 Pro | Latest | https://www.microsoft.com/en-us/software-download/windows11 |
+| Ubuntu Server | 24.04 LTS | https://ubuntu.com/download/server |
+| Ubuntu Desktop | 24.04 LTS | https://ubuntu.com/download/desktop |
+| Kali Linux | Installer (latest) | https://www.kali.org/get-kali/#kali-installer-images |
  
 ### Decompressing .iso.gz files
  
