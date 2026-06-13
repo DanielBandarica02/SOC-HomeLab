@@ -12,7 +12,7 @@ Beyond infrastructure, the project covers all stages of the SOC analyst workflow
 
 ---
 
-### Architectural Evolution & Rationale
+### Architectural Evolution
 
 This lab represents a major iteration over my previous HomeLab environment. Through ongoing research into enterprise network security, I identified that a flat network architecture (where all assets sit in a single subnet) constitutes a critical vulnerability and fails to reflect real-world corporate environments. 
 
