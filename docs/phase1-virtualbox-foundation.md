@@ -1,68 +1,28 @@
 # Phase 1 — VirtualBox Foundation
  
-> **Goal:** Prepare the hypervisor, installation media, and operating conventions so that all subsequent phases can provision VMs against a consistent baseline. No actual VM provisioning happens in this phase — that begins in Phase 2.
+> **Goal:** Prepare the hypervisor, installation media, and operating conventions so that all subsequent phases can provision VMs against a consistent baseline.
  
 ## Overview
  
 Phase 1 is pure preparation. It produces four deliverables:
  
 1. A verified VirtualBox installation with the matching Extension Pack
-2. All required installation media downloaded and integrity-checked
+2. All required installation media downloaded
 3. A folder structure for ISOs and VM storage
-4. Documented naming and snapshot conventions used by every subsequent phase
-This phase is intentionally boring. Every shortcut taken here multiplies into pain in later phases — corrupted ISOs cause kernel panics that look like driver issues, inconsistent VM names break automation scripts, missing snapshots force full rebuilds when a configuration breaks.
+4. Documented naming
  
 ---
  
 ## 1. Host requirements
  
-The lab runs on a Windows 11 Pro host with the following specs (per [Phase 0 budget](phase0-planning-design.md#6-hardware--resource-budget)):
- 
 - Intel Core i7-14700KF (20 cores, 28 threads)
-- 32 GB DDR5
+- 32 GB DDR5 Minimum
 - NVMe storage with 250 GB+ free for VM disks
 - Hardware virtualization enabled in BIOS (Intel VT-x)
-### Verifying hardware virtualization
- 
-On Windows, hardware virtualization status is reported in Task Manager → Performance → CPU panel, bottom-right: `Virtualization: Enabled`. If disabled, reboot into UEFI/BIOS and enable Intel VT-x (Intel) or SVM Mode (AMD). On HP and Dell systems this setting typically lives under *Advanced* or *Security* submenus.
- 
+
 ---
  
-## 2. VirtualBox + Extension Pack
- 
-Required: **VirtualBox 7.0 or newer** and the matching Oracle Extension Pack.
- 
-### Installation
- 
-VirtualBox installer and matching Extension Pack are downloaded from https://www.virtualbox.org/wiki/Downloads. The Extension Pack version must match the VirtualBox installer version exactly.
- 
-After installing VirtualBox with default options, the Extension Pack is added via the GUI: **File → Tools → Extension Pack Manager → Install**.
- 
-### Verification
- 
-```powershell
-VBoxManage --version
-VBoxManage list extpacks
-```
- 
-The Extension Pack must appear as `Oracle VM VirtualBox Extension Pack` with `Usable: true`. It provides VRDE (RDP into headless VMs), USB 2.0/3.0 passthrough, and PXE boot for Intel NICs — all used in later phases.
- 
----
- 
-## 3. Storage layout
- 
-Two dedicated folders are used to keep installation media separate from VM disks:
- 
-| Purpose | Path | Notes |
-|---|---|---|
-| ISO storage | `D:\VirtualBox\ISOs\` | All installation media in one place, referenced consistently |
-| VM storage | (VirtualBox default machine folder) | Set under File → Preferences → General → Default Machine Folder |
- 
-The VM storage folder is configured in VirtualBox preferences to point to a partition with at least 250 GB free. With dynamic disk allocation, the eight planned VMs allocate ~303 GB but typically use 130-180 GB in practice.
- 
----
- 
-## 4. Installation media — download and verify
+## 2. Installation media — download and verify
  
 Six ISO files are downloaded for the lab. Two ISOs (Ubuntu Server, Windows 11 Pro) are reused across multiple VMs to save bandwidth and storage.
  
