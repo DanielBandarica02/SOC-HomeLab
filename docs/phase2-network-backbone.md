@@ -172,12 +172,11 @@ The standard `OOBE\BYPASSNRO` workaround for creating a local account during Win
 | ---------- | ----------- |
 | [![pfSense console with interfaces](../screenshots/phase2/01-pfsense-console-interfaces-configured.png)](../screenshots/phase2/01-pfsense-console-interfaces-configured.png) | pfSense console banner showing the 5 interfaces with their IPs |
 | [![pfSense webGUI dashboard](../screenshots/phase2/02-pfsense-webgui-dashboard.png)](../screenshots/phase2/02-pfsense-webgui-dashboard.png) | pfSense webGUI dashboard after Setup Wizard |
-| [![OPT firewall rules](../screenshots/phase2/03-opt-firewall-rules.png)](../screenshots/phase2/03-opt-firewall-rules.png) | The three permissive baseline rules on OPT1/OPT2/OPT3 |
-| [![Ping 8.8.8.8 success](../screenshots/phase2/04-diagnostics-ping-8888-success.png)](../screenshots/phase2/04-diagnostics-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — IP-layer connectivity OK |
-| [![Ping google.com fails](../screenshots/phase2/05-diagnostics-ping-google-fails.png)](../screenshots/phase2/05-diagnostics-ping-google-fails.png) | `Diagnostics → Ping → google.com` — DNS resolution broken |
-| [![DNS Resolver DNSSEC unchecked](../screenshots/phase2/06-dns-resolver-dnssec-unchecked.png)](../screenshots/phase2/06-dns-resolver-dnssec-unchecked.png) | `Services → DNS Resolver` — `Enable DNSSEC Support` unchecked |
-| [![Ping google.com success](../screenshots/phase2/07-diagnostics-ping-google-success.png)](../screenshots/phase2/07-diagnostics-ping-google-success.png) | `Diagnostics → Ping → google.com` — DNS works after DNSSEC disabled |
-| [![Suricata install success](../screenshots/phase2/08-suricata-install-success.png)](../screenshots/phase2/08-suricata-install-success.png) | `Package Manager` — Suricata 7.0.8_5 installed successfully |
+| [![Ping 8.8.8.8 success](../screenshots/phase2/04-diagnostics-ping-8888-success.png)](../screenshots/phase2/03-diagnostics-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — IP-layer connectivity OK |
+| [![Ping google.com fails](../screenshots/phase2/05-diagnostics-ping-google-fails.png)](../screenshots/phase2/04-diagnostics-ping-google-fails.png) | `Diagnostics → Ping → google.com` — DNS resolution broken |
+| [![DNS Resolver DNSSEC unchecked](../screenshots/phase2/06-dns-resolver-dnssec-unchecked.png)](../screenshots/phase2/05-dns-resolver-dnssec-unchecked.png) | `Services → DNS Resolver` — `Enable DNSSEC Support` unchecked |
+| [![Ping google.com success](../screenshots/phase2/07-diagnostics-ping-google-success.png)](../screenshots/phase2/06-diagnostics-ping-google-success.png) | `Diagnostics → Ping → google.com` — DNS works after DNSSEC disabled |
+| [![Suricata Interface](../screenshots/phase2/08-suricata-install-success.png)](../screenshots/phase2/07-suricata-interface.png) | `Package Manager` — Suricata Interface |
 
 ---
 
