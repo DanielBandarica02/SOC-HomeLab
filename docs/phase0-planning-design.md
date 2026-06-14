@@ -70,7 +70,7 @@ The lab models a small enterprise with an internet-exposed perimeter, internal c
 
 ## 4. Architecture Decisions
 
-Each decision is recorded with rationale, trade-offs, and alternatives considered. Future revisions of the lab can challenge or revise these — but the reasoning is preserved.
+Each decision is recorded with rationale and alternatives considered. Future revisions of the lab can challenge or revise these — but the reasoning is preserved.
 
 ### 4.1 Network segmentation via VLANs
 
