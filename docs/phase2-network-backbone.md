@@ -45,13 +45,6 @@ The pfSense VM was created with five virtual NICs (1 NAT + 4 Internal Network) t
 | 4 (em3) | Internal Network `vlan66-attack`    | Allow VMs        |
 | 5 (em4) | Internal Network `vlan99-soc`       | Allow VMs        |
  
-The VirtualBox GUI only exposes 4 NIC tabs in Settings → Network. The fifth adapter was configured from PowerShell:
- 
-```powershell
-VBoxManage modifyvm "SOC-Edge-pfSense" --nic5 intnet --intnet5 "vlan99-soc" `
-  --nictype5 82540EM --nicpromisc5 allow-vms --cableconnected5 on
-```
- 
 ### pfSense installation
  
 pfSense 2.8.1 was installed from the Netgate Installer ISO (`netgate-installer-v1.2-RELEASE-amd64.iso.gz`, decompressed before mounting). Installation parameters: UFS file system, GPT partition scheme, `ada0` as target disk.
@@ -67,8 +60,6 @@ From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, 
 | OPT1      | 10.10.20.1/24    | Enabled (.100-.200)       |
 | OPT2      | 10.10.66.1/24    | Disabled (static Kali)    |
 | OPT3      | 10.10.99.1/24    | Disabled (static SOC VMs) |
- 
-802.1Q VLAN tagging was declined at the assignment prompt — the lab uses VirtualBox Internal Networks as L2 broadcast domains, which provides equivalent isolation without trunk configuration.
  
 ### Win 11 Corp bootstrap
  
@@ -86,7 +77,6 @@ The first-run wizard was completed with:
 | Secondary DNS                 | `8.8.8.8`                              |
 | Timezone                      | `Europe/Madrid`                        |
 | Block RFC1918 on WAN          | Unchecked                              |
-| Admin password                | Changed from default                   |
  
 `Block RFC1918 Private Networks` was unchecked because the VirtualBox NAT gateway lives in `10.0.2.0/24`, which is RFC1918 — blocking it would prevent pfSense from reaching its own gateway.
  
