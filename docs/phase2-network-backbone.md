@@ -175,7 +175,7 @@ The standard `OOBE\BYPASSNRO` workaround for creating a local account during Win
 | ![Ping 8.8.8.8 success](../screenshots/phase2/03-diagnostics-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — IP-layer connectivity OK |
 | ![DNS Resolver DNSSEC unchecked](../screenshots/phase2/04-dns-resolver-dnssec-unchecked.png) | `Services → DNS Resolver` — `Enable DNSSEC Support` unchecked |
 | ![Ping google.com success](../screenshots/phase2/05-diagnostics-ping-google-success.png) | `Diagnostics → Ping → google.com` — DNS works after DNSSEC disabled |
-| ![Suricata Interface](../screenshots/phase2/06-suricata-install-success.png) | `Package Manager` — Suricata Interface |
+| ![Suricata Interface](../screenshots/phase2/06-suricata-interface.png) | `Package Manager` — Suricata Interface |
 
 ---
 
