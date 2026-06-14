@@ -14,7 +14,7 @@ pfSense was deployed as the lab's edge router, providing routing between four is
 | --------------- | ------------- | ------------------------------------ |
 | pfSense CE      | 2.8.1-RELEASE | FreeBSD VM — 5 NICs                  |
 | Suricata        | 7.0.8_5       | pfSense package                      |
-| Win 11 Pro Corp | 24H2          | VLAN 10 — 10.10.10.102 (DHCP)        |
+| Win 11 Pro Corp | 25H2          | VLAN 10 — 10.10.10.102 (DHCP)        |
 
 > Wazuh Manager and Splunk Enterprise are deployed in [Phase 3 — SOC Stack Deployment](phase3-soc-stack.md).
 
