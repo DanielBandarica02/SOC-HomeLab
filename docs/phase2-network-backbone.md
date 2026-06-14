@@ -86,7 +86,7 @@ The first-run wizard was completed with:
 
 NAT outbound was changed from Automatic to **Hybrid Outbound NAT rule generation** under `Firewall → NAT → Outbound`. Hybrid preserves the auto-generated rules while allowing manual rules to be added on top.
 
-### Firewall rules — permissive baseline
+### Firewall rules
 
 OPT1, OPT2, and OPT3 have no default rules and deny all traffic by default. A permissive "allow any to any" rule was added per OPT interface to enable subsequent VMs to install packages and download tools:
 
