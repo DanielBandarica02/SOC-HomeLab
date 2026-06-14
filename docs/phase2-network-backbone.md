@@ -44,44 +44,13 @@ The pfSense VM has five virtual NICs. Their order matters because pfSense detect
 | 4 | Internal Network | `vlan66-attack` | Allow VMs |
 | 5 | Internal Network | `vlan99-soc` | Allow VMs |
  
-All five use **Intel PRO/1000 MT Desktop (82540EM)** as adapter type. FreeBSD has native drivers for this NIC; other VirtualBox NIC types (paravirtualized, virtio) can produce flaky behavior on FreeBSD guests.
+All five use **Intel PRO/1000 MT Desktop (82540EM)** as adapter type. FreeBSD has native drivers for this NIC.
  
-**Promiscuous mode** is set to *Allow VMs* on the four Internal Network adapters. This lets Suricata (running on pfSense) observe intra-VLAN traffic that does not transit pfSense's routing plane — necessary to detect lateral movement *within* a VLAN, not only across them.
- 
-### The 4-adapter GUI limitation
- 
-VirtualBox 7's GUI only exposes adapters 1–4 in the Network settings panel. The fifth adapter must be configured via CLI:
- 
-```powershell
-& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm "SOC-Edge-pfSense" `
-  --nic5 intnet --intnet5 "vlan99-soc" --nictype5 82540EM `
-  --nicpromisc5 allow-vms --cableconnected5 on
-```
- 
-Once configured this way the adapter is fully functional, even though the GUI continues to show only the first four. To verify all five NICs are correctly attached:
- 
-```powershell
-VBoxManage showvminfo "SOC-Edge-pfSense" | Select-String "NIC"
-```
+**Promiscuous mode** is set to Allow VMs on the four Internal Network adapters. This lets Suricata (running on pfSense) observe intra-VLAN traffic that does not transit pfSense's routing plane — necessary to detect lateral movement *within* a VLAN, not only across them.
  
 ---
  
-## 2. Installation media — pfSense 2.8.1
- 
-The pfSense download is a gzipped ISO: `netgate-installer-v1.2-RELEASE-amd64.iso.gz` (~330 MB). VirtualBox does not mount `.iso.gz` directly, so it is decompressed before use.
- 
-The Netgate Installer is a unified installer for pfSense Plus and pfSense CE. On non-Netgate hardware (any VirtualBox VM), it offers pfSense CE installation. Version 2.8.1 was selected during installation as the most current stable release at build time.
- 
-Installation parameters chosen:
- 
-- **File system:** UFS — simpler than ZFS and sufficient for a single-disk VM. ZFS adds RAM overhead (ARC cache) that pfSense + Suricata can use better elsewhere.
-- **Partition scheme:** GPT — compatible with both BIOS and EFI boot.
-- **Disk target:** `ada0` (the only virtual disk).
-After install completes the installation media is unmounted from VirtualBox (*Devices → Optical Drives → Remove disk from virtual drive*) before reboot, so the VM boots from the installed disk on first boot.
- 
----
- 
-## 3. Interface assignment
+## 2. Interface assignment
  
 On first boot pfSense asks how to map the detected physical interfaces (em0–em4) to logical roles. The lab uses this fixed mapping:
  
