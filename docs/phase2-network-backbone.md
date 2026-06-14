@@ -65,7 +65,7 @@ From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, 
 
 ### Win 11 Corp bootstrap
 
-The pfSense webGUI is only reachable from a host inside one of the configured VLANs. The Windows 11 Pro Corporate workstation was provisioned in VLAN 10 to serve as the bootstrap admin host, receiving `10.10.10.102` via DHCP and accessing the webGUI at `https://10.10.10.1`. Further configuration of this workstation (domain join, Sysmon, Wazuh agent) is deferred to [Phase 4 — Corporate Environment](phase4-corporate-env.md).
+The pfSense webGUI is only reachable from a host inside one of the configured VLANs. The Windows 11 Pro Corporate workstation was provisioned in VLAN 10 to serve as the bootstrap admin host, receiving `10.10.10.102` via DHCP and accessing the webGUI at `https://10.10.10.1`. Further configuration of this workstation (domain join, Sysmon, Wazuh agent) is documented on [Phase 4 — Corporate Environment](phase4-corporate-env.md).
 
 ### Setup Wizard
 
