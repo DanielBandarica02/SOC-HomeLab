@@ -54,7 +54,6 @@ The lab models a small enterprise with an internet-exposed perimeter, internal c
 - Real malware execution — all impact-stage activity uses Atomic Red Team tests or custom safe scripts
 - Volumetric DoS attacks — out of scope for detection engineering practice
 - Supply chain compromises
-- Cloud account takeover
 - Insider threats holding legitimate administrative credentials by policy (only compromised insiders are modeled)
 
 ### Trust boundaries
