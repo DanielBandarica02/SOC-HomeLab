@@ -47,13 +47,6 @@ The pfSense VM was created with five virtual NICs (1 NAT + 4 Internal Network) t
 | 4 (em3) | Internal Network `vlan66-attack`    | Allow VMs        |
 | 5 (em4) | Internal Network `vlan99-soc`       | Allow VMs        |
 
-The VirtualBox GUI only exposes 4 NIC tabs in Settings → Network. The fifth adapter was configured from PowerShell:
-
-```powershell
-VBoxManage modifyvm "SOC-Edge-pfSense" --nic5 intnet --intnet5 "vlan99-soc" `
-  --nictype5 82540EM --nicpromisc5 allow-vms --cableconnected5 on
-```
-
 ### pfSense installation
 
 pfSense 2.8.1 was installed from the Netgate Installer ISO (`netgate-installer-v1.2-RELEASE-amd64.iso.gz`, decompressed before mounting). Installation parameters: UFS file system, GPT partition scheme, `ada0` as target disk.
@@ -69,8 +62,6 @@ From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, 
 | OPT1      | 10.10.20.1/24    | Enabled (.100-.200)       |
 | OPT2      | 10.10.66.1/24    | Disabled (static Kali)    |
 | OPT3      | 10.10.99.1/24    | Disabled (static SOC VMs) |
-
-802.1Q VLAN tagging was declined at the assignment prompt — the lab uses VirtualBox Internal Networks for L2 isolation.
 
 ### Win 11 Corp bootstrap
 
@@ -88,7 +79,6 @@ The first-run wizard was completed with:
 | Secondary DNS                 | `8.8.8.8`                              |
 | Timezone                      | `Europe/Madrid`                        |
 | Block RFC1918 on WAN          | Unchecked                              |
-| Admin password                | Changed from default                   |
 
 `Block RFC1918 Private Networks` was unchecked because the VirtualBox NAT gateway lives in `10.0.2.0/24`, which is RFC1918 — blocking it would prevent pfSense from reaching its own gateway.
 
@@ -102,13 +92,10 @@ OPT1, OPT2, and OPT3 have no default rules and deny all traffic by default. A pe
 
 | Interface | Action | Source         | Destination | Description                                                                |
 | --------- | ------ | -------------- | ----------- | -------------------------------------------------------------------------- |
-| OPT1      | Pass   | OPT1 subnets   | any         | Allow OPT1 (Development) to any — bootstrap permissive, tightened in Phase 8 |
-| OPT2      | Pass   | OPT2 subnets   | any         | Allow OPT2 (Attacker DMZ) to any — bootstrap permissive, tightened in Phase 8 |
-| OPT3      | Pass   | OPT3 subnets   | any         | Allow OPT3 (SOC Management) to any — bootstrap permissive, tightened in Phase 8 |
+| OPT1      | Pass   | OPT1 subnets   | any         | Allow OPT1 (Development) to any |
+| OPT2      | Pass   | OPT2 subnets   | any         | Allow OPT2 (Attacker DMZ) to any |
+| OPT3      | Pass   | OPT3 subnets   | any         | Allow OPT3 (SOC Management) to any |
 
-> In pfSense 2.8.1 the source/destination dropdown renames `OPT1 net` (from older versions) to `OPT1 subnets`. Same meaning — the entire subnet behind the interface.
-
-Strict inter-VLAN rules will be added before Phase 8 once all VMs are running.
 
 ### Suricata package
 
@@ -117,7 +104,7 @@ Suricata was installed via `System → Package Manager → Available Packages`:
 - Package: `suricata` 7.0.8_5 (pfSense package wrapper)
 - Dependency: `suricata-7.0.1` (FreeBSD upstream port — the actual Suricata binary)
 
-The package and its dependency installed automatically. Suricata is left unconfigured at this stage — interfaces, rule sets and `eve.json` output are configured in [Phase 4 — Corporate Environment](phase4-corporate-env.md) after the SOC stack exists to ingest alerts.
+The package and its dependency installed automatically. Suricata is left unconfigured at this stage.
 
 ---
 
@@ -140,31 +127,15 @@ ping 8.8.8.8
 ping google.com
 ```
 
-Both succeeded after fix #3 in troubleshooting below, confirming the full path Win11 Corp → pfSense → NAT → Internet works for both IP and DNS-based traffic.
+Both succeeded after fix #1 in troubleshooting below, confirming the full path Win11 Corp → pfSense → NAT → Internet works for both IP and DNS-based traffic.
 
 ---
 
 ## Troubleshooting & Lessons Learned
 
-### 1. "CPU doesn't support long mode" on pfSense boot
+### 1. DNS resolver blocking Suricata install
 
-The pfSense installer aborted on first boot with the message `CPU doesn't support long mode` and looped back to the loader prompt. The host CPU (Intel i7-14700KF) supports x86-64, so the issue was in how VirtualBox exposed CPU features to the guest.
-
-**Solution:** the VM was configured with OS Type `FreeBSD` (32-bit). Changing it to `FreeBSD (64-bit)` in Settings → General → Basic resolved the issue. The Netgate Installer is amd64-only and refuses to boot on a guest presented as 32-bit.
-
----
-
-### 2. pfSense 2.8.1 console asks for DHCP yes/no before static IP
-
-When configuring the LAN interface from the console, the first prompt was `Configure IPv4 address LAN interface via DHCP? (y/n)`, not the direct IP entry shown in older tutorials and guides. Typing an IP address at this prompt caused it to repeat.
-
-**Solution:** the prompts in pfSense 2.8.x are reordered compared to older releases. Answer `n` at the DHCP prompt for static interfaces, then the wizard asks for IPv4 address, subnet bit count, gateway, IPv6 settings, and DHCP server in sequence.
-
----
-
-### 3. DNS resolver blocking Suricata install
-
-The Suricata package install from the webGUI failed to fetch the package with `name resolution failure`. From the pfSense console shell, `pkg install pfSense-pkg-suricata` returned the same error. The methodology used to isolate the problem was a classic "is it the network or is it DNS" split test, using `Diagnostics → Ping` in the pfSense webGUI:
+The Suricata package install from the webGUI failed to fetch the package with `name resolution failure`. The methodology used to isolate the problem was a classic "is it the network or is it DNS" split test, using `Diagnostics → Ping` in the pfSense webGUI:
 
 | Test                 | Result                                     |
 | -------------------- | ------------------------------------------ |
@@ -173,25 +144,15 @@ The Suricata package install from the webGUI failed to fetch the package with `n
 
 The split test localized the problem to DNS resolution on pfSense itself, not connectivity.
 
-**Solution:** `Services → DNS Resolver → General Settings` → uncheck `Enable DNSSEC Support` → Save → Apply Changes. The DNSSEC validation was failing because VirtualBox's NAT proxies DNS through the host resolver and does not consistently forward the full DNSSEC chain data, causing signed-zone queries to return `SERVFAIL`. After disabling DNSSEC, name resolution worked and Suricata installed without issues.
+**Solution:** `Services → DNS Resolver → General Settings` → uncheck `Enable DNSSEC Support` and check `Enable Forwarding Mode` → Save → Apply Changes. The DNSSEC validation was failing because VirtualBox's NAT proxies DNS through the host resolver and does not consistently forward the full DNSSEC chain data, causing signed-zone queries to return `SERVFAIL`. After disabling DNSSEC and enabling DNS Query Forwarding, name resolution worked and Suricata installed without issues.
 
 ---
 
-### 4. Windows 11 24H2 OOBE — no local account option
+### 2. Windows 11 25H2 OOBE — no local account option
 
-The standard `OOBE\BYPASSNRO` workaround for creating a local account during Windows 11 install was removed in 24H2. The OOBE reached the "Let's connect you to a network" screen and would not allow a local account — only Microsoft account sign-in.
+The standard `OOBE\BYPASSNRO` workaround for creating a local account during Windows 11 install was removed in 25H2. The OOBE reached the "Let's connect you to a network" screen and would not allow a local account — only Microsoft account sign-in.
 
 **Solution:** disconnect the virtual network cable in VirtualBox (`Devices → Network → uncheck "Connect Network Adapter"`) at the network prompt. The OOBE detects no internet and offers the "Continue with limited setup" path. The cable is reconnected after the local account is created.
-
----
-
-### 5. VirtualBox GUI exposes only 4 NIC tabs
-
-The pfSense VM needs 5 NICs but the GUI Network panel in Settings only exposes 4 adapter tabs.
-
-**Solution:** the GUI limit is 4, but the VM supports up to 8 NICs. The 5th adapter was configured via `VBoxManage modifyvm --nic5 ...` from PowerShell (see the *pfSense VM provisioning* section above for the exact command). The adapter is fully functional after CLI configuration, even though the GUI continues to show only 4 tabs.
-
----
 
 ## Result
 
@@ -199,10 +160,9 @@ The pfSense VM needs 5 NICs but the GUI Network panel in Settings only exposes 4
 - Five interfaces configured: WAN (DHCP), LAN, OPT1, OPT2, OPT3 with lab IPs
 - DHCP server active on LAN and OPT1; OPT2 and OPT3 reserved for static hosts
 - Hybrid NAT outbound mode active
-- Permissive baseline firewall rules on OPT1/OPT2/OPT3 (allow any out — tightened in Phase 8)
+- Permissive baseline firewall rules on OPT1/OPT2/OPT3 (allow any out)
 - Suricata 7.0.8_5 installed as a pfSense package (configuration deferred to Phase 4)
 - Win 11 Pro Corp bootstrap workstation in VLAN 10, accessing the webGUI at `https://10.10.10.1`
-- VirtualBox snapshots: `base-config` and `working` on pfSense, `clean-install` on Win11 Corp
 
 ---
 
