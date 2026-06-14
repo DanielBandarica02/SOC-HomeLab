@@ -134,7 +134,7 @@ All VLANs use the `10.10.0.0/16` aggregate, subnetted by VLAN ID for memorabilit
 
 **DNS:** pfSense forwards to the AD Domain Controller (`10.10.10.10`) for the internal `soclab.local` zone and falls back to `1.1.1.1` for external resolution.
 
-**NTP:** pfSense acts as the canonical time source for the lab; all VMs sync to their gateway.
+**NTP:** pfSense acts as the canonical time source for the lab.
 
 ---
 
