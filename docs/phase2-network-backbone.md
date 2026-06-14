@@ -170,12 +170,12 @@ The standard `OOBE\BYPASSNRO` workaround for creating a local account during Win
 
 | Screenshot | Description |
 | ---------- | ----------- |
-| [![pfSense console with interfaces](../screenshots/phase2/01-pfsense-console-interfaces-configured.png)] | pfSense console banner showing the 5 interfaces with their IPs |
-| [![pfSense webGUI dashboard](../screenshots/phase2/02-pfsense-webgui-dashboard.png)] | pfSense webGUI dashboard after Setup Wizard |
-| [![Ping 8.8.8.8 success](../screenshots/phase2/03-diagnostics-ping-8888-success.png)] | `Diagnostics → Ping → 8.8.8.8` — IP-layer connectivity OK |
-| [![DNS Resolver DNSSEC unchecked](../screenshots/phase2/04-dns-resolver-dnssec-unchecked.png)]) | `Services → DNS Resolver` — `Enable DNSSEC Support` unchecked |
-| [![Ping google.com success](../screenshots/phase2/05-diagnostics-ping-google-success.png)] | `Diagnostics → Ping → google.com` — DNS works after DNSSEC disabled |
-| [![Suricata Interface](../screenshots/phase2/06-suricata-install-success.png)] | `Package Manager` — Suricata Interface |
+| ![pfSense console with interfaces](../screenshots/phase2/01-pfsense-console-interfaces-configured.png) | pfSense console banner showing the 5 interfaces with their IPs |
+| ![pfSense webGUI dashboard](../screenshots/phase2/02-pfsense-webgui-dashboard.png) | pfSense webGUI dashboard after Setup Wizard |
+| ![Ping 8.8.8.8 success](../screenshots/phase2/03-diagnostics-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — IP-layer connectivity OK |
+| ![DNS Resolver DNSSEC unchecked](../screenshots/phase2/04-dns-resolver-dnssec-unchecked.png) | `Services → DNS Resolver` — `Enable DNSSEC Support` unchecked |
+| ![Ping google.com success](../screenshots/phase2/05-diagnostics-ping-google-success.png) | `Diagnostics → Ping → google.com` — DNS works after DNSSEC disabled |
+| ![Suricata Interface](../screenshots/phase2/06-suricata-install-success.png) | `Package Manager` — Suricata Interface |
 
 ---
 
