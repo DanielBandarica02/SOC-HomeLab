@@ -60,8 +60,6 @@ Standard Ubuntu Server 24.04 LTS install on both VMs with these key settings:
 
  
 ### Splunk Enterprise install (SOC-99-Splunk)
- 
-### Splunk Enterprise
 
 Splunk Enterprise 10.2.3 was installed on Ubuntu Server 24.04 using the official `.deb` package downloaded from the Splunk portal:
 
