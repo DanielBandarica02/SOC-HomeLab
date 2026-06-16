@@ -30,7 +30,7 @@ To address this gap and implement a true "Defense in Depth" strategy, this proje
  
 | VM | IP | OS | Role |
 |----|----|----|------|
-| pfSense | 10.10.X.1 (per VLAN) | pfSense CE (latest) | Router + Firewall + Suricata IDS + OpenVPN |
+| pfSense | 10.10.X.1 (per VLAN) | pfSense CE | Router + Firewall + Suricata IDS + OpenVPN |
 | Windows Server 2022 | 10.10.10.10 | Windows Server 2022 (Eval) | Active Directory DC + DNS + Sysmon + Wazuh Agent |
 | Windows 11 Pro (Corp) | 10.10.10.20 | Windows 11 Pro | Corporate workstation + Sysmon + Wazuh Agent |
 | Windows 11 Pro (Dev) | 10.10.20.10 | Windows 11 Pro | Development workstation + Sysmon + Wazuh Agent |
