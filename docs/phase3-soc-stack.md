@@ -121,7 +121,7 @@ A dedicated index was created to isolate Wazuh data:
  
 | Screenshot | Description |
 | ---------- | ----------- |
-| [![Wazuh Dashboard home](../screenshots/phase3/01-wazuh-dashboard-home.png)](../screenshots/phase3/01-wazuh-dashboard-home.png) | Wazuh Dashboard at `https://10.10.99.10` after first login |
+| ![Wazuh Dashboard home](../screenshots/phase3/01-wazuh-dashboard-home.png)) | Wazuh Dashboard at `https://10.10.99.10` after first login |
 | [![Wazuh services running](../screenshots/phase3/02-wazuh-services-active.png)](../screenshots/phase3/02-wazuh-services-active.png) | `systemctl status wazuh-manager wazuh-indexer wazuh-dashboard` all active |
 | [![Splunk Web home](../screenshots/phase3/03-splunk-web-home.png)](../screenshots/phase3/03-splunk-web-home.png) | Splunk Web home dashboard after first login |
 | [![Splunk HEC token](../screenshots/phase3/04-splunk-hec-token.png)](../screenshots/phase3/04-splunk-hec-token.png) | `wazuh-alerts` HEC token created and enabled |
