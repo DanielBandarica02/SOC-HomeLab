@@ -101,13 +101,6 @@ A dedicated index was created to isolate Wazuh data:
 - **Settings → Indexes → New Index**
 - Index name: `wazuh`
 
-
----
- 
-## Troubleshooting & Lessons Learned
- 
-
- 
 ---
  
 ## Result
@@ -127,8 +120,6 @@ A dedicated index was created to isolate Wazuh data:
 | ---------- | ----------- |
 | [![Wazuh services running](../screenshots/phase3/02-wazuh-services-active.png)](../screenshots/phase3/02-wazuh-services-active.png) | `systemctl status wazuh-manager wazuh-indexer wazuh-dashboard` all active |
 | [![Splunk HEC token](../screenshots/phase3/04-splunk-hec-token.png)](../screenshots/phase3/04-splunk-hec-token.png) | `wazuh-alerts` HEC token created and enabled |
-| [![Filebeat config](../screenshots/phase3/05-filebeat-hec-output.png)](../screenshots/phase3/05-filebeat-hec-output.png) | Filebeat HTTP output block in `filebeat.yml` |
-| [![End-to-end search](../screenshots/phase3/06-splunk-wazuh-alert-search.png)](../screenshots/phase3/06-splunk-wazuh-alert-search.png) | Test SSH brute force alert visible in Splunk Search & Reporting |
  
 ---
  
