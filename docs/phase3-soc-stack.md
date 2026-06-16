@@ -12,7 +12,7 @@ The SOC management plane is deployed within a dedicated VLAN 99 utilizing two Ub
 | ---------------------------- | ---------------- | --------------------------------- |
 | Wazuh (manager + indexer + dashboard) | 4.14.5    | Ubuntu Server 24.04 LTS VM        |
 | Splunk Enterprise            | 10.4.0           | Ubuntu Server 24.04 LTS VM        |
-| Wazuh → Splunk integration   | custom integrator + curl → HEC 8088 | Ubuntu Server 22.04 LTS VM |
+| Wazuh → Splunk integration   | Custom Integrator + curl → HEC 8088 | Ubuntu Server 22.04 LTS VM |
  
 ---
  
