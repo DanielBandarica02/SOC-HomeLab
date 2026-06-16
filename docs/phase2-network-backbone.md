@@ -1,7 +1,5 @@
 # Phase 2 — Network Backbone (pfSense)
 
-> **Goal:** Deploy pfSense as the edge router for the lab, provide L3 routing between the four VLANs defined in [Phase 0](phase0-planning-design.md), enable NAT egress to the internet, and install Suricata as the IDS package. By the end of this phase the four Internal Networks materialize and the network is ready to receive every subsequent VM.
-
 ## Overview
 
 pfSense was deployed as the lab's edge router, providing routing between four isolated VLANs and NAT for internet egress. The deployment consists of the pfSense VM with five interfaces (1 WAN + 4 LAN/OPT), a Windows 11 Pro Corporate workstation used to bootstrap webGUI access, and Suricata installed as the IDS package.
