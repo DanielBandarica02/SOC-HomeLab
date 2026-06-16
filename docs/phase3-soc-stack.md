@@ -65,7 +65,7 @@ Splunk Enterprise 10.2.3 was installed on Ubuntu Server 24.04 using the official
  
 ```bash
 wget -O splunk-10.4.0-f798d4d49089-linux-amd64.deb "https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb"
---2026-06-15 19:34:59--  https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb
+https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb
 ```
 
 ```bash
