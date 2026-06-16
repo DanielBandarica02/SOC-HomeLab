@@ -12,8 +12,7 @@ The SOC management plane is deployed within a dedicated VLAN 99 utilizing two Ub
 | ---------------------------- | ---------------- | --------------------------------- |
 | Wazuh (manager + indexer + dashboard) | 4.14.5    | Ubuntu Server 24.04 LTS VM        |
 | Splunk Enterprise            | 10.4.0           | Ubuntu Server 24.04 LTS VM        |
-| Wazuh → Splunk integration   | Filebeat 7.10.2 + HEC 8088 | Wazuh manager host        |
-| Ubuntu Server                | 24.04 LTS        | Both SOC VMs                      |
+| Wazuh → Splunk integration   | custom integrator + curl → HEC 8088 | Ubuntu Server 22.04 LTS VM |
  
 ---
  
@@ -40,18 +39,14 @@ flowchart LR
  
 ### SOC VMs provisioning
  
-Two Ubuntu Server VMs were created in VirtualBox attached to Internal Network `vlan99-soc`. Both use Intel PRO/1000 MT Desktop NICs and dynamic disks.
+Two Ubuntu Server VMs were created in VirtualBox attached to Internal Network `vlan99-soc`.
  
 | VM              | vCPU | RAM   | Disk        | IP            |
 | --------------- | ---- | ----- | ----------- | ------------- |
 | SOC-99-Wazuh    | 4    | 8 GB  | 60 GB | 10.10.99.10   |
 | SOC-99-Splunk   | 2    | 4 GB  | 40 GB | 10.10.99.20   |
  
-The Wazuh VM is sized generously because the all-in-one install runs OpenSearch as the indexer, which is memory-hungry and disk-intensive.
- 
-### Ubuntu Server installation
- 
-Standard Ubuntu Server 24.04 LTS install on both VMs with these key settings:
+### Ubuntu Server Network Configuration
  
 | Screenshot | Description |
 | ---------- | ----------- |
