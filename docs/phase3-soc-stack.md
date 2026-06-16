@@ -82,7 +82,7 @@ sudo /opt/splunk/bin/splunk enable boot-start
 
 The dashboard is accessible at `http:/10.10.99.20:8000`.
 
-### HTTP Event Collector (HEC)
+## HTTP Event Collector (HEC)
 
 The HEC was configured in Splunk to receive Wazuh alerts over HTTP:
 
