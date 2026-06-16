@@ -101,6 +101,26 @@ A dedicated index was created to isolate Wazuh data:
 - **Settings → Indexes → New Index**
 - Index name: `wazuh`
 
+### Wazuh Integration
+
+The Wazuh Manager was configured to forward all alerts to the Splunk HEC by adding the following block to `/var/ossec/etc/ossec.conf`:
+
+```xml
+<integration>
+  <name>custom-splunk-hec</name>
+  <hook_url>http://192.168.10.40:8088/services/collector/event</hook_url>
+  <api_key>4a0b64e1-5e39-449f-a88e-63d0d3159e89</api_key>
+  <alert_format>json</alert_format>
+  <level>0</level>
+</integration>
+```
+
+The Wazuh Manager was restarted to apply the changes:
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
 ---
  
 ## Result
