@@ -202,65 +202,7 @@ The alert appears within seconds, confirming the full chain: Wazuh manager → a
  
 ## Troubleshooting & Lessons Learned
  
-### 1. Ubuntu Server LVM only allocates ~50% of disk to the initial volume
- 
-When using "guided LVM" during Ubuntu Server 22.04 install, the installer creates a volume group consuming the full physical disk but assigns only about half of the extents to the initial logical volume. The remaining space sits unallocated in the VG.
- 
-For data-heavy workloads like Wazuh's indexer or Splunk's index storage, this means the application fills the LV well before the provisioned disk capacity is reached.
- 
-**Solution:** Extend the LV to consume the entire VG before installing the heavy applications:
- 
-```bash
-sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
-sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
-```
- 
-Confirm with `df -h /` showing the full disk size as available.
- 
-### 2. Wazuh all-in-one install requires 8 GB RAM minimum
- 
-The Wazuh installer's official minimum is "4 GB RAM" but in practice, attempting the all-in-one install (manager + indexer + dashboard starting simultaneously) with 6 GB RAM caused the OpenSearch indexer service to fail starting. Symptom: the install hangs at *"Starting service wazuh-indexer"* and the kernel reports a soft lockup on CPU#0 after 264 seconds, killing the install.
- 
-The root cause is OpenSearch's JVM allocating ~50% of system RAM as heap (3 GB on a 6 GB VM), leaving insufficient memory for the manager + dashboard + the OS to coexist during the bootstrap phase.
- 
-**Solution:** Provision the Wazuh VM with **at least 8 GB RAM** before running `wazuh-install.sh -a`. With 8 GB, the JVM gets 4 GB heap and the rest of the components have headroom to start cleanly.
- 
-### 3. Failed Wazuh install leaves zombie processes holding ports
- 
-When a Wazuh install fails mid-way (e.g., out of disk, or the indexer fails to start), the `Installation cleaned` message from the installer's cleanup phase does **not** kill all running Wazuh daemons. The `wazuh-modulesd`, `wazuh-authd`, and OpenSearch processes may continue running and holding ports 1514, 1515, 55000, 9200 and 443.
- 
-A retry of `wazuh-install.sh -a` then aborts with: `ERROR: Port 1515 is being used by another process` or `ERROR: Wazuh manager already installed`.
- 
-**Solution:** Deep cleanup before retrying — stop services, kill leftover processes, purge packages, and remove residual directories:
- 
-```bash
-sudo systemctl stop wazuh-manager wazuh-indexer wazuh-dashboard filebeat 2>/dev/null
-sudo systemctl disable wazuh-manager wazuh-indexer wazuh-dashboard filebeat 2>/dev/null
-sudo pkill -9 -f wazuh
-sudo pkill -9 -f opensearch
-sudo pkill -9 -f filebeat
-sudo apt-get remove --purge -y wazuh-manager wazuh-indexer wazuh-dashboard filebeat
-sudo apt-get autoremove -y
-sudo rm -rf /var/ossec /etc/wazuh-* /var/lib/wazuh-* /usr/share/wazuh-* /etc/filebeat /var/log/wazuh-* /var/log/filebeat
-sudo ss -tlnp | grep -E '1514|1515|9200|55000|443'   # must return empty
-```
- 
-Then re-download the installer and re-run with the `-o` (overwrite) flag:
- 
-```bash
-curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
-sudo bash ./wazuh-install.sh -a -o
-```
- 
-### 4. CPU contention from host during Wazuh indexer bootstrap
- 
-Even with 8 GB RAM, the indexer's startup phase can trigger a kernel soft lockup if the host CPU is saturated by other workloads (other VMs running simultaneously, host applications competing for cycles). The i7-14700KF's hybrid P-core/E-core architecture can also cause scheduler contention when virtualisation traffic is shuffled between core types.
- 
-**Solution:** Minimize host load during the install — shut down non-essential VMs (everything except pfSense + the Wazuh VM), close heavy host applications, and consider setting CPU affinity for the VirtualBox process to keep the Wazuh VM pinned to P-cores only:
- 
-- Task Manager → Details → `VirtualBoxVM.exe` (Wazuh instance) → Set affinity → unselect E-cores
-- Optionally adjust VirtualBox paravirt provider: `VBoxManage modifyvm "SOC-99-Wazuh" --paravirtprovider kvm`
-After these adjustments + a clean reinstall, the indexer bootstrap completes within the expected ~15 minutes.
+
  
 ---
  
