@@ -1,7 +1,5 @@
 # Phase 0 — Planning & Design
 
-> **Goal:** Define the architecture, scope, and design decisions for the lab before any infrastructure is built. This document is the spec that subsequent phases follow.
-
 ## Overview
 
 This phase produces no infrastructure. It consolidates the threat model, IP plan and the rationale behind every architectural choice. Anyone reading this document should understand why the lab is structured the way it is and not just what gets built.
