@@ -66,7 +66,9 @@ sudo bash ./wazuh-install.sh -a
  
 The `-a` flag performs a complete all-in-one installation. Upon completion, the installer outputs the admin credentials required to access the dashboard.
  
-The dashboard is accessible at `https://192.168.10.30` from any machine on the `SOC-Homelab` network.
+The dashboard is accessible at `https://10.10.99.10:443` from 
+
+![Wazuh Dashboard home](../screenshots/phase3/03-wazuh-dashboard-home.png)
 
 ---
 
