@@ -109,9 +109,7 @@ A dedicated index was created to isolate Wazuh data:
 - Wazuh 4.14 all-in-one stack running (manager + indexer + dashboard) at `https://10.10.99.10`
 - Splunk Enterprise 10.4 running at `http://10.10.99.20:8000`
 - HEC enabled on Splunk port 8088 with `wazuh-alerts` token issued
-- Universal Forwarder receiver listening on Splunk port 9997 (ready for Phase 4 endpoint forwarders)
-- Filebeat forwarding Wazuh `alerts.json` → Splunk HEC, validated with synthetic SSH brute force event
-- VirtualBox snapshots on both VMs: `clean-install`, `base-config`, `working`
+  
 ---
  
 ## Screenshots
