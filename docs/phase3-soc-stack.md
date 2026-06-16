@@ -56,10 +56,10 @@ Two Ubuntu Server VMs were created in VirtualBox attached to Internal Network `v
  
 ### Splunk Enterprise install (SOC-99-Splunk)
 
-Splunk Enterprise 10.2.3 was installed on Ubuntu Server 24.04 using the official `.deb` package downloaded from the Splunk portal:
+Splunk Enterprise 10.4.0 was installed on Ubuntu Server 24.04 using the official `.deb` package downloaded from the Splunk portal:
 
 ```bash
-sudo dpkg -i splunk-10.2.3-4d61cf8a5c0c-linux-amd64.deb
+sudo dpkg -i splunk-10.4.0-f798d4d49089-linux-amd64.deb
 sudo /opt/splunk/bin/splunk start --accept-license
 sudo /opt/splunk/bin/splunk enable boot-start
 ```
