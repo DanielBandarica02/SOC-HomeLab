@@ -53,36 +53,7 @@ Two Ubuntu Server VMs were created in VirtualBox attached to Internal Network `v
 | ![Wazuh Network IPv4](../screenshots/phase3/01-wazuh-ipv4-configuration.png) | Wazuh Network IPv4 Configuration |
 | ![Splunk Network IPv4](../screenshots/phase3/02-splunk-ipv4-configuration.png)| Splunk Network IPv4 Configuration |
 
- 
-### Splunk Enterprise install (SOC-99-Splunk)
-
-Splunk Enterprise 10.4.0 was installed on Ubuntu Server 24.04 using the official `.deb` package downloaded from the Splunk portal:
-
-```bash
-sudo dpkg -i splunk-10.4.0-f798d4d49089-linux-amd64.deb
-sudo /opt/splunk/bin/splunk start --accept-license
-sudo /opt/splunk/bin/splunk enable boot-start
-```
-
-The dashboard is accessible at `http:/10.10.99.20:8000`.
-
-### HTTP Event Collector (HEC)
-
-The HEC was configured in Splunk to receive Wazuh alerts over HTTP:
-
-- **Settings → Data Inputs → HTTP Event Collector → Global Settings** — HEC enabled, SSL disabled, port `8088`
-- A dedicated token was created with the following settings:
-  - Name: `Wazuh_Alerts`
-  - Source type: `wazuh`
-  - Default index: `wazuh`
-
-A dedicated index was created to isolate Wazuh data:
-
-- **Settings → Indexes → New Index**
-- Index name: `wazuh`
-
 ### Wazuh Integration
-### Wazuh Manager
  
 The Wazuh Manager was installed on Ubuntu Server 24.04 using the all-in-one installation script, which deploys the Manager, Indexer, and Dashboard in a single-node configuration:
  
@@ -146,6 +117,34 @@ Rule 2502 at level 10 confirms that Wazuh correctly correlated multiple failed a
 ![SSH brute force alerts](../screenshots/phase2/eventsssh.png)
 ![SSH server setup on Ubuntu target](../screenshots/phase2/ssh.png)
 ![Hydra attack from Kali](../screenshots/phase2/hydra.png)
+
+### Splunk Enterprise
+
+Splunk Enterprise 10.4.0 was installed on Ubuntu Server 24.04 using the official `.deb` package downloaded from the Splunk portal:
+
+```bash
+sudo dpkg -i splunk-10.4.0-f798d4d49089-linux-amd64.deb
+sudo /opt/splunk/bin/splunk start --accept-license
+sudo /opt/splunk/bin/splunk enable boot-start
+```
+
+The dashboard is accessible at `http:/10.10.99.20:8000`.
+
+### HTTP Event Collector (HEC)
+
+The HEC was configured in Splunk to receive Wazuh alerts over HTTP:
+
+- **Settings → Data Inputs → HTTP Event Collector → Global Settings** — HEC enabled, SSL disabled, port `8088`
+- A dedicated token was created with the following settings:
+  - Name: `Wazuh_Alerts`
+  - Source type: `wazuh`
+  - Default index: `wazuh`
+
+A dedicated index was created to isolate Wazuh data:
+
+- **Settings → Indexes → New Index**
+- Index name: `wazuh`
+
 
 ---
  
