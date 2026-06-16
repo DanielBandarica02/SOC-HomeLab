@@ -53,6 +53,8 @@ Two Ubuntu Server VMs were created in VirtualBox attached to Internal Network `v
 | ![Wazuh Network IPv4](../screenshots/phase3/01-wazuh-ipv4-configuration.png) | Wazuh Network IPv4 Configuration |
 | ![Splunk Network IPv4](../screenshots/phase3/02-splunk-ipv4-configuration.png)| Splunk Network IPv4 Configuration |
 
+---
+
 ### Wazuh Integration
  
 The Wazuh Manager was installed on Ubuntu Server 24.04 using the all-in-one installation script, which deploys the Manager, Indexer, and Dashboard in a single-node configuration:
@@ -65,6 +67,8 @@ sudo bash ./wazuh-install.sh -a
 The `-a` flag performs a complete all-in-one installation. Upon completion, the installer outputs the admin credentials required to access the dashboard.
  
 The dashboard is accessible at `https://192.168.10.30` from any machine on the `SOC-Homelab` network.
+
+---
 
 ### Splunk Enterprise
 
