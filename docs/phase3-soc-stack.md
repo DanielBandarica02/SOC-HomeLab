@@ -59,8 +59,8 @@ Standard Ubuntu Server 24.04 LTS install on both VMs with these key settings:
  
 | Screenshot | Description |
 | ---------- | ----------- |
-| [![Wazuh Network IPv4](../screenshots/phase3/01-wazuh-ipv4-configuration.png)] | Wazuh Network IPv4 Configuration |
-| [![Splunk Network IPv4](../screenshots/phase3/02-splunk-ipv4-configuration.png)]| Splunk Network IPv4 Configuration |
+| ![Wazuh Network IPv4](../screenshots/phase3/01-wazuh-ipv4-configuration.png) | Wazuh Network IPv4 Configuration |
+| ![Splunk Network IPv4](../screenshots/phase3/02-splunk-ipv4-configuration.png)| Splunk Network IPv4 Configuration |
 
  
 ### Splunk Enterprise install (SOC-99-Splunk)
