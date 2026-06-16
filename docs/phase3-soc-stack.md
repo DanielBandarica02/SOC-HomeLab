@@ -66,7 +66,7 @@ sudo bash ./wazuh-install.sh -a
  
 The `-a` flag performs a complete all-in-one installation. Upon completion, the installer outputs the admin credentials required to access the dashboard.
  
-The dashboard is accessible at `https://10.10.99.10:443` from 
+The dashboard is accessible at `https://10.10.99.10:443`.
 
 ![Wazuh Dashboard home](../screenshots/phase3/03-wazuh-dashboard-home.png)
 
@@ -83,6 +83,8 @@ sudo /opt/splunk/bin/splunk enable boot-start
 ```
 
 The dashboard is accessible at `http:/10.10.99.20:8000`.
+
+![Splunk Web home](../screenshots/phase3/04-splunk-web-home.png)
 
 ## HTTP Event Collector (HEC)
 
@@ -123,9 +125,7 @@ A dedicated index was created to isolate Wazuh data:
  
 | Screenshot | Description |
 | ---------- | ----------- |
-| ![Wazuh Dashboard home](../screenshots/phase3/01-wazuh-dashboard-home.png)) | Wazuh Dashboard at `https://10.10.99.10` after first login |
 | [![Wazuh services running](../screenshots/phase3/02-wazuh-services-active.png)](../screenshots/phase3/02-wazuh-services-active.png) | `systemctl status wazuh-manager wazuh-indexer wazuh-dashboard` all active |
-| [![Splunk Web home](../screenshots/phase3/03-splunk-web-home.png)](../screenshots/phase3/03-splunk-web-home.png) | Splunk Web home dashboard after first login |
 | [![Splunk HEC token](../screenshots/phase3/04-splunk-hec-token.png)](../screenshots/phase3/04-splunk-hec-token.png) | `wazuh-alerts` HEC token created and enabled |
 | [![Filebeat config](../screenshots/phase3/05-filebeat-hec-output.png)](../screenshots/phase3/05-filebeat-hec-output.png) | Filebeat HTTP output block in `filebeat.yml` |
 | [![End-to-end search](../screenshots/phase3/06-splunk-wazuh-alert-search.png)](../screenshots/phase3/06-splunk-wazuh-alert-search.png) | Test SSH brute force alert visible in Splunk Search & Reporting |
