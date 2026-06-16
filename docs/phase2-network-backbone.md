@@ -158,8 +158,8 @@ The standard `OOBE\BYPASSNRO` workaround for creating a local account during Win
 - Five interfaces configured: WAN (DHCP), LAN, OPT1, OPT2, OPT3 with lab IPs
 - DHCP server active on LAN and OPT1; OPT2 and OPT3 reserved for static hosts
 - Hybrid NAT outbound mode active
-- Permissive baseline firewall rules on OPT1/OPT2/OPT3 (allow any out)
-- Suricata 7.0.8_5 installed as a pfSense package (configuration deferred to Phase 4)
+- Permissive baseline firewall rules on OPT1/OPT2/OPT3
+- Suricata 7.0.8_5 installed as a pfSense package
 - Win 11 Pro Corp bootstrap workstation in VLAN 10, accessing the webGUI at `https://10.10.10.1`
 
 ---
