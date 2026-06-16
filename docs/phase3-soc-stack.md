@@ -64,7 +64,7 @@ sudo /opt/splunk/bin/splunk start --accept-license
 sudo /opt/splunk/bin/splunk enable boot-start
 ```
 
-The dashboard is accessible at `http://192.168.10.40:8000`.
+The dashboard is accessible at `http:/10.10.99.20:8000`.
 
 ### HTTP Event Collector (HEC)
 
