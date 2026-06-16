@@ -122,6 +122,30 @@ sudo systemctl restart wazuh-manager
 ```
 
 ---
+
+## Troubleshooting & Lessons Learned
+
+### HEC Integration — Alert Forwarding Boundary & Block Placement
+
+During the initial validation of the Splunk integration using an SSH brute-force attack (via Hydra), no security events or alerts were appearing in Splunk Search, despite the HEC token being correctly configured and port 8088 being open. The root cause was twofold:
+
+1. **Syntax Placement:** The `<integration>` block in `ossec.conf` was mistakenly placed inside a duplicate `<ossec_config>` tag that the Wazuh Manager completely ignored.
+2. **Alert Filtering Threshold:** By default, the Wazuh integration engine applies strict filtering thresholds for forwarding events. Without an explicit instruction, lower-level or baseline security telemetry was discarded before leaving the manager.
+
+**Solution:** 
+Ensured the `<integration>` block was placed inside the primary, single valid `<ossec_config>` block (immediately before the closing `</ossec_config>` tag) and explicitly forced the engine to forward all telemetry by setting `<level>0</level>` within the integration parameters.
+
+```xml
+<integration>
+  <name>custom-splunk-hec</name>
+  <hook_url>http://192.168.10.40:8088/services/collector/event</hook_url>
+  <api_key>4a0b64e1-5e39-449f-a88e-63d0d3159e89</api_key>
+  <alert_format>json</alert_format>
+  <level>0</level>  <!-- Crucial to forward all severities and host events -->
+</integration>
+```
+
+---
  
 ## Result
  
