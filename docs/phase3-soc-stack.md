@@ -12,10 +12,10 @@ This phase follows the out-of-band SOC architecture defined in [Phase 0](phase0-
  
 | Component                    | Version          | Host                              |
 | ---------------------------- | ---------------- | --------------------------------- |
-| Wazuh (manager + indexer + dashboard) | 4.14.5    | Ubuntu Server 22.04 LTS VM        |
-| Splunk Enterprise            | 10.4.0           | Ubuntu Server 22.04 LTS VM        |
+| Wazuh (manager + indexer + dashboard) | 4.14.5    | Ubuntu Server 24.04 LTS VM        |
+| Splunk Enterprise            | 10.4.0           | Ubuntu Server 24.04 LTS VM        |
 | Wazuh → Splunk integration   | Filebeat 7.10.2 + HEC 8088 | Wazuh manager host        |
-| Ubuntu Server                | 22.04 LTS        | Both SOC VMs                      |
+| Ubuntu Server                | 24.04 LTS        | Both SOC VMs                      |
  
 ---
  
