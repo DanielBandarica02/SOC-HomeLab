@@ -2,7 +2,7 @@
  
 ## Overview
  
-The SOC management plane was deployed in VLAN 99 with two Ubuntu Server VMs working in tandem: **Wazuh** as the EDR + primary detection engine (manager + indexer + dashboard, all-in-one install), and **Splunk Enterprise** as the secondary SIEM that receives Wazuh alerts via HEC for centralized search and dashboards. Both stacks were provisioned, installed, integrated and validated end-to-end before any endpoint agents were deployed.
+The SOC management plane was deployed in VLAN 99 with two Ubuntu Server VMs working in tandem: **Wazuh** as the EDR + primary detection engine (manager + indexer + dashboard), and **Splunk Enterprise** as the secondary SIEM that receives Wazuh alerts via HEC for centralized search and dashboards. Both stacks were provisioned, installed, integrated and validated end-to-end before any endpoint agents were deployed.
  
 This phase follows the out-of-band SOC architecture defined in [Phase 0](phase0-planning-design.md) — the SOC VLAN never initiates connections into data-plane VLANs; endpoints push telemetry outbound through pfSense to Wazuh manager (1514/tcp) and Suricata pushes IDS alerts to Splunk via HEC (8088/tcp).
  
