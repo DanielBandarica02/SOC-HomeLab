@@ -44,8 +44,8 @@ Two Ubuntu Server VMs were created in VirtualBox attached to Internal Network `v
  
 | VM              | vCPU | RAM   | Disk        | IP            |
 | --------------- | ---- | ----- | ----------- | ------------- |
-| SOC-99-Wazuh    | 4    | 8 GB  | 60 GB dyn  | 10.10.99.10   |
-| SOC-99-Splunk   | 2    | 4 GB  | 40 GB dyn   | 10.10.99.20   |
+| SOC-99-Wazuh    | 4    | 8 GB  | 60 GB | 10.10.99.10   |
+| SOC-99-Splunk   | 2    | 4 GB  | 40 GB | 10.10.99.20   |
  
 The Wazuh VM is sized generously because the all-in-one install runs OpenSearch as the indexer, which is memory-hungry and disk-intensive.
  
