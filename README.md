@@ -37,7 +37,7 @@ To address this gap and implement a true "Defense in Depth" strategy, this proje
 | Ubuntu Desktop | 10.10.20.20 | Ubuntu Desktop 24.04 | Development workstation + Auditd + Wazuh Agent |
 | Ubuntu Wazuh | 10.10.99.10 | Ubuntu Server 24.04 | Wazuh Manager + Indexer + Dashboard |
 | Ubuntu Splunk | 10.10.99.20 | Ubuntu Server 24.04 | Splunk Enterprise SIEM |
-| Kali Linux | 10.10.66.10 | Kali Linux (latest) | Attack machine |
+| Kali Linux | 10.10.66.10 | Kali Linux | Attack machine |
  
 ---
  
