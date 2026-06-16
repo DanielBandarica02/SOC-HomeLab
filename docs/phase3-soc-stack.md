@@ -55,43 +55,21 @@ The Wazuh VM is sized generously because the all-in-one install runs OpenSearch 
  
 ### Ubuntu Server installation
  
-Standard Ubuntu Server 22.04 LTS install on both VMs with these key settings:
+Standard Ubuntu Server 24.04 LTS install on both VMs with these key settings:
  
-| Setting               | SOC-99-Wazuh   | SOC-99-Splunk  |
-| --------------------- | -------------- | -------------- |
-| Hostname              | `wazuh-homelab` | `splunk-homelab` |
-| Username              | `admin`        | `admin`        |
-| Storage               | Entire disk + LVM | Entire disk + LVM |
-| OpenSSH server        | Installed      | Installed      |
-| IPv4 Method           | Manual         | Manual         |
-| IP / Subnet           | `10.10.99.10/24` | `10.10.99.20/24` |
-| Gateway               | `10.10.99.1`   | `10.10.99.1`   |
-| DNS                   | `1.1.1.1, 8.8.8.8` | `1.1.1.1, 8.8.8.8` |
-| Search domain         | `soclab.local` | `soclab.local` |
- 
-VLAN 99 has no DHCP server (it's defined as static-only in Phase 2), so the IPs are configured manually during the installer.
- 
-### LVM disk expansion
- 
-Ubuntu Server's "guided LVM" install allocates only ~50% of the available disk to the initial logical volume. Before installing the heavy applications, the LV is extended to consume the entire volume group on both VMs:
- 
-```bash
-sudo vgs
-sudo lvs
-sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
-sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
-df -h
-```
- 
-After this, `/` reports the full disk available — critical for Wazuh's indexer which grows quickly with ingested events.
+| Screenshot | Description |
+| ---------- | ----------- |
+| [![Wazuh Network IPv4](../screenshots/phase3/01-wazuh-ipv4-configuration.png)] | Wazuh Network IPv4 Configuration |
+| [![Splunk Network IPv4](../screenshots/phase3/02-splunk-ipv4-configuration.png)]| Splunk Network IPv4 Configuration |
+
  
 ### Splunk Enterprise install (SOC-99-Splunk)
  
 Splunk 10.4.0 was downloaded directly from Splunk's permanent release archive and installed via `dpkg`:
  
 ```bash
-wget -O splunk-10.4.0-f798d4d49089-linux-amd64.deb \
-  "https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb"
+wget -O splunk-10.4.0-f798d4d49089-linux-amd64.deb "https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb"
+--2026-06-15 19:34:59--  https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb
  
 sudo dpkg -i splunk-10.4.0-f798d4d49089-linux-amd64.deb
 sudo /opt/splunk/bin/splunk start --accept-license
