@@ -65,18 +65,20 @@ Standard Ubuntu Server 24.04 LTS install on both VMs with these key settings:
  
 ### Splunk Enterprise install (SOC-99-Splunk)
  
-Splunk 10.4.0 was downloaded directly from Splunk's permanent release archive and installed via `dpkg`:
+Splunk Enterprise 10.2.3 was installed on Ubuntu Server 24.04 using the official .deb package downloaded from the Splunk portal:
  
 ```bash
 wget -O splunk-10.4.0-f798d4d49089-linux-amd64.deb "https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb"
 --2026-06-15 19:34:59--  https://download.splunk.com/products/splunk/releases/10.4.0/linux/splunk-10.4.0-f798d4d49089-linux-amd64.deb
- 
+```
+
+```bash
 sudo dpkg -i splunk-10.4.0-f798d4d49089-linux-amd64.deb
 sudo /opt/splunk/bin/splunk start --accept-license
 sudo /opt/splunk/bin/splunk enable boot-start
 ```
  
-The admin user + password are set interactively during `splunk start`. Splunk Web becomes available at `http://10.10.99.20:8000`.
+The dashboard is accessible at `http://10.10.99.20:8000`.
  
 #### Enabling HTTP Event Collector (HEC)
  
