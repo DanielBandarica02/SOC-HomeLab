@@ -36,8 +36,6 @@ flowchart LR
     WZ -- "Filebeat → HEC :8088<br/>alerts.json forward" --> SP
 ```
  
-Endpoints (Phase 4 onwards) ship Sysmon + native event logs to the Wazuh manager via the Wazuh agent. Wazuh's rules engine processes events and writes alerts to `alerts.json`; Filebeat reads this file and forwards alerts to Splunk via HEC, enabling centralized search of EDR alerts alongside Suricata IDS alerts in a single SIEM frontend.
- 
 ---
  
 ## Deployment
