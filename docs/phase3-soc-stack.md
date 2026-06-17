@@ -30,7 +30,7 @@ flowchart LR
     end
     
     subgraph SOC[VLAN 99 — SOC Management]
-        WZ[Wazuh Manager<br/>10.10.99.10<br/>Manager :1514<br/>API :55000<br/>Dashboard :443]
+        WZ[Wazuh Manager<br/>10.10.99.10<br/>Manager :1514<br/>Dashboard :443]
         SP[Splunk Enterprise<br/>10.10.99.20<br/>Web :8000<br/>HEC :8088]
     end
     
