@@ -69,33 +69,6 @@ The Wazuh Manager was configured to forward all alerts to the Splunk HEC by addi
 </integration>
 ```
 
-Wazuh's built-in integrator daemon was configured to POST every qualifying alert to Splunk's HEC endpoint via a custom shell script. The script was placed at `/var/ossec/integrations/custom-splunk` with permissions `750` and ownership `root:wazuh`:
-
-```bash
-#!/bin/bash
-ALERT_FILE=$1
-HEC_TOKEN=$2
-HEC_URL=$3
-ALERT_JSON=$(cat $ALERT_FILE)
-curl -k -X POST "${HEC_URL}/services/collector/event" \
-  -H "Authorization: Splunk ${HEC_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d "{\"event\": ${ALERT_JSON}, \"sourcetype\": \"wazuh:alert\", \"index\": \"main\"}"
-```
-
-## Validation
-
-I have generated a manual connection on the Wazuh VM to test if the HEC integration is successfully established between Wazuh and Splunk
-
-```bash
-curl -k -X POST "http://10.10.99.20:8088/services/collector/event" \
-  -H "Authorization: Splunk 90bdc3e3-5666-4ee1-bc43-7d6409341d2b" \
-  -H "Content-Type: application/json" \
-  -d '{"event": "Validation test", "sourcetype": "wazuh:alert", "index": "wazuh"}'
-```
-
-![Validation Prove](../screenshots/phase3/validation-prove.png)
-
 The Wazuh Manager was restarted to apply the changes:
 
 ```bash
