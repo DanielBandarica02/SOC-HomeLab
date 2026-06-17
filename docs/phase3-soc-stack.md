@@ -203,7 +203,7 @@ Ensured the `<integration>` block was placed inside the primary, single valid `<
 | Screenshot | Description |
 | ---------- | ----------- |
 | ![Wazuh Manager running](../screenshots/phase3/06-wazuh-manager-active.png) | Wazuh-manager running |
-| ![Splunk HEC token](../screenshots/phase3/07-splunk-hec-token.png) | `wazuh-alerts` HEC token created and enabled |
+| ![Splunk HEC token](../screenshots/phase3/07-splunk-hec-token.png) | `Wazuh-HEC` HEC token created and enabled |
  
 ---
  
