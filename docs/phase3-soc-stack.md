@@ -20,18 +20,32 @@ The SOC management plane is deployed within a dedicated VLAN 99 utilizing two Ub
  
 ```mermaid
 flowchart LR
-    subgraph DATA[Data-plane VLANs]
-        EP1[Endpoints<br/>VLAN 10, 20]
-        PF[pfSense + Suricata<br/>10.10.99.1]
+    subgraph DP[Data-plane VLANs]
+        EP_COR[Corporate Endpoints<br/>VLAN 10]
+        EP_DEV[Dev Endpoints<br/>VLAN 20]
     end
+    
+    subgraph EDGE[Network Edge]
+        PF[pfSense Firewall<br/>+ Suricata IDS<br/>Inter-VLAN routing]
+    end
+    
     subgraph SOC[VLAN 99 — SOC Management]
-        WZ[Wazuh Manager<br/>10.10.99.10<br/>Manager :1514 · API :55000<br/>Dashboard :443]
-        SP[Splunk Enterprise<br/>10.10.99.20<br/>Web :8000 · HEC :8088 · UF :9997]
+        WZ[Wazuh Manager<br/>10.10.99.10<br/>Manager :1514<br/>API :55000<br/>Dashboard :443]
+        SP[Splunk Enterprise<br/>10.10.99.20<br/>Web :8000<br/>HEC :8088]
     end
-    EP1 -- "Wazuh agent :1514" --> PF --> WZ
+    
+    EP_COR -- "Wazuh agent events :1514" --> PF
+    EP_DEV -- "Wazuh agent events :1514" --> PF
+    PF -- "Routed to SOC VLAN" --> WZ
     PF -- "Suricata eve.json → HEC :8088" --> SP
-    WZ -- "Filebeat → HEC :8088<br/>alerts.json forward" --> SP
+    WZ -- "custom-splunk-hec integration → HEC :8088" --> SP
 ```
+
+**Traffic flows:**
+ 
+1. Endpoints send Wazuh agent events to the Manager (TCP 1514). pfSense routes the traffic between VLANs; it does not inspect or proxy at the application layer.
+2. Suricata, running as a package on pfSense, writes alerts to `eve.json` and forwards them directly to Splunk HEC on port 8088.
+3. The Wazuh Manager processes agent events, applies detection rules, and forwards generated alerts to Splunk via a custom integration script (HTTP POST to HEC).
  
 ---
  
