@@ -154,7 +154,7 @@ curl -k -X POST "http://10.10.99.20:8088/services/collector/event" \
   -d '{"event": "Validation test", "sourcetype": "wazuh:alert", "index": "wazuh"}'
 ```
 
-![Validation Prove](../screenshots/phase3/validation-prove.png)
+![Validation Test](../screenshots/phase3/05-validation-test.png)
 
 The Wazuh Manager was restarted to apply the changes:
 
