@@ -1,14 +1,8 @@
 # SOC-HomeLab
  
-> A fully integrated Security Operations Center home lab built from scratch with VLAN segmentation, covering the complete threat detection and response lifecycle. Combines Blue Team detection engineering, Red Team attack simulation, and incident response. Oriented toward SOC Analyst, Detection Engineer and Threat Hunter roles.
+A production-grade Security Operations Center built from scratch in a fully segmented virtualized environment. The lab replicates a small enterprise architecture with corporate, development, attacker and SOC management VLANs, and is operated as a real SOC — including detection engineering, attack simulation, and incident response.
  
----
- 
-## Overview
- 
-This lab implements a production-grade SOC architecture across eight virtual machines distributed in four isolated VLANs, routed and firewalled through pfSense. The full pipeline includes perimeter and inter-VLAN intrusion detection (Suricata on pfSense), endpoint monitoring (Wazuh), centralized log ingestion (Splunk via HEC), enhanced Windows telemetry (Sysmon), and an Active Directory environment for realistic attack simulation. Network segmentation enforces an out-of-band SOC management plane, a dedicated attacker DMZ, and controlled cross-VLAN access between corporate and development networks.
- 
-Beyond infrastructure, the project covers all stages of the SOC analyst workflow — from rule writing and attack execution to forensic investigation, hunt operations, automated response, and threat intelligence enrichment.
+The project is structured as a Purple Team end-to-end exercise: offensive simulation, blue team operations, custom detection development, and SOAR automation over the same environment.
 
 ---
 
