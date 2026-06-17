@@ -83,10 +83,17 @@ To address this gap and implement a true "Defense in Depth" strategy, this proje
  
 ```
 SOC-HomeLab/
-├── docs/                       Phase-by-phase build documentation
-├── detection-engineering/      Detection rules with full methodology
-├── rules/                      Ready-to-deploy rule code (Wazuh XML, Splunk SPL)
-└── screenshots/                Visual evidence per phase
+├── docs/                          Phase-by-phase documentation
+│   ├── phase0-planning-design.md
+│   ├── phase1-virtualbox-foundation.md
+│   ├── phase2-network-backbone.md
+│   ├── phase3-soc-stack.md
+│   └── ...
+├── detection-engineering/         Detection rule documentation (markdown)
+│   └── rules/
+├── attacks/                       Attack writeups (Purple Team) (Soon)
+├── incident-response/             Incident reports written as an L1 analyst (Soon)
+└── screenshots/                   Validation evidence by phase
 ```
  
 ---
