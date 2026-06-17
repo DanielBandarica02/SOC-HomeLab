@@ -202,8 +202,8 @@ Ensured the `<integration>` block was placed inside the primary, single valid `<
  
 | Screenshot | Description |
 | ---------- | ----------- |
-| [![Wazuh services running](../screenshots/phase3/02-wazuh-services-active.png)](../screenshots/phase3/06-wazuh-services-active.png) | `systemctl status wazuh-manager wazuh-indexer wazuh-dashboard` all active |
-| [![Splunk HEC token](../screenshots/phase3/04-splunk-hec-token.png)](../screenshots/phase3/07-splunk-hec-token.png) | `wazuh-alerts` HEC token created and enabled |
+| ![Wazuh Manager running](../screenshots/phase3/06-wazuh-manager-active.png) | Wazuh-manager running |
+| ![Splunk HEC token](../screenshots/phase3/07-splunk-hec-token.png) | `wazuh-alerts` HEC token created and enabled |
  
 ---
  
