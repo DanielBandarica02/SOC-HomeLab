@@ -117,34 +117,38 @@ Each decision is recorded with rationale and alternatives considered. Future rev
 
 ---
 
-## 5. IP Addressing Plan
-
-All VLANs use the `10.10.0.0/16` aggregate, subnetted by VLAN ID for memorability.
-
-| VLAN | Purpose         | CIDR             | Gateway      | DHCP range  | Reserved                              |
-| ---- | --------------- | ---------------- | ------------ | ----------- | ------------------------------------- |
-| 10   | Corporate       | `10.10.10.0/24`  | `10.10.10.1` | `.100–.200` | `.10` (DC), `.20` (workstation)       |
-| 20   | Development     | `10.10.20.0/24`  | `10.10.20.1` | `.100–.200` | `.10` (Win11 dev), `.20` (Ubuntu dev) |
-| 66   | Attacker DMZ    | `10.10.66.0/24`  | `10.10.66.1` | static      | `.10` (Kali)                          |
-| 99   | SOC Management  | `10.10.99.0/24`  | `10.10.99.1` | static      | `.10` (Wazuh), `.20` (Splunk)         |
-| 100  | OpenVPN clients | `10.10.100.0/24` | (pfSense)    | `.2–.50`    | —                                     |
-
-**DNS:** pfSense forwards to the AD Domain Controller (`10.10.10.10`) for the internal `soclab.local` zone and falls back to `1.1.1.1` for external resolution.
-
-**NTP:** pfSense acts as the canonical time source for the lab.
+## 5. Host Inventory
+ 
+| VLAN | Host | OS | Role | IP |
+|------|------|----|----|-----|
+| Edge | SOC-EDGE-pfSense | pfSense CE 2.8.1 | Router, firewall, Suricata, OpenVPN | LAN gateways per VLAN |
+| 10 | SOC-10-DC | Windows Server 2022 | Active Directory Domain Controller | `10.10.10.10` |
+| 10 | SOC-10-Win11Corp | Windows 11 Pro | Domain-joined corporate workstation | `10.10.10.20` |
+| 20 | SOC-20-Win11Dev | Windows 11 Pro | Development workstation | `10.10.20.10` |
+| 20 | SOC-20-UbuntuDev | Ubuntu Desktop 24.04 | Development workstation (Linux) | `10.10.20.20` |
+| 66 | SOC-66-Kali | Kali Linux | Attacker workstation | `10.10.66.10` |
+| 99 | SOC-99-Wazuh | Ubuntu Server 24.04 | Wazuh Manager + Indexer + Dashboard | `10.10.99.10` |
+| 99 | SOC-99-Splunk | Ubuntu Server 24.04 | Splunk Enterprise SIEM | `10.10.99.20` |
+ 
+Total: 8 VMs (1 edge + 7 endpoint).
 
 ---
 
-## 6. VLAN Design Summary
-
-| VLAN | Tag            | Purpose                                               | Hosts                    |
-| ---- | -------------- | ----------------------------------------------------- | ------------------------ |
-| 10   | Corporate      | Domain-joined users and identity services             | DC + 1 workstation       |
-| 20   | Development    | Isolated dev environment, accessible only via VPN/RDP | Win + Linux workstations |
-| 66   | Attacker DMZ   | Simulated external threat actor behind NAT            | Kali                     |
-| 99   | SOC Management | Out-of-band telemetry collection and analytics        | Wazuh + Splunk           |
-
-The reasoning behind each VLAN is captured in the architecture decisions above.
+## 6. IP Addressing Plan
+ 
+All VLANs use the `10.10.0.0/16` aggregate, subnetted by VLAN ID for memorability.
+ 
+| VLAN | Purpose | CIDR | Gateway | DHCP range | Reserved |
+|------|---------|------|---------|------------|----------|
+| 10 | Corporate | `10.10.10.0/24` | `10.10.10.1` | `.100–.200` | `.10` (DC), `.20` (workstation) |
+| 20 | Development | `10.10.20.0/24` | `10.10.20.1` | `.100–.200` | `.10` (Win11 dev), `.20` (Ubuntu dev) |
+| 66 | Attacker DMZ | `10.10.66.0/24` | `10.10.66.1` | static | `.10` (Kali) |
+| 99 | SOC Management | `10.10.99.0/24` | `10.10.99.1` | static | `.10` (Wazuh), `.20` (Splunk) |
+| 100 | OpenVPN clients | `10.10.100.0/24` | (pfSense) | `.2–.50` | — |
+ 
+**DNS:** pfSense forwards to the AD Domain Controller (`10.10.10.10`) for the internal `lab.local` zone and falls back to `1.1.1.1` for external resolution.
+ 
+**NTP:** pfSense acts as the canonical time source for the lab; all VMs sync to their gateway.
 
 ---
 
