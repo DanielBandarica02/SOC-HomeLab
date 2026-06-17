@@ -67,6 +67,17 @@ To address this gap and implement a true "Defense in Depth" strategy, this proje
 | **Forensics** | Volatility, Wireshark |
 
 ---
+
+## Capabilities Demonstrated
+ 
+- **Network architecture** — VLAN design, firewall policy, inter-segment routing, perimeter detection
+- **SOC operations** — out-of-band management, telemetry pipelines, log forwarding, HEC integration
+- **Detection engineering** — custom rule development, MITRE ATT&CK mapping, atomic testing, threshold calibration
+- **Blue Team operations** — alert triage, incident investigation, forensic timeline reconstruction
+- **Purple Team workflow** — offensive simulation feeding detection improvement
+- **Documentation** — professional technical writing, decision rationale, reproducible deployment procedures
+
+---
  
 ## Repository Structure
  
