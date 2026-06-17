@@ -164,12 +164,10 @@ Ensured the `<integration>` block was placed inside the primary, single valid `<
 ## Result
  
 - Two Ubuntu Server VMs operational in VLAN 99 (`10.10.99.10` Wazuh, `10.10.99.20` Splunk)
-- Wazuh 4.14.5 all-in-one stack running (manager + indexer + dashboard) at `https://10.10.99.10`
+- Wazuh 4.14.5 all-in-one stack running (manager + indexer + dashboard) at `https://10.10.99.10:443`
 - Splunk Enterprise 10.4.0 running at `http://10.10.99.20:8000`
 - HEC enabled on Splunk port 8088 with `Wazuh_Alerts` and `Suricata_Alerts` tokens issued
-- Custom shell integration deployed at `/var/ossec/integrations/custom-splunk-hec` forwarding alerts via HEC
 - Suricata configured on all four pfSense LAN interfaces with EVE JSON output to Splunk HEC
-- Firewall rules tightened: VLAN 99 receives traffic only on TCP 1514 and TCP 8088 from data-plane sources
   
 ---
  
