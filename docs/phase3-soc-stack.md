@@ -106,7 +106,7 @@ The HEC was configured in Splunk to receive Wazuh alerts over HTTP:
 
 - **Settings → Data Inputs → HTTP Event Collector → Global Settings** — HEC enabled, SSL disabled, port `8088`
 - A dedicated token was created with the following settings:
-  - Name: `Wazuh_Alerts`
+  - Name: `Wazuh-HEC`
   - Source type: `wazuh`
   - Default index: `wazuh`
 
@@ -121,9 +121,9 @@ The Wazuh Manager was configured to forward all alerts to the Splunk HEC by addi
 
 ```xml
 <integration>
-  <name>custom-splunk-hec</name>
-  <hook_url>http://10.10.99.20:8088/services/collector/event</hook_url>
-  <api_key>4a0b64e1-5e39-449f-a88e-63d0d3159e89</api_key>
+  <name>custom-splunk</name>
+  <hook_url>http://10.10.99.20:8088/</hook_url>
+  <api_key>90bdc3e3-5666-4ee1-bc43-7d6409341d2b</api_key>
   <alert_format>json</alert_format>
   <level>0</level>
 </integration>
