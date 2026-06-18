@@ -179,7 +179,7 @@ Ensured the `<integration>` block was placed inside the primary, single valid `<
 <integration>
   <name>custom-splunk-hec</name>
   <hook_url>http://192.168.10.40:8088/services/collector/event</hook_url>
-  <api_key>4a0b64e1-5e39-449f-a88e-63d0d3159e89</api_key>
+  <api_key>90bdc3e3-5666-4ee1-bc43-7d6409341d2b</api_key>
   <alert_format>json</alert_format>
   <level>0</level>  <!-- Crucial to forward all severities and host events -->
 </integration>
