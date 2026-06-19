@@ -121,7 +121,7 @@ The Wazuh Manager was configured to forward all alerts to the Splunk HEC by addi
 ```xml
 <integration>
   <name>custom-splunk</name>
-  <hook_url>http://10.10.99.20:8088/</hook_url>
+  <hook_url>http://10.10.99.20:8088/services/collector/event</hook_url>
   <api_key>90bdc3e3-5666-4ee1-bc43-7d6409341d2b</api_key>
   <alert_format>json</alert_format>
   <level>0</level>
@@ -132,14 +132,17 @@ Wazuh's built-in integrator daemon was configured to POST every qualifying alert
 
 ```bash
 #!/bin/bash
+
 ALERT_FILE=$1
 HEC_TOKEN=$2
 HEC_URL=$3
-ALERT_JSON=$(cat $ALERT_FILE)
-curl -k -X POST "${HEC_URL}/services/collector/event" \
+
+ALERT_JSON=$(cat "$ALERT_FILE")
+
+curl -k -X POST "${HEC_URL}" \
   -H "Authorization: Splunk ${HEC_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "{\"event\": ${ALERT_JSON}, \"sourcetype\": \"wazuh:alert\", \"index\": \"main\"}"
+  -d "{\"event\": ${ALERT_JSON}, \"sourcetype\": \"wazuh:alert\", \"index\": \"wazuh\"}"
 ```
 
 ## Validation
