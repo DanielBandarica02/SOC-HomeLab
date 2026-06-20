@@ -32,16 +32,16 @@
  
 These are the per-VM allocations I'll configure in VirtualBox. The numbers below are the minimum I consider healthy under normal lab usage — running below this is possible but trades stability for headroom on the host.
  
-| VM                       | vCPU | RAM    | Disk    | Notes                                                  |
-| ------------------------ | :--: | :----: | :-----: | ------------------------------------------------------ |
-| pfSense CE               |   2  |  2 GB  |  20 GB  | 1 vCPU works; 2 helps when Suricata is active.         |
-| WinSrv2022 (AD DC)       |   2  |  4 GB  |  60 GB  | Below 4 GB, AD becomes painful to use.                 |
-| Win11-Corp               |   2  |  4 GB  |  60 GB  | Win 11 is heavy — 4 GB is the practical minimum.       |
-| Win11-Dev                |   2  |  4 GB  |  60 GB  | Same as above.                                         |
-| Ubuntu-Dev               |   2  |  4 GB  |  40 GB  | Desktop edition; a CLI-only build could drop to 2 GB.  |
-| Kali                     |   2  |  4 GB  |  40 GB  | Disk grows quickly once extra toolkits are installed.  |
-| Ubuntu-Server (Wazuh)    |   4  |  8 GB  |  80 GB  | All-in-one is the heaviest VM; the indexer is hungry.  |
-| **Total**                |  16  | 30 GB  | 360 GB  |                                                        |
+| VM                       | vCPU | RAM    | Disk    |
+| ------------------------ | :--: | :----: | :-----: |
+| pfSense CE               |   2  |  2 GB  |  20 GB  |
+| WinSrv2022 (AD DC)       |   2  |  4 GB  |  60 GB  |
+| Win11-Corp               |   2  |  4 GB  |  60 GB  |
+| Win11-Dev                |   2  |  4 GB  |  60 GB  |
+| Ubuntu-Dev               |   2  |  4 GB  |  40 GB  |
+| Kali                     |   2  |  4 GB  |  40 GB  |
+| Ubuntu-Server (Wazuh)    |   4  |  8 GB  |  80 GB  |
+
  
 
 ## VirtualBox network topology
