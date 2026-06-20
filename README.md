@@ -92,6 +92,16 @@ soc-homelab/
 └── 06-incident-reports/     
 ```
 
+## Project Phases
+
+[`00-architecture`](00-architecture/)
+[`01-infrastructure`](01-infrastructure/)
+[`02-soc-stack`](02-soc-stack/)
+[`03-adversary`](03-adversary/)
+[`04-attack-scenarios`](04-attack-scenarios/)
+[`05-detection-rules`](05-detection-rules/)
+[`06-incident-reports`](06-incident-reports/)
+
 ## About This Project
  
 Built as a personal cyber range to develop and demonstrate the full skill set required for SOC Analyst and Detection Engineer roles. The lab is continuously evolving — new rules, attack scenarios, and automation playbooks are added as part of ongoing learning. Network segmentation, out-of-band SOC management, and a dedicated attacker DMZ make this lab a realistic environment for both detection engineering and incident response practice. All documentation is written in English to align with international industry standards.
