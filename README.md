@@ -33,7 +33,7 @@ A course teaches you to use tools. This lab forces me to use them in a system I 
 | VLAN 66  | 10.10.66.0/24  | Attacker DMZ (Kali Linux)                  |
 | VLAN 99  | 10.10.99.0/24  | SOC Management (Wazuh all-in-one)          |
 
-Full reasoning behind each choice in [`00-architecture/design-decisions.md`](00-architecture/design-decisions.md).
+Full reasoning behind each choice in [`00-architecture/design-decisions.md`](docs/00-architecture/architecture.svg).
 
 ## Roadmap
 
