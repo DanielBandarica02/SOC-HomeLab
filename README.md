@@ -24,7 +24,7 @@ A course teaches you to use tools. This lab forces me to use them in a system I 
 
 ## Architecture
 
-![SOC HomeLab Architecture](screenshots/readme/architecture.svg)
+![SOC HomeLab Architecture](00-architecture/architecture.svg)
 
 | Segment  | CIDR           | Purpose                                    |
 | -------- | -------------- | ------------------------------------------ |
