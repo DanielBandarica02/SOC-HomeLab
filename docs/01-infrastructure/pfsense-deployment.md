@@ -2,19 +2,7 @@
 
 ## Overview
 
-pfSense was deployed as the lab's edge router, providing routing between four isolated VLANs and NAT for internet egress. The deployment consists of the pfSense VM with five interfaces (1 WAN + 4 LAN/OPT), a Windows 11 Pro Corporate workstation used to bootstrap webGUI access, and Suricata installed as the IDS package.
-
----
-
-## Environment
-
-| Component       | Version       | Host                                 |
-| --------------- | ------------- | ------------------------------------ |
-| pfSense CE      | 2.8.1-RELEASE | FreeBSD VM — 5 NICs                  |
-| Suricata        | 7.0.8_5       | pfSense package                      |
-| Win 11 Pro Corp | 25H2          | VLAN 10 — 10.10.10.102 (DHCP)        |
-
-> Wazuh Manager and Splunk Enterprise are deployed in [Phase 3 — SOC Stack Deployment](phase3-soc-stack.md).
+pfSense was deployed as the lab's edge router, providing routing between four isolated VLANs and NAT for internet egress. The deployment consists of the pfSense VM with five interfaces (1 WAN + 5 LAN/OPT), my main PC used to bootstrap webGUI access, and Suricata installed as the IDS package.
 
 ---
 
