@@ -94,23 +94,7 @@ soc-homelab/
 
 ## Project Phases
 
-[`00-architecture`](00-architecture/)
-[`01-infrastructure`](01-infrastructure/)
-[`02-soc-stack`](02-soc-stack/)
-[`03-adversary`](03-adversary/)
-[`04-attack-scenarios`](04-attack-scenarios/)
-[`05-detection-rules`](05-detection-rules/)
-[`06-incident-reports`](06-incident-reports/)
 
-| Phases  | Purpose |
-| -------- |  ------------------------------------------ |
-| VLAN 10  |  [`00-architecture`](00-architecture/)     |
-| VLAN 20  |  [`01-infrastructure`](01-infrastructure/)   |
-| VLAN 66  |  [`02-soc-stack`](02-soc-stack/)              |
-| VLAN 99  |  [`03-adversary`](03-adversary/)          |
-| VLAN 99  |  [`04-attack-scenarios`](04-attack-scenarios/)         |
-| VLAN 99  |  [`05-detection-rules`](05-detection-rules/)          |
-| VLAN 99  |  [`06-incident-reports`](06-incident-reports/)          |
 
 ## About This Project
  
