@@ -1,6 +1,6 @@
 # Design decisions
 
-This document captures the *why* behind the architecture. Any technician can follow a tutorial; what defines a good analyst is understanding design decisions and their trade-offs.
+This document captures the why behind the architecture. 
 
 ## 1. Why VLAN segmentation?
 
@@ -14,17 +14,7 @@ Without segmentation I lose visibility of the lateral movement I specifically wa
 
 **Accepted trade-off:** higher initial configuration complexity.
 
-## 2. Why pfSense and not OPNsense or a commodity router?
-
-Three reasons:
-
-- **Suricata integrated as an official package** — IDS without spinning up a separate VM.
-- **Plenty of documentation** in homelab and blue team contexts.
-- **Rule syntax and log format** are widely covered in public write-ups, which makes troubleshooting easier when something doesn't fit.
-
-OPNsense is valid and technically superior in some areas (cleaner UI, more frequent releases), but pfSense has more reference material for someone learning. If a future iteration calls for breaking out of my comfort zone, I'll migrate.
-
-## 3. Why Wazuh and not Splunk / pure ELK?
+## 2. Why Wazuh and not Splunk / pure ELK?
 
 - **Wazuh is one of the most-used open-source SIEMs** in junior and mid-tier environments — I want to learn the tool I'm most likely to touch in a real job.
 - **All-in-one** (Manager + Indexer + Dashboard) fits in a single VM, which lowers infrastructure cost.
@@ -33,7 +23,7 @@ OPNsense is valid and technically superior in some areas (cleaner UI, more frequ
 
 Splunk would be more "professional" but the free license is heavily capped, and I don't want vendor lock-in on an educational project.
 
-## 4. Why Sysmon + Auditd and not just the Wazuh agent?
+## 3. Why Sysmon + Auditd and not just the Wazuh agent?
 
 The Wazuh agent collects native OS logs. That's not enough for a real SOC:
 
@@ -43,7 +33,7 @@ The Wazuh agent collects native OS logs. That's not enough for a real SOC:
 
 Without this telemetry layer, many MITRE techniques would be invisible to me. That would turn the lab into theater: I run the attack but fail to detect it because of missing logs, not lack of intelligence.
 
-## 5. Why an Ubuntu host in the development VLAN?
+## 4. Why an Ubuntu host in the development VLAN?
 
 Realism. A real corporate environment is heterogeneous. Limiting myself to Windows would leave me without practice on:
 
@@ -51,11 +41,11 @@ Realism. A real corporate environment is heterogeneous. Limiting myself to Windo
 - Cross-platform movement (Linux compromise → Windows pivot).
 - Techniques specific to dev environments: exposed SSH keys, git repositories with secrets, containers as a vector.
 
-## 6. Why MITRE ATT&CK as the scenario framework?
+## 5. Why MITRE ATT&CK as the scenario framework?
 
 It's the language every professional SOC uses to describe techniques. Any incident report, detection rule, or threat hunt in production maps back to ATT&CK. If I build my scenarios around the framework, my documentation speaks the language an interviewer expects to hear from the first answer.
 
-## 7. Why VirtualBox and not Proxmox / ESXi?
+## 6. Why VirtualBox and not Proxmox / ESXi?
 
 Pragmatic choice:
 
@@ -71,13 +61,13 @@ Pragmatic choice:
 
 If I scale the lab later, I'll migrate to Proxmox and document the transition as an extra chapter of the repo.
 
-## 8. Why is the management VLAN (99) separated out-of-band?
+## 7. Why is the management VLAN (99) separated out-of-band?
 
 The Wazuh console **shouldn't be reachable from the segments where the monitored workloads run**. If an attacker compromises a workstation and finds the SIEM on the same subnet, the next logical step is to try to compromise it — to wipe their tracks or blind the analyst.
 
 An out-of-band VLAN with strict rules (telemetry only inbound from agents on TCP 1514/1515, management only from my admin machine over HTTPS) shrinks that attack surface. It's a basic principle of SOC architecture and I want the lab to reflect it from day one.
 
-## 9. Why OpenVPN as the bridge between VLAN 10 and VLAN 20?
+## 8. Why OpenVPN as the bridge between VLAN 10 and VLAN 20?
 
 VLAN 10 (Corporate) and VLAN 20 (Software Development) are separate trust zones, but in a real company they're not isolated — corporate users (PMs, analysts, support) need to reach dev workstations to run RDP sessions, troubleshoot builds, or assist developers. Two ways to allow that crossing:
 
