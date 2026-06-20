@@ -83,13 +83,17 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 ```text
 soc-homelab/
 ├── README.md
-├── 00-architecture/        
-├── 01-infrastructure/       
-├── 02-soc-stack/            
-├── 03-adversary/            
-├── 04-attack-scenarios/    
-├── 05-detection-rules/     
-└── 06-incident-reports/     
+├── docs
+├──── 00-architecture/
+├────── architecture.svg
+├────── design-decisions.md
+├────── prerequisites.md
+├──── 01-infrastructure/       
+├──── 02-soc-stack/            
+├──── 03-adversary/            
+├──── 04-attack-scenarios/    
+├──── 05-detection-rules/     
+└──── 06-incident-reports/     
 ```
 
 ## Project Phases
