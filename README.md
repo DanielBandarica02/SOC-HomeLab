@@ -102,6 +102,16 @@ soc-homelab/
 [`05-detection-rules`](05-detection-rules/)
 [`06-incident-reports`](06-incident-reports/)
 
+| Phases  | Purpose |
+| -------- |  ------------------------------------------ |
+| VLAN 10  |  [`00-architecture`](00-architecture/)     |
+| VLAN 20  |  [`01-infrastructure`](01-infrastructure/)   |
+| VLAN 66  |  [`02-soc-stack`](02-soc-stack/)              |
+| VLAN 99  |  [`03-adversary`](03-adversary/)          |
+| VLAN 99  |  [`04-attack-scenarios`](04-attack-scenarios/)         |
+| VLAN 99  |  [`05-detection-rules`](05-detection-rules/)          |
+| VLAN 99  |  [`06-incident-reports`](06-incident-reports/)          |
+
 ## About This Project
  
 Built as a personal cyber range to develop and demonstrate the full skill set required for SOC Analyst and Detection Engineer roles. The lab is continuously evolving — new rules, attack scenarios, and automation playbooks are added as part of ongoing learning. Network segmentation, out-of-band SOC management, and a dedicated attacker DMZ make this lab a realistic environment for both detection engineering and incident response practice. All documentation is written in English to align with international industry standards.
