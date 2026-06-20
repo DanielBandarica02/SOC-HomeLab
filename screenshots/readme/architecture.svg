@@ -29,9 +29,6 @@
   <marker id="arr-indigo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 1L8 5L0 9" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
-  <marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-    <path d="M0 1L8 5L0 9" fill="none" stroke="#0D9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  </marker>
   <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 1L8 5L0 9" fill="none" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
@@ -40,7 +37,7 @@
 <rect x="0" y="0" width="1100" height="1000" fill="white" stroke="#E2E8F0" stroke-width="1"/>
 
 <text x="550" y="40" text-anchor="middle" class="title">SOC HomeLab — Network Architecture</text>
-<text x="550" y="66" text-anchor="middle" class="subtitle">VLAN-segmented security operations laboratory · pfSense routing · Wazuh + Splunk SIEM · out-of-band management</text>
+<text x="550" y="66" text-anchor="middle" class="subtitle">VLAN-segmented security operations laboratory · pfSense routing · Wazuh SIEM + EDR · out-of-band management</text>
 
 <rect x="475" y="100" width="150" height="56" rx="8" fill="white" stroke="#94A3B8" stroke-width="1.5"/>
 <text x="550" y="124" text-anchor="middle" class="host-name">Internet</text>
@@ -113,27 +110,16 @@
 <path d="M 805 655 L 805 695 L 650 695 L 650 730" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-indigo)"/>
 <text x="550" y="688" text-anchor="middle" class="arrow-label" fill="#6366F1">Wazuh agent telemetry · TCP 1514</text>
 
-<rect x="180" y="735" width="740" height="195" rx="14" fill="#CCFBF1" fill-opacity="0.5" stroke="#0D9488" stroke-width="1.5"/>
-<text x="200" y="760" class="vlan-title" fill="#134E4A">VLAN 99 — SOC Management Operations</text>
-<text x="200" y="778" class="vlan-cidr" fill="#0F766E">10.10.99.0/24 · out-of-band</text>
+<rect x="280" y="735" width="540" height="195" rx="14" fill="#CCFBF1" fill-opacity="0.5" stroke="#0D9488" stroke-width="1.5"/>
+<text x="300" y="760" class="vlan-title" fill="#134E4A">VLAN 99 — SOC Management Operations</text>
+<text x="300" y="778" class="vlan-cidr" fill="#0F766E">10.10.99.0/24 · out-of-band</text>
 
-<rect x="200" y="800" width="290" height="105" rx="6" fill="white" stroke="#99F6E4" stroke-width="1"/>
-<rect x="200" y="800" width="4" height="105" fill="#0D9488"/>
-<text x="216" y="825" class="host-name">Ubuntu Server 24.04</text>
-<text x="216" y="846" class="host-ip">10.10.99.10</text>
-<text x="216" y="871" class="host-role">Wazuh Manager + Indexer +</text>
-<text x="216" y="889" class="host-role">Dashboard + Suricata ingestion</text>
-
-<line x1="498" y1="852" x2="602" y2="852" stroke="#0D9488" stroke-width="2" marker-end="url(#arr-teal)"/>
-<text x="550" y="843" text-anchor="middle" class="arrow-label" fill="#0D9488">HEC :8088</text>
-<text x="550" y="872" text-anchor="middle" class="arrow-label" fill="#0D9488" style="font-size: 11px;">structured JSON events</text>
-
-<rect x="610" y="800" width="290" height="105" rx="6" fill="white" stroke="#99F6E4" stroke-width="1"/>
-<rect x="610" y="800" width="4" height="105" fill="#0D9488"/>
-<text x="626" y="825" class="host-name">Ubuntu Server 24.04</text>
-<text x="626" y="846" class="host-ip">10.10.99.20</text>
-<text x="626" y="871" class="host-role">Splunk Enterprise SIEM</text>
-<text x="626" y="889" class="host-role">HEC + Web UI + correlation</text>
+<rect x="380" y="800" width="340" height="105" rx="6" fill="white" stroke="#99F6E4" stroke-width="1"/>
+<rect x="380" y="800" width="4" height="105" fill="#0D9488"/>
+<text x="396" y="825" class="host-name">Ubuntu Server 22.04</text>
+<text x="396" y="846" class="host-ip">10.10.99.10</text>
+<text x="396" y="871" class="host-role">Wazuh Manager + Indexer + Dashboard</text>
+<text x="396" y="889" class="host-role">All-in-one SIEM + EDR · Suricata ingestion</text>
 
 <text x="60" y="965" class="zone-label">DATA FLOWS</text>
 <line x1="160" y1="961" x2="192" y2="961" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr-gray)"/>
@@ -142,8 +128,6 @@
 <text x="322" y="965" class="legend">VPN / RDP</text>
 <line x1="420" y1="961" x2="452" y2="961" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-indigo)"/>
 <text x="462" y="965" class="legend">Agent telemetry</text>
-<line x1="610" y1="961" x2="642" y2="961" stroke="#0D9488" stroke-width="2" marker-end="url(#arr-teal)"/>
-<text x="652" y="965" class="legend">HEC ingestion</text>
-<line x1="780" y1="961" x2="812" y2="961" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-red)"/>
-<text x="822" y="965" class="legend">Attack traffic</text>
+<line x1="610" y1="961" x2="642" y2="961" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-red)"/>
+<text x="652" y="965" class="legend">Attack traffic</text>
 </svg>
