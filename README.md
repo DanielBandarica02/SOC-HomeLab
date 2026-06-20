@@ -81,9 +81,9 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 ## Repository structure
 
 ```text
-soc-homelab/
+SOC-HomeLab/
 ├── README.md
-├── docs
+├── docs/
 ├──── 00-architecture/
 ├────── architecture.svg
 ├────── design-decisions.md
