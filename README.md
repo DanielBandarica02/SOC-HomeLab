@@ -93,7 +93,9 @@ SOC-HomeLab/
 ├── 03-adversary/
 ├── 04-attack-scenarios/
 ├── 05-detection-rules/
-└── 06-incident-reports/   
+├── 06-incident-reports/
+└── Screenshots
+   
 ```
 
 ## Project Phases
