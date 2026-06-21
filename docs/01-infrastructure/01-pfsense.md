@@ -1,438 +1,366 @@
-# Phase 1.1 — Perimeter: pfSense + OpenVPN
+# Phase 2 — Network Backbone (pfSense + OpenVPN)
  
-> **Goal:** pfSense running as the single inter-VLAN router for the lab, with Internet egress, DHCP per LAN, OpenVPN as the only sanctioned crossing between VLAN 10 and VLAN 20, and a dedicated management path for me to administer the firewall before any other VM exists.
-
+## Overview
+ 
+pfSense was deployed as the lab's edge router, providing inter-VLAN routing and NAT for internet egress, and as the lab's VPN concentrator for the controlled crossing between the Corporate and Development segments. The deployment consists of the pfSense VM with six interfaces (1 WAN + 4 LAN/OPT + 1 host-only MGMT), a temporary host-only network used to bootstrap webGUI access before any endpoint VM exists, an internal PKI (Certificate Authority + server certificate), and an OpenVPN remote-access server bound to the Corporate VLAN.
+ 
 ---
  
-## 1. Create the VirtualBox VM
+## Architecture
  
-### General settings
+```mermaid
+flowchart LR
+    A[Internet] -->|NAT| B[pfSense em0/WAN<br/>10.0.2.15/24]
+    B --> C[em1/VLAN10 — Corporate<br/>10.10.10.1/24]
+    B --> D[em2/VLAN20 — Dev<br/>10.10.20.1/24]
+    B --> E[em3/VLAN66 — Attacker<br/>10.10.66.1/24]
+    B --> F[em4/VLAN99 — SOC<br/>10.10.99.1/24]
+    B --> G[em5/MGMT — Host-only<br/>192.168.56.10/24]
+    H[Host PC<br/>192.168.56.1] -.->|admin via webGUI| G
+    C -.->|OpenVPN UDP 1194<br/>tunnel 10.10.50.0/24| D
+```
  
-| Field   | Value                |
-| ------- | -------------------- |
-| Name    | `pfSense`            |
-| Type    | BSD                  |
-| Version | FreeBSD (64-bit)     |
+Inter-VLAN traffic is denied by default at the firewall. The only sanctioned crossing between VLAN 10 and VLAN 20 is the OpenVPN tunnel, which adds certificate + user authentication and per-session logging on top of the network controls.
  
-### Resources
+---
  
-| Resource | Value |
-| -------- | ----- |
-| CPU      | 2 vCPU |
-| RAM      | 2 GB |
-| Disk     | 20 GB |
-
+## Deployment
  
-## 2. Install pfSense
-
-The pfSense VM was created with five virtual NICs (1 NAT + 4 Internal Network) to provide one interface per VLAN plus the WAN uplink. All adapters use **Intel PRO/1000 MT Desktop (82540EM)** because FreeBSD has native drivers for this NIC.
-
-| Adapter | Attached to                         | Promiscuous Mode |
-| ------- | ----------------------------------- | ---------------- |
-| 1 (em0) | NAT                                 | Deny             |
-| 2 (em1) | Internal Network `vlan10-corp`      | Allow VMs        |
-| 3 (em2) | Internal Network `vlan20-dev`       | Allow VMs        |
-| 4 (em3) | Internal Network `vlan66-attack`    | Allow VMs        |
-| 5 (em4) | Internal Network `vlan99-soc`       | Allow VMs        |
-
-![Network Adapters](screenshots/phase2/01-network-adapters.png)
-
-
-For every adapter:
+### pfSense VM provisioning
  
-- **Promiscuous Mode:** `Allow All` — required for Suricata to inspect everything traversing the firewall, and for visibility into broadcast / multicast traffic (ARP poisoning, LLMNR / NBT-NS abuse, etc.) that's central to many MITRE techniques. Without it the IDS would be partially blind. 
-
+The pfSense VM was created with six virtual NICs (1 NAT + 4 Internal Network + 1 Host-only) to provide one interface per VLAN plus the WAN uplink and a bootstrap management path. All adapters use **Intel PRO/1000 MT Desktop (82540EM)** because FreeBSD has native drivers for this NIC.
+ 
+| Adapter | Attached to                       | Promiscuous Mode |
+| ------- | --------------------------------- | ---------------- |
+| 1 (em0) | NAT                               | Deny             |
+| 2 (em1) | Internal Network `vbox-vlan10-corp` | Allow All      |
+| 3 (em2) | Internal Network `vbox-vlan20-dev`  | Allow All      |
+| 4 (em3) | Internal Network `vbox-vlan66-dmz`  | Allow All      |
+| 5 (em4) | Internal Network `vbox-vlan99-soc`  | Allow All      |
+| 6 (em5) | Host-only Adapter                   | Allow All      |
+ 
+`Promiscuous Mode: Allow All` was selected on all internal adapters because Suricata (deferred to Phase 3) needs to inspect every frame traversing the firewall, including broadcast/multicast traffic central to attack techniques such as ARP poisoning and LLMNR/NBT-NS abuse.
+ 
+### VirtualBox GUI four-adapter limit
+ 
+The VirtualBox GUI exposes only four adapter tabs in Settings → Network, while the hypervisor engine supports up to eight NICs per VM. Adapters 5 and 6 were configured via `VBoxManage` from the host CLI with the VM powered off:
+ 
+```bash
+VBoxManage modifyvm "pfSense" \
+  --nic5 intnet --intnet5 "vbox-vlan99-soc" \
+  --nictype5 82540EM --cableconnected5 on --nicpromisc5 allow-all
+ 
+VBoxManage modifyvm "pfSense" \
+  --nic6 hostonly --hostonlyadapter6 "vboxnet0" \
+  --nictype6 82540EM --cableconnected6 on --nicpromisc6 allow-all
+```
+ 
+Verification: `VBoxManage showvminfo "pfSense" | grep -i "NIC 5\|NIC 6"`.
+ 
 ### pfSense installation
-
-pfSense 2.8.1 was installed from the Netgate Installer ISO 
-
+ 
+pfSense 2.8.1-RELEASE was installed from the Netgate Installer ISO. Installation parameters: UFS file system, GPT partition scheme (compatible with MBR), `ada0` as target disk.
+ 
+UFS was chosen over ZFS because the lab disk is single-disk and 20 GB, the VM RAM allocation (2 GB) does not give ZFS comfortable headroom, and rollback is already handled at the VirtualBox snapshot level — making ZFS's filesystem-level snapshots redundant.
+ 
+The pfSense 2.8 installer includes a pre-install LAN Network Mode Setup screen that asks for the LAN IP and DHCP range before disk write. The defaults (`192.168.1.1/24`, DHCP `.100–.199`) were overridden to match the lab IP plan (`10.10.10.1/24`, DHCP `10.10.10.100–10.10.10.200`).
+ 
+At the end of the installer, `Halt` was selected instead of `Reboot` to avoid an installer-loop race condition (see Troubleshooting #1).
+ 
 ### Interface assignment and IP configuration
-
-From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, em3=OPT2, em4=OPT3) and IP addresses configured per the lab IP plan:
-
-| Interface | IPv4 / mask     | DHCP server                |
-| --------- | --------------- | -------------------------- |
-| WAN       | DHCP — 10.0.2.15 | n/a                       |
-| LAN       | 10.10.10.1/24    | Enabled (.100-.200)       |
-| OPT1      | 10.10.20.1/24    | Enabled (.100-.200)       |
-| OPT2      | 10.10.66.1/24    | Disabled (static Kali)    |
-| OPT3      | 10.10.99.1/24    | Disabled (static SOC VMs) |
  
+From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, em3=OPT2, em4=OPT3) via console option `1) Assign Interfaces`. The "Should VLANs be set up now?" prompt was answered with `n` because the lab uses VirtualBox Internal Networks, not 802.1Q VLAN tagging.
  
-### Verify with `ping 8.8.8.8`
+IPs were configured via option `2) Set interface(s) IP address`. LAN was already provisioned from the pre-install wizard; OPT1, OPT2, OPT3 were configured manually.
  
-Console option `7) Ping host` → `8.8.8.8`. Four replies → outbound NAT works. pfSense CE defaults to **Automatic Outbound NAT**, which generates NAT rules for every LAN interface without configuration.
-
-![Ping Verification](screenshots/phase1/02-ping-verification.png)
+| Interface | IPv4 / mask     | DHCP server          |
+| --------- | --------------- | -------------------- |
+| WAN       | DHCP — 10.0.2.15 | n/a                 |
+| LAN       | 10.10.10.1/24   | Enabled (.100–.200) |
+| OPT1      | 10.10.20.1/24   | Enabled (.100–.200) |
+| OPT2      | 10.10.66.1/24   | Enabled (.100–.200) |
+| OPT3      | 10.10.99.1/24   | Enabled (.100–.200) |
+ 
+The DHCP range `.100–.200` reserves `.10–.99` for static assets (AD DC, workstations, Wazuh, Kali). Any IP `≤ .99` is a known provisioned asset; anything `≥ .100` is a dynamic lease — a mental model that simplifies log triage in later phases.
+ 
+### Management interface bootstrap (host-only adapter)
+ 
+The pfSense webGUI is only reachable from a host inside one of the configured networks, and at this point no endpoint VM exists in any VLAN. A host-only management adapter (em5, attached to VirtualBox network `vboxnet0`, `192.168.56.0/24`) was added so the webGUI could be accessed from the host PC's browser before any endpoint exists.
+ 
+The host-only network was configured in `File → Host Network Manager` with the host's adapter at `192.168.56.1/24` and the VirtualBox built-in DHCP server disabled. pfSense's em5 was assigned the static IP `192.168.56.10/24` with no DHCP server (the network is admin-only; no other devices need leases).
+ 
+This interface is documented as temporary and is intended to be either removed or restricted by firewall rule once Phase 4 brings a Corporate workstation online.
+ 
+### Setup Wizard
+ 
+The first-run wizard was completed with:
+ 
+| Setting                                | Value                       |
+| -------------------------------------- | --------------------------- |
+| Hostname                               | `pfSense`                   |
+| Domain                                 | `soclab.internal`           |
+| Primary DNS                            | `1.1.1.1`                   |
+| Secondary DNS                          | `8.8.8.8`                   |
+| Override DNS                           | Unchecked                   |
+| Timezone                               | `Europe/Madrid`             |
+| NTP Server                             | `pool.ntp.org`              |
+| Block RFC1918 Private Networks on WAN  | Unchecked                   |
+| Block bogon networks on WAN            | Unchecked                   |
+ 
+The domain TLD was set to `.internal` rather than `.local` because pfSense's wizard explicitly warns against `.local` — that TLD is reserved by mDNS (Avahi, Bonjour, Windows Network Discovery) and causes name resolution conflicts. `.internal` is the IETF / ICANN convention for private networks.
+ 
+`Override DNS` was unchecked so the manually configured `1.1.1.1` and `8.8.8.8` remain authoritative; the inverse (checked) would let the WAN DHCP-provided DNS overwrite them on every lease renewal, breaking predictability.
+ 
+The two `Block ... on WAN` checkboxes were unchecked because the WAN sits on VirtualBox NAT (`10.0.2.0/24`), which is itself RFC1918. Leaving these enabled would cause pfSense to drop traffic from the NAT gateway (`10.0.2.2`), including periodic DHCP renewals, causing intermittent WAN loss.
+ 
+### Interface renaming
+ 
+The default pfSense interface names (`LAN`, `OPT1`, `OPT2`, `OPT3`, `OPT4`) were renamed under `Interfaces → [name] → Description` to match the lab vocabulary, so firewall rule tabs and logs are immediately readable.
+ 
+| Default | Renamed to | Description                  |
+| ------- | ---------- | ---------------------------- |
+| LAN     | VLAN10     | Corporate domain segment     |
+| OPT1    | VLAN20     | Software Development         |
+| OPT2    | VLAN66     | Attacker DMZ                 |
+| OPT3    | VLAN99     | SOC Management (out-of-band) |
+| OPT4    | MGMT       | Temporary host-only admin    |
+ 
+All five interfaces were saved individually without applying, then `Apply Changes` was clicked once at the end — a single `pfctl` reload rather than five (see Troubleshooting #6).
+ 
+### Firewall rules
+ 
+pfSense applies default-deny on every interface except LAN, which has an automatic anti-lockout rule. The newly created MGMT interface initially blocked all traffic, including the webGUI HTTPS port (see Troubleshooting #5). A permanent rule was added to allow administrative access from the host PC:
+ 
+| Interface | Action | Source         | Destination          | Protocol | Description                       |
+| --------- | ------ | -------------- | -------------------- | -------- | --------------------------------- |
+| MGMT      | Pass   | `192.168.56.1` | This Firewall (self) | any      | Allow host PC full admin access   |
+ 
+Destination is restricted to `This Firewall (self)` rather than `any`, so the MGMT network cannot be used to pivot into the lab VLANs — it is purely an admin path to pfSense itself.
+ 
+VLAN10, VLAN20, VLAN66, and VLAN99 were left with no allow rules at this stage (default-deny posture). Inter-VLAN rules will be added per scenario in Phase 5, documented per case.
+ 
+### OpenVPN — PKI setup
+ 
+A two-tier internal PKI was created under `System → Cert Manager`:
+ 
+| Object             | Type        | Common Name           | Algorithm    | Lifetime |
+| ------------------ | ----------- | --------------------- | ------------ | -------- |
+| SOC-Lab-CA         | CA          | `SOC-Lab-CA`          | RSA 2048 + SHA256 | 3650 d |
+| SOC-Lab-VPN-Server | Server cert | `vpn.soclab.internal` | RSA 2048 + SHA256 | 3650 d |
+ 
+The server certificate was created with `Certificate Type: Server Certificate` rather than the default `User Certificate`. The two types differ in the X.509 `extendedKeyUsage` extension — using a user certificate on the server side functionally works but emits client-side warnings on every connection.
+ 
+2048-bit RSA was selected over 4096 because the security gain at lab scale is marginal while the TLS handshake cost roughly doubles. SHA256 was selected because SHA1 is cryptographically broken and not negotiable for new deployments.
+ 
+### OpenVPN — server configuration
+ 
+Under `VPN → OpenVPN → Servers → Add`:
+ 
+| Setting                       | Value                                |
+| ----------------------------- | ------------------------------------ |
+| Server Mode                   | Remote Access (SSL/TLS + User Auth)  |
+| Backend for authentication    | Local Database                       |
+| Device Mode                   | tun (Layer 3)                        |
+| Protocol                      | UDP on IPv4 only                     |
+| Interface                     | VLAN10                               |
+| Local port                    | 1194                                 |
+| Peer Certificate Authority    | SOC-Lab-CA                           |
+| Server Certificate            | SOC-Lab-VPN-Server                   |
+| Data Encryption Algorithms    | AES-256-GCM, AES-128-GCM, CHACHA20-POLY1305 |
+| Auth Digest Algorithm         | SHA256                               |
+| IPv4 Tunnel Network           | `10.10.50.0/24`                      |
+| Redirect IPv4 Gateway         | Unchecked                            |
+| IPv4 Local Network(s)         | `10.10.20.0/24`                      |
+| Allow Compression             | Refuse any non-stub compression (Most secure) |
+| Topology                      | Subnet                               |
+| DNS Default Domain            | `soclab.internal`                    |
+ 
+`Remote Access (SSL/TLS + User Auth)` was selected to require both certificate and password authentication. Single-factor at a VPN edge (cert-only or password-only) is below the entry-level expectation for any production deployment; the lab matches that posture.
+ 
+`Redirect IPv4 Gateway` was left unchecked because forcing all client traffic through the tunnel would break the client's internet access (pfSense does not route arbitrary OpenVPN client traffic out the WAN). Only the VLAN 20 route is pushed to clients.
+ 
+Compression was disabled because of VORACLE-class attacks against compressed VPN data planes. The minor bandwidth reduction is not worth the side-channel risk.
+ 
+### OpenVPN — user and client certificate
+ 
+Under `System → User Manager → Add`:
+ 
+| Setting          | Value                |
+| ---------------- | -------------------- |
+| Username         | `vpn-corp-user`      |
+| Password         | (recorded externally) |
+| Full name        | Corporate VPN User   |
+| Client certificate | Created inline, signed by SOC-Lab-CA, RSA 2048 + SHA256, 3650 d, type `User Certificate` |
+ 
+### OpenVPN — firewall rule on the OpenVPN tab
+ 
+Creating the OpenVPN server caused a new `OpenVPN` tab to appear under `Firewall → Rules`. The tab is empty by default, meaning tunnel clients can establish the connection but cannot route to any subnet behind the firewall.
+ 
+| Interface | Action | Source              | Destination         | Protocol | Description                                |
+| --------- | ------ | ------------------- | ------------------- | -------- | ------------------------------------------ |
+| OpenVPN   | Pass   | Net `10.10.50.0/24` | Net `10.10.20.0/24` | any      | Allow OpenVPN clients to reach VLAN20 (dev) |
+ 
+The rule allows any protocol from the tunnel subnet to VLAN 20. A tighter rule restricted to RDP (3389) and SSH (22) would match production practice, but the broader rule was preferred at this stage to allow iteration in subsequent phases. Tightening becomes a documented decision during Phase 5 scenario design.
+ 
+### OpenVPN — client export
+ 
+The `OpenVPN Client Export Utility` package was installed via `System → Package Manager` to enable single-file client configuration export. Under `VPN → OpenVPN → Client Export`, the `vpn-corp-user` entry was exported using **Inline Configurations → Most Clients**, producing a single `.ovpn` file with the CA, client certificate, client key, TLS auth key, and connection parameters all embedded. This file is retained for import by the Corporate workstation in Phase 4.
  
 ---
  
-## 3. Management interface (host-only) for Web UI access
-
-I add a 6th adapter on a VirtualBox host-only network so I can access the GUI from my host PC.
-
+## Validation — Connectivity Tests
  
-### 4.4 The default-deny gotcha and the first Web UI access
+### NAT outbound from pfSense
  
-At this point pfSense tells me I can access the Web UI at `https://192.168.56.10`. **It doesn't load.** This is the second real gotcha.
+From the pfSense console, option `7) Ping host`:
  
-pfSense applies **default deny on every interface except LAN**. LAN has an "anti-lockout rule" automatically — every other interface, including the freshly-created MGMT, blocks everything inbound. The Web UI is reachable network-wise but the firewall drops the connection.
- 
-To break in, console option `8) Shell`:
- 
-```sh
-pfctl -d         # disables the packet filter entirely
+```
+ping 8.8.8.8
 ```
  
-Now the browser loads `https://192.168.56.10`. Login `admin` / `pfsense`. I immediately go to:
+Result: four replies under 50 ms — WAN NAT functional, pfSense reaches the internet through the VirtualBox NAT engine.
  
-**Firewall → Rules → OPT4 → Add** and create this rule:
+### Host PC ↔ pfSense webGUI
  
-| Field | Value |
-| --- | --- |
-| Action | Pass |
-| Interface | OPT4 |
-| Address Family | IPv4 |
-| Protocol | **any** |
-| Source | Single host or alias → `192.168.56.1` |
-| Destination | **This Firewall (self)** |
-| Description | `Allow host PC full admin access to pfSense` |
+From the host PC's PowerShell:
  
-Save → Apply Changes.
- 
-Then back to the console shell:
- 
-```sh
-pfctl -e         # re-enable the packet filter
-exit
+```powershell
+ping 192.168.56.10
 ```
  
-**Why `any` protocol and not just TCP/443 for HTTPS:** I started with the tighter rule (TCP/443 only) and immediately found myself wanting ping for diagnostics and the option to use SSH later. The "any" rule from `192.168.56.1` to `self` covers all admin paths without opening the firewall to broader traffic — destination is still pfSense itself, not a route into the lab.
+Result: four replies under 1 ms — host-only network operational, MGMT firewall rule permits ICMP.
  
-**Why `pfctl -d` isn't a long-term solution:** pfSense auto-re-enables the packet filter on `Apply Changes`, service restarts, and several other events. The permanent rule is the right fix; `pfctl -d` is just for the first-access window.
+Browser access to `https://192.168.56.10` loaded the pfSense webGUI after accepting the self-signed certificate warning. Login succeeded with the password set during the Setup Wizard.
  
----
+### OpenVPN service status
  
-## 5. Setup Wizard
+Under `VPN → OpenVPN → Servers`, the server listed status **Up** (green). Under `Status → OpenVPN`, the daemon listed as **running**.
  
-Visiting the Web UI for the first time triggers pfSense's Setup Wizard. I walk it through with these values:
- 
-### General Information
- 
-| Field | Value | Note |
-| --- | --- | --- |
-| Hostname | `pfSense` | — |
-| Domain | `soclab.internal` | **Not** `.local` — that TLD is reserved by mDNS (Avahi, Bonjour, etc.) and pfSense itself warns against it. `.internal` is the IETF / ICANN convention for private networks. |
-| Primary DNS Server | `1.1.1.1` | Cloudflare |
-| Secondary DNS Server | `8.8.8.8` | Google — mixing providers for redundancy |
-| **Override DNS** | **unchecked** | Confusingly worded checkbox. Unchecked = my manual DNS values stay, DHCP from WAN doesn't override them. Checked = DHCP can override (we don't want that). |
- 
-### Time Server Information
- 
-| Field | Value |
-| --- | --- |
-| Timezone | `Europe/Madrid` |
-| NTP Server | `pool.ntp.org` (default) |
- 
-### WAN Configuration
- 
-Mostly defaults (DHCP). The two checkboxes I have to **uncheck** at the bottom:
- 
-- **Block RFC1918 Private Networks** → uncheck
-- **Block bogon networks** → uncheck
-**Why:** my WAN sits on VirtualBox NAT (`10.0.2.0/24`), which is itself RFC1918. If I leave these blocks on, pfSense drops traffic from `10.0.2.2` (the VirtualBox NAT gateway) — including periodic DHCP renewals — and I lose WAN intermittently. In a real-world deployment with a public WAN, these checkboxes are good practice; on a virtualized NAT WAN, they're self-sabotage.
- 
-### LAN Configuration
- 
-Already set during the install wizard. Just verify `10.10.10.1/24` and click Next.
- 
-### Admin password
- 
-Change from `pfsense` to something strong. Save somewhere I can find it.
- 
-Reload → Finish → land on Dashboard.
+End-to-end tunnel validation (client connects, receives push route, reaches a VLAN 20 host) is deferred to Phase 4 when the first OpenVPN client (Win11-Corp) is provisioned.
  
 ---
  
-## 6. Rename interfaces
+## Troubleshooting & Lessons Learned
  
-Default names (`LAN`, `OPT1`, `OPT2`, `OPT3`, `OPT4`) are useless once I have rules and logs. I rename them to match the topology vocabulary so a future rule like `VLAN66 → VLAN99 blocked` immediately tells me "the attacker tried to touch the SIEM."
+### 1. Kernel panic after the first install attempt
  
-| Default name | Renamed to | Description |
-| --- | --- | --- |
-| LAN | **VLAN10** | Corporate domain segment |
-| OPT1 | **VLAN20** | Software Development |
-| OPT2 | **VLAN66** | Attacker DMZ |
-| OPT3 | **VLAN99** | SOC Management (out-of-band) |
-| OPT4 | **MGMT** | Temporary host-only admin |
+After the first install completed and the VM rebooted, the FreeBSD console looped with `vm_fault: pager read error, pid XXXX (init)`. The methodology to triage this was process of elimination on the post-install boot path:
  
-For each interface: **Interfaces → [name] → Description field → Save.**
+| Hypothesis                          | Evidence                                                            | Conclusion |
+| ----------------------------------- | ------------------------------------------------------------------- | ---------- |
+| Bad ISO checksum                    | SHA256 verified before install — match                              | Ruled out  |
+| Corrupted VDI                       | Disk created cleanly, no I/O errors during install                  | Possible   |
+| Incomplete install (early ISO eject) | "Reboot" was selected at end of install while ISO was still mounted; the `Remove disk from virtual drive` operation in VirtualBox's Devices menu was performed mid-reboot | Likely root cause |
  
-**Crucial:** Save all 5 first, then click **Apply Changes** once at the very end. The yellow "you must apply" banner accumulates across navigations. If I Apply after each rename, that's 5 `pfctl` reloads — and each reload can drop my browser session. One Apply at the end = one reload, one risk window.
+**Solution:** the VM was hard-powered-off, the ISO was re-mounted, and the install was re-run. At the `Complete` screen, **`Halt`** was selected instead of `Reboot`, allowing the VM to power off in a quiescent state. The ISO was then unmounted via Settings → Storage with the VM definitively off, and the VM was booted from disk in a clean state. The second install booted successfully.
  
-After Apply, the firewall rules tabs and log labels all update to the new names. The existing OPT4 rule moves to the MGMT tab automatically — pfSense references interfaces by internal ID (`opt4`), not by display name.
+### 2. VirtualBox GUI four-adapter limit
  
----
+The VM Settings → Network UI shows only four adapter tabs, but the architecture requires five internal NICs plus a sixth host-only NIC. The methodology: the VirtualBox documentation was consulted, confirming up to eight adapters per VM are supported by the engine — the limit is GUI-only.
  
-## 7. OpenVPN — full setup
+**Solution:** adapters 5 and 6 were configured via `VBoxManage modifyvm` from the host CLI with the VM powered off, then verified with `VBoxManage showvminfo`. The configuration is persistent and behaves identically to GUI-configured adapters at runtime.
  
-The architectural decision behind this: VLAN 10 (Corporate) and VLAN 20 (Software Development) are separate trust zones, and the only sanctioned crossing is an authenticated, logged OpenVPN tunnel. Direct firewall rules between the two segments stay denied. See [design-decisions.md §9](../00-architecture/design-decisions.md#9-why-openvpn-as-the-bridge-between-vlan-10-and-vlan-20) for the rationale.
+### 3. Pre-install LAN wizard accepts wrong-subnet defaults
  
-### 7.1 Install the OpenVPN Client Export package
+pfSense 2.8's installer presents a `LAN (em1) Network Mode Setup` screen before the disk install with defaults of `192.168.1.1/24` and DHCP range `192.168.1.100–.199`. On the first install attempt, defaults were accepted, resulting in LAN provisioned on the wrong subnet. This was detected post-install when the LAN gateway IP did not match the lab IP plan.
  
-**System → Package Manager → Available Packages**.
+**Solution:** the IP, DHCP start, and DHCP end fields were overridden via the keyboard shortcuts (`I`, `S`, `E`) before the install proceeded on the second attempt.
  
-Search for `openvpn-client-export`. The package "OpenVPN Client Export Utility" appears. **+ Install → Confirm**. Wait 30–60 seconds.
+### 4. Interface assignment skipped Optional interfaces
  
-After install, **VPN → OpenVPN** has a new tab: `Client Export`.
+After the second install, the first-boot interface assignment wizard prompted for `Optional 1`. An accidental empty Enter caused pfSense to interpret the input as "no more interfaces," resulting in `em2`, `em3`, `em4` (and later `em5`) remaining unassigned. Detection: the console menu showed only WAN and LAN with IPs, and option `2) Set interface(s) IP address` only listed those two interfaces.
  
-### 7.2 Create the Certificate Authority
+**Solution:** option `1) Assign Interfaces` was re-run from the main menu, walking through the full sequence and providing all `em` names. Pressing Enter empty is only correct on the prompt *after* the last desired interface.
  
-**System → Cert Manager → CAs → Add.**
+### 5. VLAN sub-menu trap during interface assignment
  
-This CA is the trust root of my lab VPN. It signs the server certificate and every user certificate. In production, this would be either a public CA or an enterprise PKI; in the lab, I am my own CA.
+A `y` was entered by mistake at the `Should VLANs be set up now?` prompt during option 1, putting the wizard into an 802.1Q VLAN configuration sub-flow. The first sub-prompt (`Enter the parent interface name for the new VLAN`) accepted an interface name (em0) instead of being recognized as an exit prompt.
  
-| Field | Value |
-| --- | --- |
-| Descriptive name | `SOC-Lab-CA` |
-| Method | **Create an internal Certificate Authority** |
-| Randomize Serial | ✓ |
-| Key Type | RSA |
-| Key Length | 2048 |
-| Digest Algorithm | SHA256 |
-| Lifetime (days) | 3650 |
-| Common Name | `SOC-Lab-CA` |
-| Country Code | `ES` |
-| State or Province | `Catalonia` |
-| City | `Girona` |
-| Organization | `SOC HomeLab` |
-| OU / Email | (blank) |
+**Solution:** at any prompt within the VLAN sub-flow ending in `(or nothing if finished)`, pressing Enter with an empty input exits the sub-menu. If a partial VLAN entry has already been started, completing it with any tag and pressing Enter on the next parent-interface prompt also exits. Any phantom VLAN created during this can be deleted later from `Interfaces → Assignments → VLANs`.
  
-Save.
+### 6. Default-deny lockout on newly created OPT interface
  
-**Why 2048 bits and SHA256:** 2048 is the security/performance balance — 4096 doubles the key handshake cost for negligible practical security gain on a lab. SHA1 is broken, MD5 is more broken; SHA256 is the minimum acceptable today and the OpenVPN community consensus.
+After the MGMT interface (em5) was configured with IP `192.168.56.10/24`, the pfSense console announced the webGUI URL. The browser request timed out. The methodology used was a layered connectivity test:
  
-### 7.3 Create the server certificate
+| Test                                                  | Result      |
+| ----------------------------------------------------- | ----------- |
+| `ping 192.168.56.1` (host adapter from pfSense)       | Replies     |
+| Host PC's VirtualBox Host-Only adapter has `192.168.56.1` (`ipconfig`) | Confirmed   |
+| `ping 192.168.56.10` from host PC                     | Timeout     |
+| Browser `https://192.168.56.10`                       | Timeout     |
  
-**System → Cert Manager → Certificates → Add/Sign.**
+L2 and L3 connectivity were functional from pfSense's side, ruling out a link or routing issue. The lockout was localized to the firewall: pfSense applies default-deny on every interface except LAN (which carries an automatic anti-lockout rule). MGMT had no rules.
  
-| Field | Value |
-| --- | --- |
-| Method | Create an internal Certificate |
-| Descriptive name | `SOC-Lab-VPN-Server` |
-| Certificate authority | **SOC-Lab-CA** |
-| Key Type | RSA |
-| Key Length | 2048 |
-| Digest Algorithm | SHA256 |
-| Lifetime (days) | 3650 |
-| Common Name | `vpn.soclab.internal` |
-| Country / State / City / Org | same as the CA |
-| **Certificate Type** | **Server Certificate** |
-| Alternative Names | (blank) |
+**Solution:** packet filtering was disabled temporarily via the pfSense console shell with `pfctl -d`, the webGUI was accessed, a permanent allow rule was created on `Firewall → Rules → MGMT` (source `192.168.56.1`, destination `This Firewall (self)`, protocol any), and the packet filter was re-enabled with `pfctl -e`.
  
-Save.
+`pfctl -d` is not a stable workaround: pfSense automatically re-enables the packet filter on `Apply Changes`, service restarts, and several other internal events. The permanent firewall rule is the correct fix.
  
-**Why "Server Certificate":** the `extendedKeyUsage` X.509 extension differs between user certs and server certs. If I leave this as "User Certificate" (the default), the server will function but clients will emit warnings about an unexpected certificate type on every connect.
+### 7. Interface rename caused webGUI session drops
  
-### 7.4 Create the OpenVPN server
+Renaming each interface (`LAN` → `VLAN10`, `OPT1` → `VLAN20`, etc.) and clicking `Apply Changes` after each rename caused the browser HTTPS session to disconnect repeatedly. The pattern was reproduced: each Apply triggered a `pfctl` reload, and each reload severed the live admin session.
  
-**VPN → OpenVPN → Servers → Add.**
+**Solution:** the workflow was changed to save each rename without clicking Apply — the yellow "must apply" banner accumulates across navigations — then `Apply Changes` was clicked once at the end. One reload, one risk window instead of five.
  
-#### General Information
+### 8. `.local` TLD vs mDNS
  
-| Field | Value |
-| --- | --- |
-| Server Mode | **Remote Access (SSL/TLS + User Auth)** |
-| Backend for authentication | Local Database |
-| Device Mode | tun (Layer 3 Tunnel Mode) |
-| Protocol | **UDP on IPv4 only** |
-| Interface | **VLAN10** |
-| Local port | `1194` |
-| Description | `SOC-Lab VPN Server (VLAN10 -> VLAN20)` |
+The Setup Wizard's General Information page explicitly warns against `.local` as the domain TLD because mDNS (Avahi, Bonjour, Airprint, Windows Network Discovery on some configurations) claims it. A first-pass entry of `soclab.local` was replaced with `soclab.internal` after re-reading the warning. The `.internal` TLD is the modern convention promoted by ICANN and the IETF for private networks.
  
-**Why "SSL/TLS + User Auth":** defense in depth. Even if a user's password leaks, the attacker still needs the user's certificate. Even if a laptop with a certificate is stolen, the attacker still needs the password. Single-factor auth (cert-only or password-only) is one boundary; two-factor at the VPN edge is the entry-level expectation in any decent enterprise.
+### 9. Misleading "Override DNS" checkbox label
  
-**Why UDP:** OpenVPN was designed for UDP. TCP-over-TCP creates retransmission stacking that degrades performance. UDP also makes the VPN harder to fingerprint with simple port scans.
+The wizard's `Override DNS` checkbox is labelled "Allow DNS servers to be overridden by DHCP/PPP on WAN". The intuitive reading conflicts with the actual behavior:
  
-#### Cryptographic Settings
+| State          | Actual behavior                                                  |
+| -------------- | ---------------------------------------------------------------- |
+| Checked        | WAN-DHCP-provided DNS overrides the manually configured entries  |
+| Unchecked      | The manually configured entries are authoritative (sticky)       |
  
-| Field | Value |
-| --- | --- |
-| TLS Configuration | ✓ Use a TLS Key |
-| Generate TLS Key | ✓ (auto on save) |
-| TLS Key Usage Mode | TLS Authentication |
-| Peer Certificate Authority | SOC-Lab-CA |
-| Server Certificate | SOC-Lab-VPN-Server |
-| DH Parameter Length | 2048 |
-| Data Encryption Algorithms | AES-256-GCM, AES-128-GCM, CHACHA20-POLY1305 (defaults) |
-| Fallback Data Encryption Algorithm | AES-256-CBC |
-| Auth digest algorithm | SHA256 |
+For predictable lab DNS behavior, the box was unchecked so the manually configured `1.1.1.1` and `8.8.8.8` remain authoritative regardless of WAN DHCP changes.
  
-#### Tunnel Settings
+### 10. `Block private networks / bogon networks` on WAN broke RFC1918 NAT
  
-| Field | Value |
-| --- | --- |
-| IPv4 Tunnel Network | `10.10.50.0/24` |
-| IPv6 Tunnel Network | (blank) |
-| Redirect IPv4 Gateway | **unchecked** |
-| IPv4 Local Network(s) | `10.10.20.0/24` |
-| Concurrent connections | `5` |
-| Allow Compression | Refuse any non-stub compression (Most secure) |
-| Push Compression | unchecked |
-| Inter-client communication | unchecked |
-| Duplicate Connections | unchecked |
+The Setup Wizard enables both `Block RFC1918 Private Networks` and `Block bogon networks` on WAN by default. On a public WAN this is good practice — it prevents source-spoofed traffic from RFC1918 ranges. On the lab's VirtualBox NAT WAN, where the pfSense WAN IP is `10.0.2.15/24` (RFC1918) and the gateway is `10.0.2.2`, both rules drop legitimate VirtualBox NAT traffic, including periodic DHCP renewals.
  
-**Why no `Redirect IPv4 Gateway`:** if checked, the client routes ALL its traffic through the VPN, breaking its own Internet access (since pfSense doesn't forward arbitrary client traffic to the WAN by default). I only need clients to reach VLAN 20, so I push only that route.
+**Solution:** both checkboxes were unchecked during the wizard. The decision is documented as a virtualized-NAT-WAN exception, not a generic security relaxation.
  
-**Why compression off:** VORACLE and similar attacks against compressed VPN traffic. Modern best practice is no compression on VPN data planes.
+### 11. Server certificate type matters for OpenVPN
  
-#### Client Settings
+The default Certificate Type when creating a new internal certificate in `Cert Manager` is `User Certificate`. Initially, the server certificate for OpenVPN was created with the default. While the OpenVPN service started, client-side connections emitted certificate warnings.
  
-| Field | Value |
-| --- | --- |
-| Dynamic IP | ✓ |
-| Topology | Subnet |
-| DNS Default Domain | `soclab.internal` |
-| DNS Server 1 | (blank for now — will point to AD DC `10.10.10.10` once Phase 1.2 brings the domain online) |
- 
-Save. pfSense auto-generates the TLS key on save.
- 
-After save, **VPN → OpenVPN → Servers** shows the server with status "Up" (green).
- 
-### 7.5 Create user with client certificate
- 
-**System → User Manager → Users → Add.**
- 
-| Field | Value |
-| --- | --- |
-| Username | `vpn-corp-user` |
-| Password | (strong, recorded somewhere safe) |
-| Full name | Corporate VPN User |
-| Group membership | (none for now) |
- 
-In the same form, check **Click to create a user certificate**:
- 
-| Field | Value |
-| --- | --- |
-| Descriptive name | `vpn-corp-user-cert` |
-| Certificate authority | SOC-Lab-CA |
-| Key Type | RSA, 2048 |
-| Digest Algorithm | SHA256 |
-| Lifetime (days) | 3650 |
-| Common Name | `vpn-corp-user` (auto from username) |
-| Certificate Type | User Certificate (default) |
- 
-Save.
- 
-### 7.6 Firewall rule on the OpenVPN tab
- 
-Creating the OpenVPN server makes a new tab appear: **Firewall → Rules → OpenVPN**. It's empty by default — meaning tunnel clients can connect but can't reach anything. I add the rule that allows traffic from the tunnel subnet to VLAN 20:
- 
-| Field | Value |
-| --- | --- |
-| Action | Pass |
-| Interface | OpenVPN |
-| Address Family | IPv4 |
-| Protocol | any |
-| Source | Network → `10.10.50.0/24` |
-| Destination | Network → `10.10.20.0/24` |
-| Description | `Allow OpenVPN clients to reach VLAN20 (dev)` |
- 
-Save → Apply Changes.
- 
-**Why `any` protocol and not just RDP/SSH:** in production I'd restrict to specific services. In a lab where I'm still iterating, I want to be able to ping VLAN20 hosts for debugging, run arbitrary tests, etc. When Phase 4 attack scenarios are designed, I'll narrow this rule to specific allowed flows — and that tightening becomes a documented decision in the scenario writeup, not silent over-permissiveness.
- 
-### 7.7 Export the client configuration
- 
-**VPN → OpenVPN → Client Export.**
- 
-Scroll down to the **OpenVPN Clients** table. `vpn-corp-user` should be listed (a user only appears here if it has a certificate signed by the same CA as the server's).
- 
-Under **Inline Configurations**, click **Most Clients** to download a `.ovpn` file with the CA, the client certificate, the client key, the TLS auth key, and the connection configuration all embedded as a single file.
- 
-Save this `.ovpn` somewhere I'll find later (e.g., `~/HomeLab/vpn-configs/vpn-corp-user.ovpn`). When Win11-Corp is built in Phase 1.2, this is the only file I need to import in OpenVPN Connect to bring up the tunnel.
+**Solution:** the server certificate was recreated with `Certificate Type: Server Certificate`. The two types differ in the X.509 `extendedKeyUsage` extension — server certificates carry the `TLS Web Server Authentication` OID, which OpenVPN clients validate on the server during the handshake.
  
 ---
  
-## 8. Verification
+## Result
  
-Before snapshotting, I confirm:
+- pfSense 2.8.1-RELEASE routing traffic between 4 VLANs (10/20/66/99) and out via WAN NAT.
+- Six interfaces operational: WAN (DHCP), VLAN10, VLAN20, VLAN66, VLAN99 (each `.1` with /24 DHCP servers on `.100–.200`), and MGMT (host-only, static `192.168.56.10/24`).
+- Automatic Outbound NAT active; `ping 8.8.8.8` from the pfSense console confirms internet egress.
+- Internal PKI established: `SOC-Lab-CA` root, `SOC-Lab-VPN-Server` server certificate, `vpn-corp-user-cert` client certificate.
+- OpenVPN remote-access server bound to VLAN10 (`em1`), listening on UDP 1194, pushing route `10.10.20.0/24` to authenticated clients via tunnel subnet `10.10.50.0/24`.
+- `Firewall → Rules → OpenVPN` rule allows the tunnel subnet to reach VLAN 20.
+- `Firewall → Rules → MGMT` rule allows the host PC full admin access to pfSense (destination `self`).
+- One VPN user (`vpn-corp-user`) with `.ovpn` client configuration exported and stored externally, ready for Phase 4.
+- pfSense webGUI accessible from host PC at `https://192.168.56.10` with the packet filter enabled.
+- Snapshot `pfsense-vpn-ready` taken in VirtualBox.
+---
  
-- **Status → Interfaces:** WAN, VLAN10, VLAN20, VLAN66, VLAN99, MGMT all show "up" with correct IPs.
-- **Services → DHCP Server:** four LAN ranges configured (MGMT disabled).
-- **Firewall → NAT → Outbound:** mode is Automatic.
-- **Firewall → Rules → MGMT:** my admin rule from §4.4 is present.
-- **Firewall → Rules → OpenVPN:** the §7.6 rule is present.
-- **VPN → OpenVPN → Servers:** server status "Up" (green).
-- **Status → OpenVPN:** the daemon shows "running".
-- **System → Cert Manager:** CA (`SOC-Lab-CA`) plus 2 certificates (`SOC-Lab-VPN-Server` + `vpn-corp-user-cert`) all valid.
-- `ping 8.8.8.8` from the console works (NAT outbound).
-- `https://192.168.56.10` loads with `pfctl` enabled (the MGMT rule is doing its job).
-The end-to-end OpenVPN tunnel test happens in **Phase 1.2** when Win11-Corp comes online and imports the `.ovpn` — there's no way to verify tunnel routing without a real client.
+## Screenshots
+ 
+| Screenshot | Description |
+| ---------- | ----------- |
+| ![pfSense console with interfaces](../Screenshots/phase2/01-pfsense-console-interfaces.png) | pfSense console banner showing the 6 interfaces with their IPs |
+| ![Setup Wizard General Information](../Screenshots/phase2/02-setup-wizard-general.png) | Setup Wizard — General Information with `soclab.internal` and DNS configured |
+| ![Setup Wizard WAN](../Screenshots/phase2/03-setup-wizard-wan.png) | Setup Wizard — WAN with RFC1918 and bogon blocks unchecked |
+| ![Interfaces dashboard renamed](../Screenshots/phase2/04-interfaces-renamed.png) | Dashboard Interfaces panel with VLAN10/20/66/99/MGMT names |
+| ![MGMT firewall rule](../Screenshots/phase2/05-firewall-mgmt-rule.png) | `Firewall → Rules → MGMT` with the host-PC admin rule |
+| ![Cert Manager — CA and certs](../Screenshots/phase2/06-cert-manager.png) | `System → Cert Manager` showing the CA and server/user certs |
+| ![OpenVPN server up](../Screenshots/phase2/07-openvpn-server-up.png) | `VPN → OpenVPN → Servers` with the server status Up |
+| ![OpenVPN firewall rule](../Screenshots/phase2/08-firewall-openvpn-rule.png) | `Firewall → Rules → OpenVPN` with the tunnel-to-VLAN20 rule |
+| ![Client Export](../Screenshots/phase2/09-client-export.png) | `VPN → OpenVPN → Client Export` listing `vpn-corp-user` |
+| ![Ping 8.8.8.8 from pfSense](../Screenshots/phase2/10-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — NAT outbound functional |
  
 ---
  
-## 9. Snapshot
- 
-VirtualBox → pfSense → **Snapshots → Take Snapshot**:
- 
-- Name: `pfsense-vpn-ready`
-- Description: *pfSense 2.8 base + 4 VLAN gateways + DHCP per LAN + MGMT host-only + OpenVPN server (SSL/TLS+UserAuth, UDP 1194 on VLAN10) + CA + server cert + 1 user with cert + firewall rules on MGMT and OpenVPN. .ovpn exported. Ready for VLAN 10 endpoints in Phase 1.2.*
-Rollback point before any of the next-phase VMs touches pfSense.
- 
----
- 
-## Gotchas I hit and how I fixed them
- 
-These are the issues I actually encountered during this phase. Documenting them is the difference between a tutorial and a portfolio piece — they show what happens to real builds, not idealized walkthroughs.
- 
-### Kernel panic after first install (`vm_fault: pager read error`)
- 
-The first install completed but the VM booted into a kernel panic loop with `init` failing repeatedly. Cause: the install didn't write a complete bootable system to disk, likely because the ISO was removed too early during the reboot phase. Fix: hard power off, re-mount ISO, reinstall, and this time choose **Halt** at the end (not Reboot) so I can unmount the ISO manually with the VM in a clean powered-off state before booting from disk.
- 
-### VirtualBox GUI only shows 4 NIC tabs
- 
-A real engine limit on the GUI, not on the hypervisor. Slots 5–8 require `VBoxManage modifyvm --nicN ...` from the host CLI with the VM powered off. Once configured via CLI, the NIC works exactly as if it had been added in the GUI.
- 
-### Pre-install LAN wizard with `192.168.1.x` defaults
- 
-pfSense 2.8's installer added a LAN Network Mode Setup screen that pre-configures LAN before the actual disk install. The defaults are `192.168.1.1/24` with DHCP `192.168.1.100–199`. If I miss this screen and accept defaults, I end up with the wrong subnet on LAN and have to fix it via option 2 from the console post-install. Use the keyboard shortcuts (`I`, `S`, `E`) to edit IP and DHCP range before clicking Continue.
- 
-### Interface assignment skipped OPT prompts
- 
-On the very first boot after install, pfSense asked me about WAN, LAN, and then the Optional interfaces in sequence. When the second install asked for "Optional 1" right after LAN, I pressed Enter on a blank line by reflex and pfSense interpreted that as "no more interfaces" — ending up with only WAN + LAN assigned, leaving `em2`, `em3`, `em4` (and later `em5`) unassigned. Fix: re-run option `1) Assign Interfaces` from the main menu, walk through the full sequence including all OPTs, and only press Enter on the very last one to stop adding.
- 
-### "Should VLANs be set up now?" trap
- 
-Answering `y` to this question by mistake (instead of `n`) puts me inside an 802.1Q VLAN configuration sub-menu. The escape isn't obvious: at the prompt `Enter the parent interface name for the new VLAN (or nothing if finished):`, **press Enter with no input**. That exits the sub-menu back to the WAN/LAN flow. If I've already entered a parent interface and the next prompt asks for a VLAN tag, I either Ctrl+C to abort, or complete a dummy VLAN (any tag, any description) and Enter-blank on the next iteration. Any phantom VLAN I create can be deleted later from Interfaces → Assignments → VLANs tab in the GUI.
- 
-### Default-deny on every interface except LAN
- 
-When I added OPT4 (MGMT) and assigned it `192.168.56.10`, pfSense told me the Web UI was now at `https://192.168.56.10` — but my browser couldn't reach it. Cause: only LAN ships with an automatic "anti-lockout" rule; every other interface, including freshly-created OPT4, default-denies all inbound traffic. The Web UI is reachable network-wise but the firewall drops the connection. Fix: temporarily disable the packet filter with `pfctl -d` from the console shell (option 8), access the GUI, create a permanent allow rule on the MGMT tab, then re-enable with `pfctl -e`.
- 
-### `pfctl -d` doesn't persist
- 
-I initially thought I could rely on `pfctl -d` for ongoing access. Wrong — pfSense auto-re-enables the packet filter on `Apply Changes`, service restarts, and other events. Within minutes of using `pfctl -d`, normal pfSense operations turn it back on and I'm locked out again. The only stable fix is an explicit firewall rule allowing my host PC into the MGMT interface.
- 
-### Apply Changes drops the browser session during interface rename
- 
-Renaming each interface and clicking Apply Changes individually causes a `pfctl` reload after each apply. Each reload can drop my live HTTPS session with the GUI. Doing 5 renames this way = 5 chances to lose access. Fix: Save each rename without clicking Apply — the yellow "must apply" banner accumulates across pages — then click Apply Changes once at the very end. One reload, one risk window.
- 
-### `.local` TLD conflicts with mDNS
- 
-pfSense itself warns in the Setup Wizard against using `.local` as the TLD because mDNS (Avahi, Bonjour, Airprint, Windows Network Discovery in some configurations) claims it. I had originally typed `soclab.local`; the fix is `soclab.internal` — `.internal` is the IETF / ICANN convention for private networks. Change in **System → General Setup → Domain**.
- 
-### "Override DNS" checkbox semantics
- 
-The label "Allow DNS servers to be overridden by DHCP/PPP on WAN" had me checked when I wanted my manual DNS values to be sticky. Re-reading: **checked = WAN DHCP can override** (DHCP wins, my manual entries get replaced); **unchecked = manual entries are sticky** (what I actually want). For a lab where I want predictable DNS behavior, uncheck.
- 
-### "Block private networks" and "Block bogon networks" on WAN sabotage VirtualBox NAT
- 
-These two checkboxes are best practice on a public WAN — they drop spoofed packets from RFC1918 or unassigned address space. On a VirtualBox NAT WAN where my pfSense WAN IP is itself `10.0.2.15/24` (RFC1918), these rules drop legitimate traffic from the VirtualBox NAT gateway (`10.0.2.2`), including periodic DHCP renewals. Result: WAN connectivity loss without warning. Uncheck both for any virtualized NAT WAN setup.
- 
----
- 
-## What's next
- 
-[`02-vlan10.md`](02-vlan10.md) — VLAN 10 build-out: Windows Server 2022 with Active Directory Domain Services, Win11-Corp domain-joined workstation. After 02 is done, Win11-Corp imports the `.ovpn` exported in §7.7, the tunnel comes up end-to-end, and I can clean up or restrict the temporary MGMT host-only interface.
+*Previous: [Phase 1 — VirtualBox Foundation](phase1-virtualbox-foundation.md)*  
+*Next: [Phase 3 — SOC Stack Deployment](phase3-soc-stack.md)*
  
