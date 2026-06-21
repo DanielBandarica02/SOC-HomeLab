@@ -35,7 +35,7 @@ The pfSense VM was created with five virtual NICs (1 NAT + 4 Internal Network) t
 | 4 (em3) | Internal Network `vlan66-attack`    | Allow VMs        |
 | 5 (em4) | Internal Network `vlan99-soc`       | Allow VMs        |
 
-![Network Adapters](../screenshots/phase2/01-network-adapters.png)
+![Network Adapters](screenshots/phase2/01-network-adapters.png)
 
 For every adapter:
  
@@ -62,7 +62,7 @@ From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, 
  
 Console option `7) Ping host` → `8.8.8.8`. Four replies → outbound NAT works. pfSense CE defaults to **Automatic Outbound NAT**, which generates NAT rules for every LAN interface without configuration.
 
-![Ping Verification](../screenshots/phase1/02-ping-verification.png)
+![Ping Verification](screenshots/phase1/02-ping-verification.png)
  
 ---
  
