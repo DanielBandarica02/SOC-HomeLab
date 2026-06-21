@@ -1,4 +1,4 @@
-# Phase 2 — Network Backbone (pfSense + OpenVPN)
+# Network Backbone (pfSense + OpenVPN)
  
 ## Overview
  
@@ -38,38 +38,18 @@ The pfSense VM was created with six virtual NICs (1 NAT + 4 Internal Network + 1
 | 4 (em3) | Internal Network `vbox-vlan66-dmz`  | Allow All      |
 | 5 (em4) | Internal Network `vbox-vlan99-soc`  | Allow All      |
 | 6 (em5) | Host-only Adapter                   | Allow All      |
+
+![pfSense console with interfaces](../screenshots/phase2/01-network-adapters.png)
  
-`Promiscuous Mode: Allow All` was selected on all internal adapters because Suricata (deferred to Phase 3) needs to inspect every frame traversing the firewall, including broadcast/multicast traffic central to attack techniques such as ARP poisoning and LLMNR/NBT-NS abuse.
- 
-### VirtualBox GUI four-adapter limit
- 
-The VirtualBox GUI exposes only four adapter tabs in Settings → Network, while the hypervisor engine supports up to eight NICs per VM. Adapters 5 and 6 were configured via `VBoxManage` from the host CLI with the VM powered off:
- 
-```bash
-VBoxManage modifyvm "pfSense" \
-  --nic5 intnet --intnet5 "vbox-vlan99-soc" \
-  --nictype5 82540EM --cableconnected5 on --nicpromisc5 allow-all
- 
-VBoxManage modifyvm "pfSense" \
-  --nic6 hostonly --hostonlyadapter6 "vboxnet0" \
-  --nictype6 82540EM --cableconnected6 on --nicpromisc6 allow-all
-```
- 
-Verification: `VBoxManage showvminfo "pfSense" | grep -i "NIC 5\|NIC 6"`.
+`Promiscuous Mode: Allow All` was selected on all internal adapters because Suricata needs to inspect every frame traversing the firewall, including broadcast/multicast traffic central to attack techniques such as ARP poisoning.
  
 ### pfSense installation
  
-pfSense 2.8.1-RELEASE was installed from the Netgate Installer ISO. Installation parameters: UFS file system, GPT partition scheme (compatible with MBR), `ada0` as target disk.
- 
-UFS was chosen over ZFS because the lab disk is single-disk and 20 GB, the VM RAM allocation (2 GB) does not give ZFS comfortable headroom, and rollback is already handled at the VirtualBox snapshot level — making ZFS's filesystem-level snapshots redundant.
- 
-The pfSense 2.8 installer includes a pre-install LAN Network Mode Setup screen that asks for the LAN IP and DHCP range before disk write. The defaults (`192.168.1.1/24`, DHCP `.100–.199`) were overridden to match the lab IP plan (`10.10.10.1/24`, DHCP `10.10.10.100–10.10.10.200`).
- 
-At the end of the installer, `Halt` was selected instead of `Reboot` to avoid an installer-loop race condition (see Troubleshooting #1).
+pfSense 2.8.1-RELEASE was installed from the Netgate Installer ISO. Installation parameters: UFS file system and GPT partition scheme.
  
 ### Interface assignment and IP configuration
  
-From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, em3=OPT2, em4=OPT3) via console option `1) Assign Interfaces`. The "Should VLANs be set up now?" prompt was answered with `n` because the lab uses VirtualBox Internal Networks, not 802.1Q VLAN tagging.
+From the pfSense console, interfaces were assigned (em0=WAN, em1=LAN, em2=OPT1, em3=OPT2, em4=OPT3) via console option `1) Assign Interfaces`. 
  
 IPs were configured via option `2) Set interface(s) IP address`. LAN was already provisioned from the pre-install wizard; OPT1, OPT2, OPT3 were configured manually.
  
@@ -81,37 +61,15 @@ IPs were configured via option `2) Set interface(s) IP address`. LAN was already
 | OPT2      | 10.10.66.1/24   | Enabled (.100–.200) |
 | OPT3      | 10.10.99.1/24   | Enabled (.100–.200) |
  
-The DHCP range `.100–.200` reserves `.10–.99` for static assets (AD DC, workstations, Wazuh, Kali). Any IP `≤ .99` is a known provisioned asset; anything `≥ .100` is a dynamic lease — a mental model that simplifies log triage in later phases.
+The DHCP range `.100–.200` reserves `.10–.99` for static assets (AD DC, workstations, Wazuh, Kali). 
+
+![pfSense console with interfaces](../screenshots/phase2/02-interfaces.png)
  
 ### Management interface bootstrap (host-only adapter)
  
-The pfSense webGUI is only reachable from a host inside one of the configured networks, and at this point no endpoint VM exists in any VLAN. A host-only management adapter (em5, attached to VirtualBox network `vboxnet0`, `192.168.56.0/24`) was added so the webGUI could be accessed from the host PC's browser before any endpoint exists.
- 
-The host-only network was configured in `File → Host Network Manager` with the host's adapter at `192.168.56.1/24` and the VirtualBox built-in DHCP server disabled. pfSense's em5 was assigned the static IP `192.168.56.10/24` with no DHCP server (the network is admin-only; no other devices need leases).
+The pfSense webGUI is only reachable from a host inside one of the configured networks, and at this point no endpoint VM exists in any VLAN. The host-only network was configured in `File → Host Network Manager` with the host's adapter at `192.168.56.1/24`. pfSense's em5 was assigned the static IP `192.168.56.10/24`
  
 This interface is documented as temporary and is intended to be either removed or restricted by firewall rule once Phase 4 brings a Corporate workstation online.
- 
-### Setup Wizard
- 
-The first-run wizard was completed with:
- 
-| Setting                                | Value                       |
-| -------------------------------------- | --------------------------- |
-| Hostname                               | `pfSense`                   |
-| Domain                                 | `soclab.internal`           |
-| Primary DNS                            | `1.1.1.1`                   |
-| Secondary DNS                          | `8.8.8.8`                   |
-| Override DNS                           | Unchecked                   |
-| Timezone                               | `Europe/Madrid`             |
-| NTP Server                             | `pool.ntp.org`              |
-| Block RFC1918 Private Networks on WAN  | Unchecked                   |
-| Block bogon networks on WAN            | Unchecked                   |
- 
-The domain TLD was set to `.internal` rather than `.local` because pfSense's wizard explicitly warns against `.local` — that TLD is reserved by mDNS (Avahi, Bonjour, Windows Network Discovery) and causes name resolution conflicts. `.internal` is the IETF / ICANN convention for private networks.
- 
-`Override DNS` was unchecked so the manually configured `1.1.1.1` and `8.8.8.8` remain authoritative; the inverse (checked) would let the WAN DHCP-provided DNS overwrite them on every lease renewal, breaking predictability.
- 
-The two `Block ... on WAN` checkboxes were unchecked because the WAN sits on VirtualBox NAT (`10.0.2.0/24`), which is itself RFC1918. Leaving these enabled would cause pfSense to drop traffic from the NAT gateway (`10.0.2.2`), including periodic DHCP renewals, causing intermittent WAN loss.
  
 ### Interface renaming
  
@@ -124,8 +82,9 @@ The default pfSense interface names (`LAN`, `OPT1`, `OPT2`, `OPT3`, `OPT4`) were
 | OPT2    | VLAN66     | Attacker DMZ                 |
 | OPT3    | VLAN99     | SOC Management (out-of-band) |
 | OPT4    | MGMT       | Temporary host-only admin    |
- 
-All five interfaces were saved individually without applying, then `Apply Changes` was clicked once at the end — a single `pfctl` reload rather than five (see Troubleshooting #6).
+
+![pfSense Dashboard Renamed Interfaces](../screenshots/phase2/03-dashboard-interfaces.png)
+
  
 ### Firewall rules
  
@@ -135,9 +94,9 @@ pfSense applies default-deny on every interface except LAN, which has an automat
 | --------- | ------ | -------------- | -------------------- | -------- | --------------------------------- |
 | MGMT      | Pass   | `192.168.56.1` | This Firewall (self) | any      | Allow host PC full admin access   |
  
-Destination is restricted to `This Firewall (self)` rather than `any`, so the MGMT network cannot be used to pivot into the lab VLANs — it is purely an admin path to pfSense itself.
+![Host-Only Firewall Rule](../screenshots/phase2/04-host-only-firewall-rule.png)
  
-VLAN10, VLAN20, VLAN66, and VLAN99 were left with no allow rules at this stage (default-deny posture). Inter-VLAN rules will be added per scenario in Phase 5, documented per case.
+VLAN10, VLAN20, VLAN66, and VLAN99 were left with no allow rules at this stage (default-deny posture).
  
 ### OpenVPN — PKI setup
  
@@ -348,16 +307,16 @@ The default Certificate Type when creating a new internal certificate in `Cert M
  
 | Screenshot | Description |
 | ---------- | ----------- |
-| ![pfSense console with interfaces](../Screenshots/phase2/01-pfsense-console-interfaces.png) | pfSense console banner showing the 6 interfaces with their IPs |
-| ![Setup Wizard General Information](../Screenshots/phase2/02-setup-wizard-general.png) | Setup Wizard — General Information with `soclab.internal` and DNS configured |
-| ![Setup Wizard WAN](../Screenshots/phase2/03-setup-wizard-wan.png) | Setup Wizard — WAN with RFC1918 and bogon blocks unchecked |
-| ![Interfaces dashboard renamed](../Screenshots/phase2/04-interfaces-renamed.png) | Dashboard Interfaces panel with VLAN10/20/66/99/MGMT names |
-| ![MGMT firewall rule](../Screenshots/phase2/05-firewall-mgmt-rule.png) | `Firewall → Rules → MGMT` with the host-PC admin rule |
-| ![Cert Manager — CA and certs](../Screenshots/phase2/06-cert-manager.png) | `System → Cert Manager` showing the CA and server/user certs |
-| ![OpenVPN server up](../Screenshots/phase2/07-openvpn-server-up.png) | `VPN → OpenVPN → Servers` with the server status Up |
-| ![OpenVPN firewall rule](../Screenshots/phase2/08-firewall-openvpn-rule.png) | `Firewall → Rules → OpenVPN` with the tunnel-to-VLAN20 rule |
-| ![Client Export](../Screenshots/phase2/09-client-export.png) | `VPN → OpenVPN → Client Export` listing `vpn-corp-user` |
-| ![Ping 8.8.8.8 from pfSense](../Screenshots/phase2/10-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — NAT outbound functional |
+| ![pfSense console with interfaces](../screenshots/phase2/01-pfsense-console-interfaces.png) | pfSense console banner showing the 6 interfaces with their IPs |
+| ![Setup Wizard General Information](../screenshots/phase2/02-setup-wizard-general.png) | Setup Wizard — General Information with `soclab.internal` and DNS configured |
+| ![Setup Wizard WAN](../screenshots/phase2/03-setup-wizard-wan.png) | Setup Wizard — WAN with RFC1918 and bogon blocks unchecked |
+| ![Interfaces dashboard renamed](../screenshots/phase2/04-interfaces-renamed.png) | Dashboard Interfaces panel with VLAN10/20/66/99/MGMT names |
+| ![MGMT firewall rule](../screenshots/phase2/05-firewall-mgmt-rule.png) | `Firewall → Rules → MGMT` with the host-PC admin rule |
+| ![Cert Manager — CA and certs](../screenshots/phase2/06-cert-manager.png) | `System → Cert Manager` showing the CA and server/user certs |
+| ![OpenVPN server up](../screenshots/phase2/07-openvpn-server-up.png) | `VPN → OpenVPN → Servers` with the server status Up |
+| ![OpenVPN firewall rule](../screenshots/phase2/08-firewall-openvpn-rule.png) | `Firewall → Rules → OpenVPN` with the tunnel-to-VLAN20 rule |
+| ![Client Export](../screenshots/phase2/09-client-export.png) | `VPN → OpenVPN → Client Export` listing `vpn-corp-user` |
+| ![Ping 8.8.8.8 from pfSense](../screenshots/phase2/10-ping-8888-success.png) | `Diagnostics → Ping → 8.8.8.8` — NAT outbound functional |
  
 ---
  
