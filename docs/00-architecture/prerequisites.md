@@ -11,8 +11,7 @@
 ## Host software
 
 - **Oracle VirtualBox**
-- **VirtualBox Extension Pack** (for USB passthrough, RDP, better graphics performance).
-- SSH client (PuTTY, Windows Terminal, or native Linux / macOS terminal).
+- SSH client.
 - Modern browser (for Wazuh Dashboard and pfSense Web UI).
 
 ## ISOs used
