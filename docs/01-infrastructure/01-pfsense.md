@@ -39,7 +39,7 @@ The pfSense VM was created with six virtual NICs (1 NAT + 4 Internal Network + 1
 | 5 (em4) | Internal Network `vbox-vlan99-soc`  | Allow All      |
 | 6 (em5) | Host-only Adapter                   | Allow All      |
 
-![pfSense console with interfaces](screenshots/phase2/01-network-adapters.png)
+![pfSense console with interfaces](../../screenshots/phase2/01-network-adapters.png)
  
 `Promiscuous Mode: Allow All` was selected on all internal adapters because Suricata needs to inspect every frame traversing the firewall, including broadcast/multicast traffic central to attack techniques such as ARP poisoning.
  
@@ -63,7 +63,7 @@ IPs were configured via option `2) Set interface(s) IP address`. LAN was already
  
 The DHCP range `.100–.200` reserves `.10–.99` for static assets (AD DC, workstations, Wazuh, Kali). 
 
-![pfSense console with interfaces](screenshots/phase2/02-interfaces.png)
+![pfSense console with interfaces](../../screenshots/phase2/02-interfaces.png)
  
 ### Management interface bootstrap (host-only adapter)
  
@@ -83,7 +83,7 @@ The default pfSense interface names (`LAN`, `OPT1`, `OPT2`, `OPT3`, `OPT4`) were
 | OPT3    | VLAN99     | SOC Management (out-of-band) |
 | OPT4    | MGMT       | Temporary host-only admin    |
 
-![pfSense Dashboard Renamed Interfaces](screenshots/phase2/03-dashboard-interfaces.png)
+![pfSense Dashboard Renamed Interfaces](../../screenshots/phase2/03-dashboard-interfaces.png)
 
  
 ### Firewall rules
@@ -94,7 +94,7 @@ pfSense applies default-deny on every interface except LAN, which has an automat
 | --------- | ------ | -------------- | -------------------- | -------- | --------------------------------- |
 | MGMT      | Pass   | `192.168.56.1` | This Firewall (self) | any      | Allow host PC full admin access   |
  
-![Host-Only Firewall Rule](screenshots/phase2/04-host-only-firewall-rule.png)
+![Host-Only Firewall Rule](../../screenshots/phase2/04-host-only-firewall-rule.png)
  
 VLAN10, VLAN20, VLAN66, and VLAN99 were left with no allow rules at this stage (default-deny posture).
  
