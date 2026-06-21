@@ -35,7 +35,7 @@ The pfSense VM was created with five virtual NICs (1 NAT + 4 Internal Network) t
 | 4 (em3) | Internal Network `vlan66-attack`    | Allow VMs        |
 | 5 (em4) | Internal Network `vlan99-soc`       | Allow VMs        |
 
-![Network Adapters](../../screenshots/phase2/01-network-adapters.pngg)
+![Network Adapters](../../screenshots/phase2/01-network-adapters.png)
 
 ../../screenshots/phase2/01-network-adapters.png
 
