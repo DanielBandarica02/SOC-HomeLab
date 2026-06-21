@@ -107,8 +107,6 @@ A two-tier internal PKI was created under `System → Cert Manager`:
 | SOC-Lab-CA         | CA          | `SOC-Lab-CA`          | RSA 2048 + SHA256 | 3650 d |
 | SOC-Lab-VPN-Server | Server cert | `vpn.soclab.internal` | RSA 2048 + SHA256 | 3650 d |
  
-The server certificate was created with `Certificate Type: Server Certificate` rather than the default `User Certificate`. The two types differ in the X.509 `extendedKeyUsage` extension — using a user certificate on the server side functionally works but emits client-side warnings on every connection.
- 
 2048-bit RSA was selected over 4096 because the security gain at lab scale is marginal while the TLS handshake cost roughly doubles. SHA256 was selected because SHA1 is cryptographically broken and not negotiable for new deployments.
  
 ### OpenVPN — server configuration
@@ -134,11 +132,11 @@ Under `VPN → OpenVPN → Servers → Add`:
 | Topology                      | Subnet                               |
 | DNS Default Domain            | `soclab.internal`                    |
  
-`Remote Access (SSL/TLS + User Auth)` was selected to require both certificate and password authentication. Single-factor at a VPN edge (cert-only or password-only) is below the entry-level expectation for any production deployment; the lab matches that posture.
+`Remote Access (SSL/TLS + User Auth)` was selected to require both certificate and password authentication.
  
 `Redirect IPv4 Gateway` was left unchecked because forcing all client traffic through the tunnel would break the client's internet access (pfSense does not route arbitrary OpenVPN client traffic out the WAN). Only the VLAN 20 route is pushed to clients.
  
-Compression was disabled because of VORACLE-class attacks against compressed VPN data planes. The minor bandwidth reduction is not worth the side-channel risk.
+Compression was disabled because of VORACLE-class attacks against compressed VPN data planes.
  
 ### OpenVPN — user and client certificate
  
@@ -147,7 +145,7 @@ Under `System → User Manager → Add`:
 | Setting          | Value                |
 | ---------------- | -------------------- |
 | Username         | `vpn-corp-user`      |
-| Password         | (recorded externally) |
+| Password         | ******************** |
 | Full name        | Corporate VPN User   |
 | Client certificate | Created inline, signed by SOC-Lab-CA, RSA 2048 + SHA256, 3650 d, type `User Certificate` |
  
@@ -159,11 +157,15 @@ Creating the OpenVPN server caused a new `OpenVPN` tab to appear under `Firewall
 | --------- | ------ | ------------------- | ------------------- | -------- | ------------------------------------------ |
 | OpenVPN   | Pass   | Net `10.10.50.0/24` | Net `10.10.20.0/24` | any      | Allow OpenVPN clients to reach VLAN20 (dev) |
  
-The rule allows any protocol from the tunnel subnet to VLAN 20. A tighter rule restricted to RDP (3389) and SSH (22) would match production practice, but the broader rule was preferred at this stage to allow iteration in subsequent phases. Tightening becomes a documented decision during Phase 5 scenario design.
+The rule allows any protocol from the tunnel subnet to VLAN 20. A tighter rule restricted to RDP (3389) and SSH (22) would match production practice, but the broader rule was preferred at this stage to allow iteration in subsequent phases. 
  
 ### OpenVPN — client export
  
-The `OpenVPN Client Export Utility` package was installed via `System → Package Manager` to enable single-file client configuration export. Under `VPN → OpenVPN → Client Export`, the `vpn-corp-user` entry was exported using **Inline Configurations → Most Clients**, producing a single `.ovpn` file with the CA, client certificate, client key, TLS auth key, and connection parameters all embedded. This file is retained for import by the Corporate workstation in Phase 4.
+The `OpenVPN Client Export Utility` package was installed via `System → Package Manager` to enable single-file client configuration export. 
+
+![OPENVPN Installation](../../screenshots/phase2/05-openvpn-install.png)
+
+Under `VPN → OpenVPN → Client Export`, the `vpn-corp-user` entry was exported using **Inline Configurations → Most Clients**, producing a single `.ovpn` file with the CA, client certificate, client key, TLS auth key, and connection parameters all embedded.
  
 ---
  
@@ -176,42 +178,19 @@ From the pfSense console, option `7) Ping host`:
 ```
 ping 8.8.8.8
 ```
- 
+![Ping Verification](../../screenshots/phase2/06-ping-verification.png)
+
 Result: four replies under 50 ms — WAN NAT functional, pfSense reaches the internet through the VirtualBox NAT engine.
- 
-### Host PC ↔ pfSense webGUI
- 
-From the host PC's PowerShell:
- 
-```powershell
-ping 192.168.56.10
-```
- 
-Result: four replies under 1 ms — host-only network operational, MGMT firewall rule permits ICMP.
- 
-Browser access to `https://192.168.56.10` loaded the pfSense webGUI after accepting the self-signed certificate warning. Login succeeded with the password set during the Setup Wizard.
  
 ### OpenVPN service status
  
-Under `VPN → OpenVPN → Servers`, the server listed status **Up** (green). Under `Status → OpenVPN`, the daemon listed as **running**.
- 
-End-to-end tunnel validation (client connects, receives push route, reaches a VLAN 20 host) is deferred to Phase 4 when the first OpenVPN client (Win11-Corp) is provisioned.
+Under `Status → OpenVPN`, the server listed status **Up** (green). 
+
+![Status Verification](../../screenshots/phase2/07-status-verification.png)
  
 ---
  
 ## Troubleshooting & Lessons Learned
- 
-### 1. Kernel panic after the first install attempt
- 
-After the first install completed and the VM rebooted, the FreeBSD console looped with `vm_fault: pager read error, pid XXXX (init)`. The methodology to triage this was process of elimination on the post-install boot path:
- 
-| Hypothesis                          | Evidence                                                            | Conclusion |
-| ----------------------------------- | ------------------------------------------------------------------- | ---------- |
-| Bad ISO checksum                    | SHA256 verified before install — match                              | Ruled out  |
-| Corrupted VDI                       | Disk created cleanly, no I/O errors during install                  | Possible   |
-| Incomplete install (early ISO eject) | "Reboot" was selected at end of install while ISO was still mounted; the `Remove disk from virtual drive` operation in VirtualBox's Devices menu was performed mid-reboot | Likely root cause |
- 
-**Solution:** the VM was hard-powered-off, the ISO was re-mounted, and the install was re-run. At the `Complete` screen, **`Halt`** was selected instead of `Reboot`, allowing the VM to power off in a quiescent state. The ISO was then unmounted via Settings → Storage with the VM definitively off, and the VM was booted from disk in a clean state. The second install booted successfully.
  
 ### 2. VirtualBox GUI four-adapter limit
  
