@@ -8,8 +8,6 @@
 | RAM      | 24 GB                                                  | 32+ GB          |
 | Disk     | 300 GB free on SSD                                     | 500+ GB SSD     |
 
-**Honest note on RAM:** running the 6 VMs simultaneously asks for ~26 GB allocated. If my host has 16 GB, I won't be able to run everything at once — I'll bring up segments in shifts (e.g. pfSense + AD + Wazuh always up, attacker and workstations on demand).
-
 ## Host software
 
 - **Oracle VirtualBox**
