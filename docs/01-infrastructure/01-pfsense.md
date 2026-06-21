@@ -40,7 +40,7 @@ The pfSense VM was created with five virtual NICs (1 NAT + 4 Internal Network) t
 
 For every adapter:
  
-- **Promiscuous Mode:** `Allow All` — required for Suricata in Phase 2 to inspect everything traversing the firewall, and for visibility into broadcast / multicast traffic (ARP poisoning, LLMNR / NBT-NS abuse, etc.) that's central to many MITRE techniques. Without it the IDS would be partially blind. 
+- **Promiscuous Mode:** `Allow All` — required for Suricata to inspect everything traversing the firewall, and for visibility into broadcast / multicast traffic (ARP poisoning, LLMNR / NBT-NS abuse, etc.) that's central to many MITRE techniques. Without it the IDS would be partially blind. 
 
 ### pfSense installation
 
@@ -68,79 +68,9 @@ Console option `7) Ping host` → `8.8.8.8`. Four replies → outbound NAT works
 ---
  
 ## 3. Management interface (host-only) for Web UI access
- 
-The chicken-and-egg: the Web UI listens on `https://10.10.10.1` and the other gateway IPs, but I have no endpoint VM on any LAN yet to open a browser from. I add a 6th adapter on a VirtualBox host-only network so I can access the GUI from my host PC.
- 
-### 4.1 Create / verify the host-only network
- 
-VirtualBox → **File → Host Network Manager**. There's usually one created by default; if not, click **Create**.
- 
-| Field | Value |
-| --- | --- |
-| IPv4 Address | `192.168.56.1` (this is the host PC's address on this network) |
-| IPv4 Network Mask | `255.255.255.0` |
-| DHCP Server | **Disabled** |
- 
-The `192.168.56.1` is the host's interface on this network — that's why pfSense will be at `192.168.56.10` (not `.1`), to avoid a duplicate-IP conflict with the host.
- 
-### 4.2 Add NIC 6 via VBoxManage (GUI only shows 4 tabs)
- 
-First, list the host-only adapter name (the exact name varies by OS):
- 
-```bash
-VBoxManage list hostonlyifs              # Linux / macOS / Windows
-```
- 
-Copy the `Name` field. Then, with pfSense powered off:
- 
-```bash
-# Linux / macOS
-VBoxManage modifyvm "pfSense" \
-  --nic6 hostonly \
-  --hostonlyadapter6 "vboxnet0" \
-  --nictype6 82540EM \
-  --cableconnected6 on \
-  --nicpromisc6 allow-all
-```
- 
-```powershell
-# Windows
-& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm "pfSense" `
-  --nic6 hostonly --hostonlyadapter6 "VirtualBox Host-Only Ethernet Adapter" `
-  --nictype6 82540EM --cableconnected6 on --nicpromisc6 allow-all
-```
- 
-### 4.3 Assign em5 to OPT4 inside pfSense
- 
-Boot the VM. From the console menu, option `1) Assign Interfaces` again — accept the existing assignments and add a new one:
- 
-| Prompt | Answer |
-| --- | --- |
-| Should VLANs be set up now? | `n` |
-| WAN | `em0` |
-| LAN | `em1` |
-| Optional 1 | `em2` |
-| Optional 2 | `em3` |
-| Optional 3 | `em4` |
-| Optional 4 | `em5` ← new |
-| Optional 5 | *(Enter, empty)* |
-| Proceed? | `y` |
- 
-Then option `2` → select OPT4 → fill in:
- 
-| Prompt | Answer |
-| --- | --- |
-| Configure via DHCP? | `n` |
-| IPv4 address | `192.168.56.10` |
-| Subnet bit count | `24` |
-| Upstream gateway | *(Enter)* |
-| IPv6 via WAN tracking | `n` |
-| IPv6 via DHCP6 | `n` |
-| IPv6 address | *(Enter)* |
-| **Enable DHCP server on OPT4?** | **`n`** |
-| Revert to HTTP | `n` |
- 
-DHCP off on OPT4 — this network is admin-only, just my PC ↔ pfSense. No other devices.
+
+I add a 6th adapter on a VirtualBox host-only network so I can access the GUI from my host PC.
+
  
 ### 4.4 The default-deny gotcha and the first Web UI access
  
