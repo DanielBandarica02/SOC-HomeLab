@@ -88,7 +88,8 @@ SOC-HomeLab/
     ├── architecture.svg
     ├── design-decisions.md
     └── prerequisites.md
-├── 01-infrastructure/
+└── 01-infrastructure/
+    └── 01-pfsense.md
 ├── 02-soc-stack/
 ├── 03-adversary/
 ├── 04-attack-scenarios/
