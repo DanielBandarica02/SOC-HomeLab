@@ -197,12 +197,6 @@ Even after switching the WAN to a Bridged Adapter (#12 above), throughput remain
 
 **Solution:** under `System → Advanced → Networking → Network Interfaces`, all three offload-disabling checkboxes were enabled:
 
-| Setting                                       | State    |
-| --------------------------------------------- | -------- |
-| Disable hardware checksum offload             | Checked  |
-| Disable hardware TCP segmentation offload     | Checked  |
-| Disable hardware large receive offload        | Checked  |
-
 ![Network Interfaces Settings](../../screenshots/phase2/08-network-settings.png)
 
 A reboot was performed to apply the changes consistently across all interfaces. After reboot, sustained downloads no longer showed drops or retransmissions, and throughput on `pkg fetch` and webGUI package installs became consistent rather than bursty.
