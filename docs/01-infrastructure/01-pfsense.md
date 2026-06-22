@@ -29,15 +29,6 @@ Inter-VLAN traffic is denied by default at the firewall. The only sanctioned cro
 ### pfSense VM provisioning
  
 The pfSense VM was created with six virtual NICs (1 NAT + 4 Internal Network + 1 Host-only) to provide one interface per VLAN plus the WAN uplink and a bootstrap management path. All adapters use **Intel PRO/1000 MT Desktop (82540EM)** because FreeBSD has native drivers for this NIC.
- 
-| Adapter | Attached to                       | Promiscuous Mode |
-| ------- | --------------------------------- | ---------------- |
-| 1 (em0) | NAT                               | Deny             |
-| 2 (em1) | Internal Network `vbox-vlan10-corp` | Allow All      |
-| 3 (em2) | Internal Network `vbox-vlan20-dev`  | Allow All      |
-| 4 (em3) | Internal Network `vbox-vlan66-dmz`  | Allow All      |
-| 5 (em4) | Internal Network `vbox-vlan99-soc`  | Allow All      |
-| 6 (em5) | Host-only Adapter                   | Allow All      |
 
 ![pfSense console with interfaces](../../screenshots/phase2/01-network-adapters.png)
  
