@@ -90,12 +90,13 @@ SOC-HomeLab/
     └── prerequisites.md
 └── 01-infrastructure/
     └── 01-pfsense.md
+    └── 02-vlan10.md
 ├── 02-soc-stack/
 ├── 03-adversary/
 ├── 04-attack-scenarios/
 ├── 05-detection-rules/
 ├── 06-incident-reports/
-└── Screenshots
+└── Screenshots/
    
 ```
 
