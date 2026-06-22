@@ -65,14 +65,7 @@ This interface is documented as temporary and is intended to be either removed o
 ### Interface renaming
  
 The default pfSense interface names (`LAN`, `OPT1`, `OPT2`, `OPT3`, `OPT4`) were renamed under `Interfaces → [name] → Description` to match the lab vocabulary, so firewall rule tabs and logs are immediately readable.
- 
-| Default | Renamed to | Description                  |
-| ------- | ---------- | ---------------------------- |
-| LAN     | VLAN10     | Corporate domain segment     |
-| OPT1    | VLAN20     | Software Development         |
-| OPT2    | VLAN66     | Attacker DMZ                 |
-| OPT3    | VLAN99     | SOC Management (out-of-band) |
-| OPT4    | MGMT       | Temporary host-only admin    |
+
 
 ![pfSense Dashboard Renamed Interfaces](../../screenshots/phase2/03-dashboard-interfaces.png)
 
@@ -80,10 +73,6 @@ The default pfSense interface names (`LAN`, `OPT1`, `OPT2`, `OPT3`, `OPT4`) were
 ### Firewall rules
  
 pfSense applies default-deny on every interface except LAN, which has an automatic anti-lockout rule. The newly created MGMT interface initially blocked all traffic, including the webGUI HTTPS port (see Troubleshooting #5). A permanent rule was added to allow administrative access from the host PC:
- 
-| Interface | Action | Source         | Destination          | Protocol | Description                       |
-| --------- | ------ | -------------- | -------------------- | -------- | --------------------------------- |
-| MGMT      | Pass   | `192.168.56.1` | This Firewall (self) | any      | Allow host PC full admin access   |
  
 ![Host-Only Firewall Rule](../../screenshots/phase2/04-host-only-firewall-rule.png)
  
