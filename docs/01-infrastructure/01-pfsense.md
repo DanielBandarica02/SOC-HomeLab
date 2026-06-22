@@ -231,7 +231,7 @@ For predictable lab DNS behavior, the box was unchecked so the manually configur
 
 **Why disabling improves performance:** offloading is a net win only when the offload engine is reliable. In virtualized environments it usually is not. Forcing pfSense to compute checksums and handle segmentation in software is marginally more CPU-intensive per packet, but it eliminates entire classes of corruption-related drops — and the throughput gain from not retransmitting outweighs the per-packet cost.
 
-### 11. Server certificate type matters for OpenVPN
+### 5. Server certificate type matters for OpenVPN
  
 The default Certificate Type when creating a new internal certificate in `Cert Manager` is `User Certificate`. Initially, the server certificate for OpenVPN was created with the default. While the OpenVPN service started, client-side connections emitted certificate warnings.
  
