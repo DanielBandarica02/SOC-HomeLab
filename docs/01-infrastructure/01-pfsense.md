@@ -1,4 +1,4 @@
-# Phase 1 - Network Backbone (pfSense + OpenVPN)
+# Phase 1 — Network Backbone (pfSense + OpenVPN)
  
 ## Overview
  
