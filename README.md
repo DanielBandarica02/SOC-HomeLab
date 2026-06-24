@@ -92,6 +92,7 @@ SOC-HomeLab/
     ├── 01-infrastructure/
     │   ├── 01-pfsense.md
     │   └── 02-vlan10.md
+    │   └── 03-vlan20.md
     ├── 02-soc-stack/
     ├── 03-adversary/
     ├── 04-attack-scenarios/
