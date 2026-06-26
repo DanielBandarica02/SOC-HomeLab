@@ -94,12 +94,12 @@ SOC-HomeLab/
     │   └── 02-vlan10.md
     │   └── 03-vlan20.md
     ├── 02-soc-stack/
-    │   └── 01-wazuh-manager.md
+    │   ├── 01-wazuh-manager.md
+    │   └── 02-windows-agent.md
     ├── 03-adversary/
     ├── 04-attack-scenarios/
     ├── 05-detection-rules/
     └── 06-incident-reports/
-   
 ```
 
 ## Project Phases
