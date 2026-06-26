@@ -17,7 +17,7 @@ flowchart LR
     host[Host PC<br/>192.168.56.1<br/>via MGMT host-only]
     pfsense[pfSense VLAN99 gw<br/>10.10.99.1/24]
     wazuh[wazuh-srv — Ubuntu Server 22.04<br/>10.10.99.10/24 static<br/>Manager + Indexer + Dashboard]
-    agents[Wazuh agents<br/>DC01 · WS-CORP-01 · WS-DEV-01 · ws-dev-02<br/>enrolled in subsequent documents]
+    agents[Wazuh agents<br/>DC01 · WS-CORP-01<br/> WS-DEV-01 · ws-dev-02]
  
     host -->|HTTPS to dashboard<br/>10.10.99.10:443| pfsense
     pfsense --- wazuh
