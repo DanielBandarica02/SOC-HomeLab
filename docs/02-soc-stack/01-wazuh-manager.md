@@ -114,7 +114,7 @@ The existing admin rule on MGMT permits `192.168.56.1 → This Firewall (self)` 
  
 ### Wazuh 4.14 all-in-one installation
  
-Wazuh provides a single shell script that deploys Manager, Indexer, and Dashboard with internal PKI generation in one command. The script is the vendor-recommended path for single-host installations and is significantly more reliable than the per-component manual installs (which require careful sequencing of certificate generation, OpenSearch initialization, and dashboard pairing).
+Wazuh provides a single shell script that deploys Manager, Indexer, and Dashboard with internal PKI generation in one command. The script is the vendor-recommended path for single-host installations and is significantly more reliable than the per-component manual installs.
  
 ```bash
 curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
@@ -124,26 +124,15 @@ sudo bash wazuh-install.sh -a
  
 The `-a` flag selects the all-in-one mode. Execution time was approximately 20 minutes and proceeded through these phases:
  
-1. Internal certificate authority generation
-2. Wazuh Indexer installation and initial cluster bootstrap
-3. Wazuh Manager installation and binding to the Indexer
-4. Wazuh Dashboard installation and pairing with the Manager
-5. Service startup and health checks
-The final output of the script printed the dashboard URL and the admin credentials. These credentials were captured and stored externally **before** closing the SSH session — they are randomly generated and not reproducible from configuration files alone.
+The final output of the script printed the dashboard URL and the admin credentials. These credentials were captured and stored, they are randomly generated.
  
 ### Dashboard first access and cluster verification
  
 From the host PC browser, the dashboard was accessed at `https://10.10.99.10`. The self-signed certificate warning was accepted (the certificate is signed by Wazuh's internal CA generated during install). Login with the `admin` credentials from the installer output succeeded.
+
+![Wazuh Dashboard](../../screenshots/01-wazuh/06-wazuh-dashboard.png)
  
 The first-access verification covered the cluster health rather than agent data (no agents are deployed yet):
- 
-| Path in dashboard                          | Expected state                                |
-| ------------------------------------------ | --------------------------------------------- |
-| Server management → Agents                 | Empty list — no agents enrolled               |
-| Server management → Status                 | Manager: green · Indexer: green · Dashboard: green |
-| Security → Users                           | `admin` present as default                    |
- 
-A green cluster with an empty agents list is the correct end state for this document. Agent enrollment is the subject of the following documents in Phase 5.
  
 ---
  
@@ -151,86 +140,29 @@ A green cluster with an empty agents list is the correct end state for this docu
  
 ### Outbound and DNS from the Wazuh host
  
-```bash
-ping -c 3 10.10.99.1                # gateway VLAN 99
-ping -c 3 8.8.8.8                   # NAT outbound
-nslookup github.com                 # DNS via pfSense Resolver
-curl -I https://packages.wazuh.com  # HTTPS outbound — returns HTTP 200
-```
+![Validation - 1](../../screenshots/01-wazuh/07-connectivity-segmentation-validation.png)
  
-All four tests succeeded. The first confirms intra-VLAN reachability, the second confirms outbound NAT, the third confirms that the DNS Resolver fix from Phase 4 still applies, and the fourth confirms that HTTPS to vendor endpoints works (necessary for the installer download).
+All three tests succeeded. The first confirms intra-VLAN reachability, the second confirms outbound NAT and the third confirms that the DNS Resolver fix from Phase 4 still applies.
  
 ### Segmentation enforcement (the asymmetric direction)
  
-```bash
-ping -c 3 10.10.10.10               # DC01 — must timeout
-ping -c 3 10.10.20.10               # WS-DEV-01 — must timeout
-```
+![Validation - 2](../../screenshots/01-wazuh/08-segmentation-validation.png)
  
 Both timeouts confirm the Block rules on VLAN 99 are active. If either had returned replies, a Pass rule allowing VLAN 99 outbound to a production VLAN would exist and would be a misconfiguration to investigate immediately. The segmentation asymmetry — agents can reach Wazuh, but Wazuh cannot reach the agents at the network layer — is the central property of the out-of-band design.
- 
-### Dashboard access from the host PC
- 
-The browser opened `https://10.10.99.10` over the MGMT host-only network. The Wazuh login screen rendered after the self-signed certificate exception was accepted. Authentication with the installer-generated `admin` credentials granted access to the dashboard. Server management views confirmed all three components (Manager, Indexer, Dashboard) reporting healthy.
- 
-### pfSense log audit during install
- 
-During the Wazuh installer run, the firewall log on pfSense (`Status → System Logs → Firewall`) was filtered by Source IP `10.10.99.10`. The expected events appeared:
- 
-- TCP 80/443 outbound to vendor IPs for package downloads — Pass on VLAN99 (rule #3).
-- UDP 53 to `10.10.99.1` for DNS lookups — Pass on VLAN99 (rule #1).
-- No outbound attempts to `10.10.10.0/24`, `10.10.20.0/24`, or `10.10.66.0/24` — confirming the Wazuh installer does not attempt to reach the production VLANs.
----
- 
-## Troubleshooting & Lessons Learned
- 
-### 1. NTP synchronization as a Wazuh prerequisite, verified prophylactically
- 
-Wazuh's internal PKI (used for Manager↔Indexer↔Dashboard mutual TLS) validates certificate timestamps strictly. If the system clock on the Wazuh host is significantly out of sync with the certificates' issuance time at the moment of validation, the installer can fail with cryptic errors related to certificate verification or cluster initialization — errors that point at TLS without indicating that the underlying cause is clock skew.
- 
-Rather than reactively diagnosing this after a failed install, the system time was verified before launching the installer:
- 
-| Test                                  | Expected output                                                  |
-| ------------------------------------- | ---------------------------------------------------------------- |
-| `timedatectl status`                  | `NTP service: active` and `System clock synchronized: yes`        |
-| `date`                                | Current time matches an external reference (e.g. host PC's clock) |
- 
-The two checks confirm both that the NTP client is operational (`systemd-timesyncd` in Ubuntu 22.04 by default) and that the actual time is correct. A common gotcha occurs when the NTP service is active but the clock has not yet converged — `chronyc tracking` or `timedatectl show-timesync` provides additional detail on sync state in that case.
- 
-**Lesson learned:** when a vendor installer depends on PKI, verifying time sync is a free, fast check that prevents an entire class of difficult-to-diagnose errors. The same principle applies broadly to AD (Kerberos is also time-sensitive), to log ingestion (timestamps drive correlation), and to any TLS-bearing service. Time is invisible infrastructure until it isn't.
- 
-### 2. Recurring pattern: pfSense default-deny on every new OPT interface
- 
-This is the third time in the lab build that the same operational pattern has appeared:
- 
-| Phase | Interface added | Symptom observed                                            | Resolution                                  |
-| ----- | --------------- | ----------------------------------------------------------- | ------------------------------------------- |
-| 2     | MGMT (OPT4)     | Web UI not reachable from host PC after IP assignment       | Add explicit Pass rule on MGMT              |
-| 4     | VLAN20 (OPT1)   | Endpoints could not reach internet or pfSense services      | Add explicit Pass rule on VLAN20            |
-| 5     | VLAN99 (OPT3)   | Wazuh host could not reach internet or pfSense services     | Add explicit Pass rules on VLAN99 (this doc) |
- 
-pfSense applies default-deny to every interface except LAN. The LAN interface alone carries an automatic anti-lockout rule that allows traffic — every other interface (OPT1 through OPTn) blocks everything inbound until explicit allow rules are configured. This is a deliberate security posture but it is also a consistent source of "I just added this interface and now nothing works" confusion for operators new to pfSense.
- 
-**Generalized rule for the lab going forward:** any time a new OPT interface is created, two configuration steps are non-negotiable before the segment is usable:
- 
-1. Add explicit Pass rules for the outbound services the segment requires (DNS, ICMP, HTTP/HTTPS at minimum for management hosts).
-2. Add explicit Block rules where directional segmentation is required (such as the asymmetric VLAN 99 → production-VLANs blocks documented in this phase).
-A future iteration of the lab could codify this as a pfSense rule template applied via the API at interface creation time. For the current scope, the pattern is documented and verified manually.
  
 ---
  
 ## Result
  
-- Ubuntu Server 22.04 LTS deployed as `wazuh-srv` on VLAN 99 with static IP `10.10.99.10/24` and NTP-synchronized clock.
+- Ubuntu Server 24.04 LTS deployed as `wazuh-srv` on VLAN 99 with static IP `10.10.99.10/24`.
 - OpenSSH installed and reachable on TCP 22 from within VLAN 99.
 - UFW host firewall enabled with `default deny incoming` and an explicit allow for SSH; Wazuh ports managed by the installer.
 - pfSense firewall rules in place across VLAN99 (3 Pass + 4 Block, enforcing the out-of-band model), VLAN10 and VLAN20 (agent enrollment paths), and MGMT (host PC dashboard access).
-- Wazuh 4.13 all-in-one installed in approximately 20 minutes via the vendor script with the `-a` flag. Wazuh Manager, Indexer (OpenSearch), and Dashboard are co-located and operational on the same host.
+- Wazuh 4.14 all-in-one installed in approximately 20 minutes via the vendor script with the `-a` flag.
 - Internal PKI generated by the installer covers Manager↔Indexer↔Dashboard mutual TLS.
-- Dashboard reachable at `https://10.10.99.10` from the host PC over the MGMT host-only network; admin credentials captured and stored externally.
-- Server management views confirm the cluster is healthy (Manager, Indexer, Dashboard all green) and the agents list is empty as expected.
+- Dashboard reachable at `https://10.10.99.10` from the host PC over the MGMT host-only network.
+- Server management views confirm the cluster is healthy (Manager, Indexer, Dashboard all green).
 - Segmentation validated: from the Wazuh host, ping to VLAN 10 and VLAN 20 hosts returns timeout — the asymmetric out-of-band design holds.
-- Snapshot taken in VirtualBox: `wazuh-baseline` (manager operational, no agents enrolled yet).
  
 ---
  
