@@ -234,6 +234,6 @@ A future iteration of the lab could codify this as a pfSense rule template appli
  
 ---
  
-*Previous: [Phase 4 — VLAN 20 (Software Development)](../01-infrastructure/03-vlan20.md)*
+*Previous: [Phase 3 — VLAN 20 (Software Development)](../01-infrastructure/03-vlan20.md)*
 *Next: [Phase 5 — Windows Agents (DC01, WS-CORP-01, WS-DEV-01)](02-windows-agents.md)*
  
