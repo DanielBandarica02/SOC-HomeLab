@@ -30,45 +30,20 @@ The asymmetric direction of the arrows is intentional: every flow shown is allow
  
 ## Deployment
  
-### Ubuntu Server 22.04 LTS VM provisioning
+### Ubuntu Server 24.04 LTS VM provisioning
  
-A new VirtualBox VM was created with resources sized for the Wazuh all-in-one workload. The Indexer (OpenSearch) component is the dominant consumer of memory — typically 3-4 GB of JVM heap on its own — and the combined Manager + Dashboard add another 2 GB. Allocations below 6 GB result in continuous swap activity and dashboard latency above 10 seconds per panel.
+A new VirtualBox VM was created with resources sized for the Wazuh all-in-one workload.
  
 | Resource | Value |
 | -------- | ----- |
 | vCPU     | 4 |
 | RAM      | 8 GB |
-| Disk     | 80 GB, VDI, dynamically allocated |
-| Firmware | Legacy BIOS |
-| NIC 1    | Internal Network `vbox-vlan99-soc`, Intel PRO/1000 MT Desktop, Promiscuous Allow All |
-| Audio / USB | Disabled |
-| Boot order | Optical → Hard Disk |
- 
-The 80 GB disk is more than the Indexer will need for the lab's event volume (a few months of telemetry from four agents fits comfortably in under 10 GB), but the surplus accommodates future growth and ad-hoc data — packet captures, custom rule debugging artifacts, and so on — without requiring resize operations later.
- 
-### Operating system installation
- 
-Ubuntu Server 22.04 LTS was installed from the official ISO using the `Ubuntu Server` install type (not the Minimized variant, which strips packages that the Wazuh installer later expects). The wizard was completed with:
- 
-| Step                          | Value                                          |
-| ----------------------------- | ---------------------------------------------- |
-| Installation type             | Ubuntu Server                                  |
-| Storage configuration         | Use entire disk, set up as LVM group           |
-| Your name                     | Wazuh Administrator                            |
-| Server's name                 | `wazuh-srv`                                    |
-| Username                      | `wazadmin`                                     |
-| Password                      | Set (recorded externally)                      |
-| Ubuntu Pro                    | Skipped                                        |
-| OpenSSH server                | **Installed**, password authentication allowed |
-| Featured Server Snaps         | None                                           |
- 
-`wazadmin` is a dedicated administrative account for the SIEM, deliberately distinct from the user identities used elsewhere in the lab (`dbandarica`, `khernandez`, `arodriguez`). Separating SOC administration from operational user identities is a baseline practice for portfolio-grade documentation — when reading a Wazuh audit log in a later phase, it must be unambiguous that the actor is an analyst, not a user being investigated.
- 
-OpenSSH was enabled during installation rather than added afterward to allow the rest of the configuration to be performed via SSH from the host PC (once the firewall rules permit the path), avoiding the VirtualBox console where copy-paste and scrolling are awkward.
+| Disk     | 80 GB |
+| NIC 1    | Internal Network `internal-vlan99-soc`, Promiscuous Allow All |
  
 ### Network configuration (Netplan) and NTP synchronization
  
-Unlike Ubuntu Desktop in Phase 4 (which uses NetworkManager with a graphical configuration tool), Ubuntu Server manages its network with Netplan directly. The installer-generated configuration in `/etc/netplan/00-installer-config.yaml` was replaced with the static configuration required by the lab IP plan:
+The installer-generated configuration in `/etc/netplan/00-installer-config.yaml` was replaced with the static configuration required by the lab IP plan:
  
 ```yaml
 network:
@@ -87,16 +62,9 @@ network:
           - 1.1.1.1
 ```
  
-The configuration was applied with `sudo netplan try`, which applies the new state and offers a 120-second confirmation window — if the operator does not respond, the system reverts automatically. This safety mechanism prevents a malformed network config from leaving the VM permanently unreachable via SSH.
+The configuration was applied with `sudo netplan apply`
  
-DNS was set to point at the pfSense VLAN 99 gateway, which provides resolution via the DNS Resolver configured globally in forwarding mode (the fix from Phase 4 Troubleshooting #2). `1.1.1.1` is configured as a secondary for resilience.
- 
-NTP synchronization was verified explicitly before any further configuration — Wazuh's internal PKI is strict about clock skew between Manager, Indexer, and Dashboard components, and a misaligned system clock during the installer can produce cryptic certificate validation errors that obscure the underlying cause. This is documented under Troubleshooting #1 as a deliberate prophylactic check.
- 
-```bash
-timedatectl status
-# Expected: NTP service: active, System clock synchronized: yes
-```
+DNS was set to point at the pfSense VLAN 99 gateway, which provides resolution via the DNS Resolver configured globally in forwarding mode, `1.1.1.1` is configured as a secondary for resilience.
  
 ### Pre-install hardening — UFW and apt baseline
  
@@ -112,6 +80,8 @@ sudo ufw allow 22/tcp comment 'SSH admin'
 sudo ufw enable
 sudo ufw status verbose
 ```
+
+![UFW Verbose](../../screenshots/01-wazuh/01-ufw-verbose.png)
  
 The UFW ruleset at this stage allows only SSH inbound. Wazuh's required ports (1514, 1515, 443, 9200) are not yet open at the host level — the installer is allowed to manage these, and they will be verified after deployment.
  
@@ -124,47 +94,30 @@ Wazuh sits in an out-of-band segment with strict directional rules. Three catego
 1. **VLAN 99 outbound** — the Wazuh host needs to reach the internet (apt, the Wazuh installer download) and pfSense services (DNS), but must be blocked from initiating connections into other lab VLANs.
 2. **Agents → Wazuh** — endpoints on VLAN 10 and VLAN 20 need to reach `10.10.99.10:1514` and `:1515`.
 3. **Host PC → Dashboard** — the operator needs HTTPS to `10.10.99.10:443` through the MGMT host-only network.
+
 #### Rules on `Firewall → Rules → VLAN99`
- 
-In strict top-down order:
- 
-| # | Action | Source       | Destination          | Protocol         | Description                                            |
-| - | ------ | ------------ | -------------------- | ---------------- | ------------------------------------------------------ |
-| 1 | Pass   | VLAN99 net   | This Firewall (self) | TCP/UDP — 53     | Allow VLAN99 → pfSense DNS                             |
-| 2 | Pass   | VLAN99 net   | any                  | ICMP — any       | Allow VLAN99 ICMP outbound (diagnostics)               |
-| 3 | Pass   | VLAN99 net   | any                  | TCP — 80, 443    | Allow VLAN99 outbound HTTP/HTTPS (apt + Wazuh installer) |
-| 4 | Block  | VLAN99 net   | Net `10.10.10.0/24`  | any              | Block VLAN99 → VLAN10                                  |
-| 5 | Block  | VLAN99 net   | Net `10.10.20.0/24`  | any              | Block VLAN99 → VLAN20                                  |
-| 6 | Block  | VLAN99 net   | Net `10.10.66.0/24`  | any              | Block VLAN99 → VLAN66                                  |
-| 7 | Block  | VLAN99 net   | Net `192.168.56.0/24` | any             | Block VLAN99 → MGMT                                    |
- 
-The Block rules cannot be replaced with a single `Block VLAN99 → 10.0.0.0/8` because the VirtualBox NAT gateway sits in `10.0.2.0/24` and is required for WAN egress. Per-VLAN Block rules are explicit and avoid the unintended consequence of breaking outbound NAT.
+
+![pfSense Firewall Rules - VLAN99](../../screenshots/01-wazuh/02-pfsense-rules-vlan99.png)
  
 #### Rules on `Firewall → Rules → VLAN10` and `VLAN20`
  
 A targeted Pass rule was added at the top of each VLAN's rule list to allow agent telemetry — placed explicitly rather than relying on the existing generic outbound rules so that firewall logs make agent traffic visible and distinguishable:
  
-| Interface | Action | Source     | Destination       | Protocol            | Description                                      |
-| --------- | ------ | ---------- | ----------------- | ------------------- | ------------------------------------------------ |
-| VLAN10    | Pass   | VLAN10 net | Host `10.10.99.10` | TCP — 1514:1515    | Allow VLAN10 → Wazuh manager (telemetry + enrollment) |
-| VLAN20    | Pass   | VLAN20 net | Host `10.10.99.10` | TCP — 1514:1515    | Allow VLAN20 → Wazuh manager (telemetry + enrollment) |
+![pfSense Firewall Rules - VLAN10](../../screenshots/01-wazuh/03-pfsense-rules-vlan10.png)
+![pfSense Firewall Rules - VLAN20](../../screenshots/01-wazuh/04-pfsense-rules-vlan20.png)
  
 #### Rule on `Firewall → Rules → MGMT`
  
 The existing admin rule on MGMT permits `192.168.56.1 → This Firewall (self)` — it does not allow the host PC to reach `10.10.99.10`. A second rule was added to enable dashboard access:
  
-| Action | Source         | Destination        | Protocol     | Description                            |
-| ------ | -------------- | ------------------ | ------------ | -------------------------------------- |
-| Pass   | `192.168.56.1` | Host `10.10.99.10` | TCP — 443    | Allow host PC → Wazuh dashboard HTTPS  |
+![pfSense Firewall Rules - MGMT](../../screenshots/01-wazuh/05-pfsense-rules-MGMT.png)
  
-Save and Apply Changes after all rules across all four interface tabs are committed.
- 
-### Wazuh 4.x all-in-one installation
+### Wazuh 4.14 all-in-one installation
  
 Wazuh provides a single shell script that deploys Manager, Indexer, and Dashboard with internal PKI generation in one command. The script is the vendor-recommended path for single-host installations and is significantly more reliable than the per-component manual installs (which require careful sequencing of certificate generation, OpenSearch initialization, and dashboard pairing).
  
 ```bash
-curl -sO https://packages.wazuh.com/4.13/wazuh-install.sh
+curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
 chmod +x wazuh-install.sh
 sudo bash wazuh-install.sh -a
 ```
@@ -278,24 +231,6 @@ A future iteration of the lab could codify this as a pfSense rule template appli
 - Server management views confirm the cluster is healthy (Manager, Indexer, Dashboard all green) and the agents list is empty as expected.
 - Segmentation validated: from the Wazuh host, ping to VLAN 10 and VLAN 20 hosts returns timeout — the asymmetric out-of-band design holds.
 - Snapshot taken in VirtualBox: `wazuh-baseline` (manager operational, no agents enrolled yet).
----
- 
-## Screenshots
- 
-| Screenshot | Description |
-| ---------- | ----------- |
-| ![Ubuntu Server install — profile setup](../Screenshots/phase5/01-ubuntu-install-profile.png) | Ubuntu Server installer "Profile setup" with hostname `wazuh-srv` and username `wazadmin` |
-| ![Ubuntu Server install — SSH option](../Screenshots/phase5/02-ubuntu-install-ssh.png) | Installer step with OpenSSH server installation enabled |
-| ![Netplan static IP](../Screenshots/phase5/03-netplan-config.png) | `/etc/netplan/00-installer-config.yaml` content showing static `10.10.99.10/24` |
-| ![NTP sync status](../Screenshots/phase5/04-timedatectl-status.png) | `timedatectl status` output with `NTP service: active` and `System clock synchronized: yes` |
-| ![UFW baseline rules](../Screenshots/phase5/05-ufw-status.png) | `sudo ufw status verbose` showing default-deny incoming + SSH allow |
-| ![pfSense VLAN99 rules](../Screenshots/phase5/06-pfsense-vlan99-rules.png) | `Firewall → Rules → VLAN99` showing the 3 Pass + 4 Block ruleset |
-| ![pfSense agent enrollment rule](../Screenshots/phase5/07-pfsense-vlan10-wazuh-rule.png) | `Firewall → Rules → VLAN10` with the Pass rule for `10.10.99.10:1514–1515` |
-| ![pfSense MGMT dashboard rule](../Screenshots/phase5/08-pfsense-mgmt-dashboard-rule.png) | `Firewall → Rules → MGMT` with the second rule for HTTPS to Wazuh |
-| ![Wazuh installer summary](../Screenshots/phase5/09-wazuh-install-summary.png) | Terminal output of `wazuh-install.sh -a` final summary with credentials |
-| ![Dashboard first login](../Screenshots/phase5/10-dashboard-login.png) | `https://10.10.99.10` Wazuh login screen |
-| ![Cluster status green](../Screenshots/phase5/11-cluster-status.png) | `Server management → Status` showing Manager, Indexer, Dashboard all green |
-| ![Empty agents list](../Screenshots/phase5/12-empty-agents-list.png) | `Server management → Agents` empty — correct state pre-enrollment |
  
 ---
  
