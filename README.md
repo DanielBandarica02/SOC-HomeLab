@@ -99,8 +99,6 @@ SOC-HomeLab/
     ├── 04-attack-scenarios/
     ├── 05-detection-rules/
     └── 06-incident-reports/
-
-01-wazuh-manager.md
    
 ```
 
