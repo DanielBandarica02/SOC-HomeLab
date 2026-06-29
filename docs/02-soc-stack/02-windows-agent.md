@@ -64,7 +64,7 @@ NET START WazuhSvc
 
 ![DC01 Agent Install](../../screenshots/02-windows-agent/02-dc01-agent-install.png)
  
-The `Invoke-WebRequest` step initially failed on DC01 with `The remote name could not be resolved: 'packages.wazuh.com'` — see Troubleshooting #2. After fixing DNS forwarders, the three commands ran to completion in approximately 90 seconds, and DC01 appeared in `Server Management → Agents` with status `Active`.
+The `Invoke-WebRequest` step initially failed on DC01 with `The remote name could not be resolved: 'packages.wazuh.com'` — see Troubleshooting #2. After fixing DNS forwarders, the commands ran to completion and DC01 appeared in `Server Management → Agents` with status `Active`.
 
 ![DC01 Agent Install Validation](../../screenshots/02-windows-agent/04-dc01-agent-install-validation.png)
  
