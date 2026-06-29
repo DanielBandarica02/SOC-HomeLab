@@ -74,7 +74,7 @@ Same procedure on WS-CORP-01, with the agent name adjusted in the `msiexec` line
 
 ![WS-CORP-01 Agent Install](../../screenshots/02-windows-agent/03-wscorp01-agent-install.png)
 
-![WS-CORP-01 Agent Install Validation](../../screenshots/05-windows-agent/05-wscorp01-agent-install-validation.png)
+![WS-CORP-01 Agent Install Validation](../../screenshots/02-windows-agent/05-wscorp01-agent-install-validation.png)
  
 ### Agent install — WS-DEV-01
  
@@ -84,7 +84,7 @@ WS-DEV-01 is in VLAN 20, in workgroup mode. Its DNS server is `10.10.20.1` (pfSe
  
 Same `msiexec` procedure with `WAZUH_AGENT_NAME="WS-DEV-01"`. The agent registered successfully and appeared `Active` in the dashboard. 
 
-![WS-DEV-01 Agent Install Validation](../../screenshots/05-windows-agent/07-wsdev01-agent-install-validation.png)
+![WS-DEV-01 Agent Install Validation](../../screenshots/02-windows-agent/07-wsdev01-agent-install-validation.png)
  
 ### Sysmon installation — SwiftOnSecurity configuration
  
