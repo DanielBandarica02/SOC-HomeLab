@@ -87,7 +87,7 @@ This is where the deployment took its current shape. The working configuration u
  
 `/var/ossec/etc/ossec.conf` was extended with three blocks:
  
-![Extended Localfiles Blocks](../../screenshots/03-linux-agent/05-extended-localfiles-blocks.png)
+![Extended Localfiles Blocks](../../screenshots/03-linux-agent/05-extended-localfile-blocks.png)
  
 ---
  
