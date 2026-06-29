@@ -165,7 +165,7 @@ Both timeouts confirm the Block rules on VLAN 99 are active. If either had retur
 - Segmentation validated: from the Wazuh host, ping to VLAN 10 and VLAN 20 hosts returns timeout — the asymmetric out-of-band design holds.
  
 ---
- 
+
 *Previous: [Phase 3 — VLAN 20 (Software Development)](../01-infrastructure/03-vlan20.md)*
-*Next: [Phase 5 — Windows Agents (DC01, WS-CORP-01, WS-DEV-01)](02-windows-agents.md)*
+*Next: [Phase 5 — Windows Agents (DC01, WS-CORP-01, WS-DEV-01)](02-windows-agent.md)*
  
