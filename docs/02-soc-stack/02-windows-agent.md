@@ -85,6 +85,23 @@ WS-DEV-01 is in VLAN 20, in workgroup mode. Its DNS server is `10.10.20.1` (pfSe
 Same `msiexec` procedure with `WAZUH_AGENT_NAME="WS-DEV-01"`. The agent registered successfully and appeared `Active` in the dashboard. 
 
 ![WS-DEV-01 Agent Install Validation](../../screenshots/02-windows-agent/07-wsdev01-agent-install-validation.png)
+
+### Agent Validation on Wazuh Dashboard 
+
+Running  `runas /user:soclab\fakeuser cmd.exe"` 3 times on each OS failing the password should create an alert, the agent should send the alert to Wazuh Dashboard correctly:
+
+DC01
+
+![DC01 Agent Install Validation - 2](../../screenshots/02-windows-agent/08-dc01-agent-install-validation-2.png)
+
+WS-CORP-01
+
+![WS-CORP-01 Agent Install Validation - 2](../../screenshots/02-windows-agent/09-wscorp01-agent-install-validation-2.png)
+
+WS-DEV-01
+
+![WS-DEV-01 Agent Install Validation - 2](../../screenshots/02-windows-agent/10-wsdev01-agent-install-validation-2.png)
+
  
 ### Sysmon installation — SwiftOnSecurity configuration
  
