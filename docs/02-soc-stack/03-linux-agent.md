@@ -14,16 +14,17 @@ This document covers the agent installation, the deployment of `auditd` with cus
  
 ```mermaid
 flowchart LR
-    subgraph wsdev2[ws-dev-02 — Ubuntu Desktop 24.04]
+    subgraph wsdev2[ws-dev-02 - Ubuntu Desktop 24.04]
         kernel[Kernel audit subsystem]
         auditd[auditd daemon<br/>RAW format]
         audisp[audisp-syslog plugin]
-        authlog[/var/log/auth.log]
-        syslog_f[/var/log/syslog]
-        auditlog[/var/log/audit/audit.log]
+        authlog["/var/log/auth.log"]
+        syslog_f["/var/log/syslog"]
+        auditlog["/var/log/audit/audit.log"]
         pam[PAM / sudo]
         systemd[systemd services]
         agent[Wazuh agent<br/>3 localfile blocks]
+
         kernel --> auditd
         auditd --> auditlog
         auditd --> audisp
@@ -34,8 +35,10 @@ flowchart LR
         syslog_f --> agent
         auditlog --> agent
     end
-    pfsense[pfSense<br/>VLAN 20 → 99: TCP 1514]
-    wazuh[wazuh-srv<br/>Manager + Indexer + Dashboard]
+
+    pfsense["pfSense<br/>VLAN 20 -> 99: TCP 1514"]
+    wazuh["wazuh-srv<br/>Manager + Indexer + Dashboard"]
+    
     agent -.->|TCP 1514| pfsense
     pfsense -.->|TCP 1514| wazuh
 ```
@@ -304,170 +307,13 @@ No drop events occurred — the volume of telemetry produced during validation s
  
 ---
  
-## Troubleshooting & Lessons Learned
- 
-### 1. auditd writes `/var/log/audit/audit.log` with restrictive permissions by default
- 
-After installing auditd, the agent could see the file via the `<localfile>` block but no events were forwarded to the SIEM. The agent log showed `Analyzing file: '/var/log/audit/audit.log'`, but no events with `decoder.name: auditd` reached the dashboard.
- 
-The methodology:
- 
-| Test                                                  | Result                                | Layer eliminated                |
-| ----------------------------------------------------- | ------------------------------------- | ------------------------------- |
-| `ls -la /var/log/audit/audit.log`                     | `-rw-------  root root`                | File mode `600`, only root can read |
-| `sudo -u wazuh head -5 /var/log/audit/audit.log`      | `Permission denied`                   | Agent (running as `wazuh`) cannot read |
- 
-**Root cause:** auditd writes its log with mode `600` and group `root` by default. The Wazuh agent runs as user `wazuh:wazuh`, which has no read access to a `600 root root` file. The agent reads the directory entry but every read attempt on the content fails silently — the agent does not surface this as a prominent error.
- 
-**Solution:** add the `wazuh` user to the `adm` group (Ubuntu's traditional log-readers group) and change auditd's `log_group` to `adm`:
- 
-```bash
-sudo usermod -aG adm wazuh
-sudo sed -i 's/^log_group = root/log_group = adm/' /etc/audit/auditd.conf
-sudo systemctl stop auditd && sudo systemctl start auditd
-sudo systemctl restart wazuh-agent
-```
- 
-After the change, `ls -la /var/log/audit/audit.log` showed `-rw-r----- root adm`, and `sudo -u wazuh head` returned content. Events began reaching the SIEM with `decoder.name: auditd`.
- 
-**Lesson:** when a log shipper appears to be working (file is being read, no errors in the agent log) but no events surface in the SIEM, file permissions are a common silent failure mode. Always verify with `sudo -u <shipper-user>` that the user can actually read the file content, not just see it in the directory listing.
- 
-### 2. journald takes precedence over the auditd `<localfile>` block
- 
-After fixing permissions and initial Wazuh agent configuration, sudo events were arriving at the SIEM but **decoded as `pam` from journald**, not as `auditd` events with `data.audit.*` populated. The auditd block in `ossec.conf` was loaded by the agent (`Analyzing file: '/var/log/audit/audit.log'` visible in `ossec.log`) but its events were apparently being captured by the journald block first.
- 
-The methodology:
- 
-| Test                                                  | Result                                | Layer eliminated                |
-| ----------------------------------------------------- | ------------------------------------- | ------------------------------- |
-| Inspect a dashboard event for sudo activity           | `decoder.name: pam`, `location: journald` | Decoder is journald-routed |
-| Inspect `ossec.conf` for ingestion ordering           | journald block listed before audit.log block | Pipeline conflict identified |
- 
-**Root cause:** Ubuntu 24.04 routes auditd events into journald in addition to the standard audit.log file. Wazuh agent's journald reader processes events first and the agent considers them handled, so the `audit.log` block becomes redundant — its events do not surface as auditd-decoded entries because journald already classified them as PAM events.
- 
-**Solution:** remove the journald `<localfile>` block from `ossec.conf` rather than filtering it (filters on journald are fragile in Wazuh). After restart, sudo events appeared via `auth.log` (with the `sudo` decoder) and via `audit.log` (with the `auditd` decoder) — the two correct routes.
- 
-**Trade-off accepted:** journald is not monitored anymore. systemd service status events (wazuh-agent restarts, cron job starts, etc.) no longer reach the SIEM through this single path. This is acceptable because `/var/log/syslog` (added as a separate `<localfile>` block) covers the same ground for systemd-managed services.
- 
-**Lesson:** when two ingestion sources cover overlapping events with different decoders, the SIEM applies whichever it processes first. Removing the redundancy is cleaner than filtering inside the conflicting source. **Simplification beats configuration acrobatics**.
- 
-### 3. auditd `log_format = ENRICHED` breaks Wazuh's decoder
- 
-Even after fixing permissions and removing the journald block, SYSCALL events from auditd still didn't surface with `data.audit.*` populated. The agent was reading the file, the decoder was loaded, but the structured fields stayed empty.
- 
-The methodology:
- 
-| Test                                                  | Result                                | Layer eliminated                |
-| ----------------------------------------------------- | ------------------------------------- | ------------------------------- |
-| `sudo head -3 /var/log/audit/audit.log`               | Fields like `res=successAUID="..."` concatenated without separators | Output format anomaly identified |
-| `grep "^log_format" /etc/audit/auditd.conf`           | `log_format = ENRICHED`               | Configuration source confirmed  |
- 
-**Root cause:** Ubuntu 24.04 ships auditd with `log_format = ENRICHED` as default. The enriched format appends user/role context to each event (`AUID="..." UID="root" GID="root"`) at the end of the line, **without a clean separator** from the preceding field:
- 
-```
-... success=yes ... res=successAUID="unset" UID="root"
-```
- 
-Wazuh's regex-based audit decoder assumes the classic `RAW` format with clean field termination. The enriched output is partially matched and the structured extraction fails — the event reaches the SIEM but with empty `data.audit.*` fields.
- 
-**Solution:** change auditd to RAW format in `/etc/audit/auditd.conf`:
- 
-```bash
-sudo sed -i 's/^log_format = ENRICHED/log_format = RAW/' /etc/audit/auditd.conf
-sudo systemctl stop auditd && sudo systemctl start auditd
-```
- 
-After the change, new events appeared with the classic RAW format — no concatenated AUID/UID at the end. Note that **existing entries in audit.log retain the old enriched format** until log rotation; only events written after the auditd restart are in RAW.
- 
-**Lesson:** when a log shipper "reads" a file but produces no parsed events, the bug is rarely in the shipper — it's in the format mismatch between source and decoder. A single `head` of the source log reveals what would otherwise require enabling debug-level decoder traces.
- 
-### 4. XML typo in `<ossec_config>` blocks the agent from starting
- 
-After several rounds of editing `ossec.conf` to remove and re-add `<localfile>` blocks, a restart of the agent failed with `Job for wazuh-agent.service failed because the control process exited with error code` and a reference to "line 0 of /var/ossec/etc/ossec.conf".
- 
-The methodology:
- 
-| Test                                                  | Result                                | Layer eliminated                |
-| ----------------------------------------------------- | ------------------------------------- | ------------------------------- |
-| `sudo xmllint --noout /var/ossec/etc/ossec.conf`      | Parse error referencing the opening tag | XML malformed                  |
-| `grep -n "ossec_confing\|ossec_config"`               | Line 190: `<ossec_confing>` (typo)    | Root cause identified           |
- 
-**Root cause:** during one of the edit cycles, the opening tag was typed as `<ossec_confing>` (missing the second `g` from "config" and adding an extra `n`). The XML became unparseable because the closing tag `</ossec_config>` had no matching opening tag.
- 
-**Solution:** correct the typo to `<ossec_config>`. Validated with `xmllint --noout`, which returned no errors.
- 
-**Lesson:** when an editor reports "line 0" or a similar non-specific location, the XML parser has rejected the entire document and cannot point to a meaningful position. `xmllint --noout` against the config file is the fastest way to diagnose — it reports the exact line and character of the syntax error. Run it as a habit after every manual edit of large XML configurations.
- 
-### 5. Three `<localfile>` blocks complementary, not one
- 
-After resolving the previous gotchas, the pipeline still had gaps — some events (sudo authentications, SSH sessions) arrived via journald (which was now removed), while auditd's `audit.log` events struggled with SYSCALL decoding.
- 
-**Root cause:** the Wazuh agent's default installation includes `<localfile>` blocks for `dpkg.log`, `active-responses.log`, and `journald`, but **not for `/var/log/auth.log`, `/var/log/syslog`, or `/var/log/audit/audit.log`**. These are deliberately left for the operator to configure based on the deployment's needs.
- 
-The temptation when integrating auditd is to add only the audit.log block and assume the audit decoder covers the entire Linux security telemetry surface. This is a misconception: PAM/sudo events live in `auth.log` and are best decoded by Wazuh's PAM/sudo decoders; systemd service events live in `syslog` and are best decoded by the generic syslog decoders. The audit.log captures kernel syscalls with the auditd decoder. **The three are complementary, not redundant.**
- 
-**Solution:** add three `<localfile>` blocks, one per source, each with its appropriate decoder format:
- 
-```xml
-<localfile>
-  <log_format>audit</log_format>
-  <location>/var/log/audit/audit.log</location>
-  <only-future-events>no</only-future-events>
-</localfile>
- 
-<localfile>
-  <log_format>syslog</log_format>
-  <location>/var/log/auth.log</location>
-</localfile>
- 
-<localfile>
-  <log_format>syslog</log_format>
-  <location>/var/log/syslog</location>
-</localfile>
-```
- 
-After adding the three blocks and restarting the agent, the dashboard immediately showed events from all three sources with their respective decoders applied (`auditd`, `sudo`, `syslog`).
- 
-**Lesson:** Linux security telemetry is distributed across multiple log files by design — PAM, systemd, and the kernel audit subsystem each write to their own location. A Wazuh agent configuration that only reads one of them captures a narrow slice of the security picture. **Defense-in-depth applies to data ingestion as much as to network segmentation**: multiple complementary sources mitigate the risk that any single decoder or pipeline has issues with a specific event type.
- 
-### 6. `data.audit.key` not extracted from SYSCALL events — accepted limitation
- 
-After resolving all previous gotchas, a final observation: SYSCALL events from auditd reach the SIEM with the full event text in `full_log` (including `key="priv_esc"`), but the structured field `data.audit.key` remains empty for SYSCALL events. Other audit event types (`CONFIG_CHANGE`, `DAEMON_*`, `AVC`) populate `data.audit.*` correctly.
- 
-The methodology:
- 
-| Verification                                                     | Result                              |
-| ----------------------------------------------------------------- | ----------------------------------- |
-| `sudo grep "key=\"priv_esc\"" /var/log/audit/audit.log \| wc -l` | 280+ matches — rule firing locally   |
-| Dashboard: `agent.name: "ws-dev-02" and full_log: "priv_esc"`     | 30 events — pipeline transports them |
-| Dashboard: `agent.name: "ws-dev-02" and data.audit.key: "priv_esc"` | 0 events — structured field empty  |
- 
-**Diagnosis:** the auditd decoder's regex in Wazuh 4.14 paired with auditd RAW format on Ubuntu 24.04 does not extract the `key` field from multi-line SYSCALL events. The event is forwarded with all data in `full_log`, but the `data.audit.*` mapping for SYSCALL stays empty. This is a known limitation in this pairing.
- 
-**Operational impact:** searches by content (`full_log: "priv_esc"`) work; searches by structured field (`data.audit.key: "priv_esc"`) do not. Wazuh built-in rules that depend on the decoded `audit.key` field do not match these events. Custom detection rules using `full_log` regex matching are unaffected.
- 
-**Trade-off accepted (lab decision):** the limitation is acknowledged but not resolved with custom decoder modifications. Reasons:
- 
-1. **Functional coverage exists.** Events reach the SIEM with all relevant data in `full_log`, making them queryable and triageable.
-2. **Complementary sources cover the gap.** `/var/log/auth.log` and `/var/log/syslog` capture sudo, PAM, and systemd events with **full structured decoding** via their respective Wazuh decoders.
-3. **A future iteration** could integrate the `audisp-json` plugin (which emits auditd events as native JSON, consumable by Wazuh with `log_format: json` and fully structured). This is documented as a roadmap item.
-**Lesson:** when a SIEM ingestion pipeline has multiple decoders covering overlapping ground, incomplete parsing in one decoder is mitigated by the others. This is exactly why the multi-source configuration in Troubleshooting #5 matters — it transforms what would be a blocking limitation into an accepted trade-off with documented mitigations.
- 
----
- 
 ## Result
  
-- Wazuh agent deployed on `ws-dev-02` (Ubuntu Desktop 24.04, `10.10.20.20/24`, VLAN 20, workgroup standalone), `Active` in the dashboard alongside the three Windows agents from Part 2.
+- Wazuh agent deployed on `ws-dev-02` (Ubuntu Desktop 24.04, `10.10.20.20/24`, VLAN 20, workgroup ), `Active` in the dashboard alongside the three Windows agents from Part 2.
 - Cross-VLAN enrollment path validated: VLAN 20 → VLAN 99 over TCP 1514/1515, traversing the pfSense allow rule provisioned in Part 1.
-- auditd installed and configured: `log_format = RAW`, `log_group = adm`, audisp-syslog plugin active.
-- `wazuh` user added to `adm` group to enable read access to `/var/log/audit/audit.log`.
-- Custom audit ruleset in `/etc/audit/rules.d/soc-monitoring.rules` with two active keys (`priv_esc`, `identity_files`); kernel rules verified loaded via `auditctl -l`.
-- Three complementary `<localfile>` blocks added to `ossec.conf`: `audit.log` (audit decoder), `auth.log` (syslog format → pam/sudo decoders), `syslog` (syslog decoder). Default `journald` block removed to avoid decoder conflicts.
-- Telemetry validated from three sources in parallel: 258 events via `auditd` decoder, 136 events via `sudo` decoder, 30 events with `priv_esc` content in `full_log` — all from the same host.
+- Custom audit ruleset in `/etc/audit/rules.d/soc-monitoring.rules` 
 - Synthetic events validated: `sudo whoami` produces priv_esc auditd events and PAM session events; modifications to `/etc/passwd` trigger identity_files audit events.
-- Limitation documented: `data.audit.key` not consistently extracted from SYSCALL events in Wazuh 4.14 + Ubuntu 24.04. Content-based queries on `full_log` work; structured-field queries on `data.audit.key` do not. The complementary `auth.log`/`syslog` sources mitigate this gap with full structured parsing.
-- Six distinct troubleshooting entries surfaced and documented with methodology: file permissions, journald precedence, auditd format mismatch, XML typo, multi-source necessity, and the SYSCALL decoding limitation.
-- Snapshot: `ws-dev-02-baseline-soc` taken in VirtualBox after the full pipeline was validated, capturing the working state of agent + auditd + rules + ossec.conf.
+  
 ---
  
 ## Screenshots
