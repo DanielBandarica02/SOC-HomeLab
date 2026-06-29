@@ -95,16 +95,13 @@ SOC-HomeLab/
     │   └── 03-vlan20.md
     ├── 02-soc-stack/
     │   ├── 01-wazuh-manager.md
-    │   └── 02-windows-agent.md
+    │   ├── 02-windows-agent.md
+    │   └── 03-linux-agent.md
     ├── 03-adversary/
     ├── 04-attack-scenarios/
     ├── 05-detection-rules/
     └── 06-incident-reports/
 ```
-
-## Project Phases
-
-
 
 ## About This Project
  
