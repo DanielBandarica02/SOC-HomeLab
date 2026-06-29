@@ -101,7 +101,6 @@ WS-CORP-01
 WS-DEV-01
 
 ![WS-DEV-01 Agent Install Validation - 2](../../screenshots/02-windows-agent/10-wsdev01-agent-install-validation-2.png)
-
  
 ### Sysmon installation — SwiftOnSecurity configuration
  
@@ -111,115 +110,40 @@ The two artifacts downloaded once and copied to each host:
  
 - `Sysmon64.exe` from `https://download.sysinternals.com/files/Sysmon.zip`
 - `sysmonconfig-export.xml` from `https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml`
+
 On each host, PowerShell as Administrator:
  
-```powershell
-cd "$env:USERPROFILE\Downloads"
-.\Sysmon64.exe -accepteula -i sysmonconfig-export.xml
-Get-Service Sysmon64                          # Status: Running
-Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 5
-```
- 
-Expected installer output:
- 
-```
-Sysmon installed.
-SysmonDrv installed.
-SysmonDrv started.
-Sysmon started.
-```
- 
-The `SysmonDrv` line is significant — Sysmon ships both a user-mode service (`Sysmon64`) and a kernel driver (`SysmonDrv`). The driver is what gives Sysmon its visibility into process creation and image loads at the kernel level; without it, much of the telemetry would be unavailable. The `Get-WinEvent` query against the `Microsoft-Windows-Sysmon/Operational` channel confirms that events are being written to the local event log within seconds of the install.
+![Sysmon Install](../../screenshots/02-windows-agent/11-sysmon-install.png)
+
+Running the `Get-Service Sysmon64` command in PowerShell should display the service status as 'Running' to verify a successful installation. 
+
+![Sysmon Install](../../screenshots/02-windows-agent/12-sysmon-install-validation.png)
+
+To ensure logs are being actively generated, execute `Get-WinEvent -LogName 'Microsoft-Windows-Sysmon/Operational' -MaxEvents 5` in PowerShell. This verifies that the system is successfully capturing and recording Sysmon events.
+
+![Sysmon Install - 2](../../screenshots/02-windows-agent/13-sysmon-install-validation-2.png)
  
 ### Wazuh agent — enabling the Sysmon channel in `ossec.conf`
  
-Wazuh agent is **intentionally agnostic** to whether Sysmon is installed on a host. The agent forwards whatever event channels it is told to monitor — by default, that is `Security`, `System`, and `Application`. Sysmon writes to a separate channel (`Microsoft-Windows-Sysmon/Operational`) that must be added explicitly to the agent configuration.
+The agent forwards whatever event channels it is told to monitor — by default, that is `Security`, `System`, and `Application`. Sysmon writes to a separate channel (`Microsoft-Windows-Sysmon/Operational`) that must be added explicitly to the agent configuration.
  
 On each host, `C:\Program Files (x86)\ossec-agent\ossec.conf` was edited with Notepad running as Administrator. A new `<localfile>` block was added after the existing Security/System/Application blocks:
  
-```xml
-<localfile>
-  <location>Microsoft-Windows-Sysmon/Operational</location>
-  <log_format>eventchannel</log_format>
-</localfile>
-```
+![Enabling the Sysmon channel](../../screenshots/02-windows-agent/14-enabling-the-Sysmon-channel.png)
  
 After saving, the agent service was restarted:
  
 ```powershell
 Restart-Service WazuhSvc
-Get-Service WazuhSvc                          # Status: Running
+Get-Service WazuhSvc                         
 ```
  
 This was repeated on all three hosts. From this point on, every Sysmon event generated on any of the three Windows endpoints is forwarded to the Wazuh Manager, decoded against the Sysmon ruleset, and indexed for search and alerting.
- 
----
- 
-## Validation
- 
-### Agent health in the dashboard
- 
-`Server Management → Agents` was inspected after all three deployments. Expected state:
- 
-| Name        | Status | IP             | Operating System              | Version  |
-| ----------- | ------ | -------------- | ----------------------------- | -------- |
-| DC01        | Active | `10.10.10.10`  | Microsoft Windows Server 2022 | 4.14.x   |
-| WS-CORP-01  | Active | `10.10.10.20`  | Microsoft Windows 11 Pro      | 4.14.x   |
-| WS-DEV-01   | Active | `10.10.20.10`  | Microsoft Windows 11 Pro      | 4.14.x   |
- 
-The IPs span both monitored VLANs (10 and 20), which is the visual evidence that the cross-VLAN enrollment path works end to end.
- 
-### Synthetic events — native Security log
- 
-A failed logon was generated from DC01 to exercise both the Security log channel and the Wazuh ruleset against authentication events:
- 
-```powershell
-runas /user:soclab\nonexistentuser cmd.exe
-# Password prompt; any input fails since the user does not exist
-```
- 
-In the dashboard, `Explore → Discover` filtered by `agent.name: DC01` and `data.win.system.eventID: 4625`, the event appeared within seconds. Detail view showed the failure reason (`Unknown user name or bad password`), the target account name, the calling process, and the workstation name — the data points an L1 analyst would use to triage a brute-force candidate.
- 
-The same procedure was repeated on `WS-CORP-01` and `WS-DEV-01`, confirming that all three agents forward Security log events correctly. WS-DEV-01 used a local-account variant (`runas /user:WS-DEV-01\fakelocaluser`) since it is workgroup, not domain-joined.
- 
-### Synthetic events — Sysmon Operational channel
- 
-A reconnaissance-style command chain was executed on DC01 to exercise Sysmon process-creation telemetry:
- 
-```powershell
-cmd.exe /c "whoami && hostname"
-```
- 
-This produces three Sysmon Event ID 1 events in rapid succession — `cmd.exe` (parent: `powershell.exe`), `whoami.exe` (parent: `cmd.exe`), `hostname.exe` (parent: `cmd.exe`). In the dashboard with filter `data.win.system.providerName: Microsoft-Windows-Sysmon` and `data.win.system.eventID: 1`, the three events were visible within 10 seconds, with the parent-child relationship readable directly in the event detail (`data.win.eventdata.parentImage` field).
- 
-The parent-child chain is precisely what a threat hunter follows when reconstructing post-compromise activity, and seeing it surface end to end is the validation that the Sysmon-to-Wazuh pipeline carries the contextual data, not just the bare event.
- 
-### First real alert — T1105 from the Sysmon binary itself
- 
-A by-product of the installation procedure produced an unexpected validation: the act of dropping `Sysmon64.exe` into the Administrator's `Desktop` folder on DC01 triggered Wazuh rule `92213` ("Executable file dropped in folder commonly used by malware"), severity 15, mapped to MITRE ATT&CK technique **T1105 (Ingress Tool Transfer)** under the Command and Control tactic.
- 
-This is a true positive in detection terms even though it is a false positive in operational terms — the rule fired correctly on a pattern that legitimate setup activity happens to match. The triage logic an L1 would apply:
- 
-| Question                            | Answer in this case                                       | Disposition         |
-| ----------------------------------- | --------------------------------------------------------- | ------------------- |
-| What was dropped?                   | `Sysmon64.exe`, Microsoft Sysinternals binary             | Known legitimate    |
-| Who dropped it?                     | `Administrator`, during documented SOC stack deployment    | Known and expected  |
-| Hash verifiable against vendor?     | Yes, `Sysmon64.exe` SHA256 matches Sysinternals release   | Verified legitimate |
-| Operational justification?          | Documented Phase 5 step                                   | Justified           |
- 
-Closure: false positive attributable to setup activity. Note added to the triage log.
- 
-The conceptual takeaway is the more important one for the portfolio narrative: **the SIEM does not decide whether an activity is malicious. It detects patterns and presents them to a human with enough context to decide.** Seeing this play out on a real event in the first hour of operation is the cleanest possible validation of why the stack is built the way it is.
- 
-### Sysmon validation across the other two hosts
- 
-A condensed validation was run on `WS-CORP-01` and `WS-DEV-01`:
- 
-```powershell
-cmd.exe /c "whoami && hostname"
-```
- 
-In the dashboard, filters by `agent.name: WS-CORP-01` and then `agent.name: WS-DEV-01`, both showed the corresponding Sysmon Event ID 1 sequence within 10 seconds. Three distinct hosts feeding Sysmon telemetry into a single SIEM, with WS-DEV-01 doing so across VLAN boundaries — the cross-zone observability is operational.
+
+To validate the configuration, run `cmd.exe /c "whoami && ipconfig"` This execution should trigger a corresponding alert on the Wazuh Dashboard.
+
+![Enabling the Sysmon channel Validation](../../screenshots/02-windows-agent/15-enabling-the-Sysmon-channel-validation.png)
+
  
 ---
  
@@ -273,71 +197,11 @@ After applying, `nslookup packages.wazuh.com` returned an answer, and the `Invok
  
 **Lesson:** when a domain controller serves DNS for its own domain, by default it does not have a path to resolve names outside that domain. This is silent at promotion time and surfaces only when a service on the DC (or any client using the DC as its DNS) tries to resolve external names. In production, configuring forwarders is part of the AD baseline; in a lab, it surfaces on the first occasion the DC has to act as a normal internet client.
  
-### 3. WS-CORP-01 — DHCP lease vs static IP for firewall rule consistency
- 
-A dashboard convenience exception was added to allow `WS-CORP-01` to reach `https://10.10.99.10` from within VLAN 10. The firewall rule needed a single-host source IP — but `ipconfig` on WS-CORP-01 showed `10.10.10.102`, a DHCP-leased address that would change after the next DHCP cycle, invalidating the firewall rule.
- 
-**Methodology:** trace the cause from the symptom — a rule using a DHCP-leased address breaks at the next lease renewal. The alternatives evaluated:
- 
-| Approach                                       | Operational stability                         | Notes                                          |
-| ---------------------------------------------- | --------------------------------------------- | ---------------------------------------------- |
-| Use the DHCP-leased IP `10.10.10.102` in the rule | Breaks at the next renewal                    | Avoid                                          |
-| Convert WS-CORP-01 to static IP `10.10.10.20`  | Stable; aligns with `prerequisites.md`         | Chosen                                         |
-| Add DHCP static mapping in pfSense              | Stable; central management                    | Reasonable alternative; not used here          |
- 
-The host was reconfigured to static IP `10.10.10.20` via Windows Settings → Network → IPv4 Manual. This also matches the IP plan recorded in `00-architecture/prerequisites.md`, removing a piece of accumulated tech debt where the documented assignment differed from the actual configuration.
- 
-A side gotcha appeared during the change: the Windows 11 Settings GUI rejects `255.255.255.0` in the subnet mask field, requiring the prefix-length form (`24`) instead. The number was rejected initially with a generic "Entrada no válida" error, regardless of formatting. Solved by configuring via PowerShell, which accepts an explicit `-PrefixLength` parameter:
- 
-```powershell
-Get-NetAdapter | Where-Object { $_.Status -eq "Up" }
-Remove-NetIPAddress -InterfaceIndex 13 -Confirm:$false
-Remove-NetRoute -InterfaceIndex 13 -Confirm:$false
-New-NetIPAddress -InterfaceIndex 13 -IPAddress 10.10.10.20 -PrefixLength 24 -DefaultGateway 10.10.10.1
-Set-DnsClientServerAddress -InterfaceIndex 13 -ServerAddresses 10.10.10.10,1.1.1.1
-```
- 
-After applying, `ipconfig /all` confirmed `10.10.10.20` and `nltest /sc_query:soclab.local` returned `Trust Relationship Status: Verified` — the IP change did not disturb the domain membership.
- 
-**Lesson:** firewall rules and DHCP are an unstable combination. Any rule that names a specific host should reference an IP that is either statically configured or DHCP-reserved. The "trust the lease" approach works in production for hours or days but eventually breaks at a bad time. Documenting the IP plan and enforcing it (static or reservation) saves later debugging.
- 
-### 4. Dashboard convenience exception — VLAN 10 to VLAN 99 (single host)
- 
-Once the IP was stable, a single rule was added to allow `WS-CORP-01` (single host `10.10.10.20`) to reach the Wazuh dashboard on TCP 443. This is a deliberate exception to the out-of-band model documented in Part 1, made on operator-convenience grounds: the corporate workstation is the most common interactive session in the lab, and routing dashboard access exclusively through MGMT requires switching contexts back to the host PC for every check.
- 
-The exception is constrained to a single host rather than the full VLAN 10 subnet. The trust boundary degradation is bounded: the SIEM dashboard becomes reachable from one specific administrative workstation, not from every endpoint in the corporate zone. DC01 and any other corporate host remain blocked from the SIEM by default.
- 
-| Original policy                                       | Modified policy                                              |
-| ----------------------------------------------------- | ------------------------------------------------------------ |
-| Dashboard reachable only from MGMT (`192.168.56.1`)   | Dashboard reachable from MGMT **and** from `10.10.10.20`     |
-| Out-of-band fully enforced                            | Out-of-band relaxed for one administrative host              |
- 
-In a production deployment, this exception would not be present — administrative access to the SIEM would route through a jump host or a privileged-access workstation outside the monitored segments. For a single-operator lab, the trade-off favors operational comfort, and the exception is auditable as a single specific rule in the pfSense ruleset.
- 
-### 5. VLAN 99 out-of-band Block rules — accidentally removed during troubleshooting
- 
-During the UFW / firewall troubleshooting in #1, the four Block rules on VLAN 99 (`Block VLAN99 → VLAN10/20/66/MGMT`) were temporarily removed in an attempt to isolate whether the issue was on the pfSense side or the host side. The block rules were not the cause — UFW was — but the rules were not immediately restored.
- 
-This left the lab in a degraded state: VLAN 99 had unrestricted outbound to all private networks, defeating the out-of-band principle that is the core of Part 1's design. The condition was caught when reviewing the screenshots before resuming agent deployment.
- 
-**Methodology:** verify policy state, not just symptoms. The agents were working, the dashboard was reachable, and superficially everything looked good — but the architectural property the design was supposed to guarantee was no longer in place. The fix:
- 
-| Action | Source | Destination | Description |
-| ------ | ------ | ----------- | ----------- |
-| Block | VLAN99 net | Network `10.10.10.0/24` | Block VLAN99 → VLAN10 (out-of-band enforcement) |
-| Block | VLAN99 net | Network `10.10.20.0/24` | Block VLAN99 → VLAN20 (out-of-band enforcement) |
-| Block | VLAN99 net | Network `10.10.66.0/24` | Block VLAN99 → VLAN66 (out-of-band enforcement) |
-| Block | VLAN99 net | Network `192.168.56.0/24` | Block VLAN99 → MGMT (out-of-band enforcement) |
- 
-After re-applying and re-verifying with `ping` tests from wazuh-srv toward each blocked subnet (all timed out as expected), the lab was restored to the intended out-of-band posture.
- 
-**Lesson:** removing firewall rules to "see if it's the firewall" is a debugging anti-pattern. It changes the system under test in a way that may not be reverted symmetrically, and it can leave the architecture silently degraded after the original problem is fixed by an unrelated change. A safer approach is to **log** the rules in question (turn on per-rule logging) and observe whether they match the failing traffic — diagnostic data without architectural mutation. When rule removal is genuinely necessary, the removed rules must be tracked and restored as the last step before considering the issue closed.
- 
 ---
  
 ## Result
  
-- Three Wazuh agents deployed on `DC01`, `WS-CORP-01`, and `WS-DEV-01`, all `Active` in the dashboard, spanning VLAN 10 (corporate / AD-joined) and VLAN 20 (development / workgroup standalone).
+- Three Wazuh agents deployed on `DC01`, `WS-CORP-01`, and `WS-DEV-01`, all `Active` in the dashboard, spanning VLAN 10 (corporate / AD-joined) and VLAN 20 (development / workgroup ).
 - Sysmon installed on all three hosts with the SwiftOnSecurity configuration. Service `Sysmon64` running, kernel driver `SysmonDrv` loaded, events visible in `Microsoft-Windows-Sysmon/Operational`.
 - `ossec.conf` extended on each host with a `<localfile>` entry for the Sysmon channel; agent service restarted and confirmed running.
 - Synthetic events generated for validation: failed logon attempts produced Security Event ID 4625 visible in the SIEM within seconds; `cmd.exe /c whoami && hostname` produced the expected Sysmon Event ID 1 chain with parent-child relationship intact.
