@@ -205,7 +205,6 @@ After applying, `nslookup packages.wazuh.com` returned an answer, and the `Invok
 - Sysmon installed on all three hosts with the SwiftOnSecurity configuration. Service `Sysmon64` running, kernel driver `SysmonDrv` loaded, events visible in `Microsoft-Windows-Sysmon/Operational`.
 - `ossec.conf` extended on each host with a `<localfile>` entry for the Sysmon channel; agent service restarted and confirmed running.
 - Synthetic events generated for validation: failed logon attempts produced Security Event ID 4625 visible in the SIEM within seconds; `cmd.exe /c whoami && hostname` produced the expected Sysmon Event ID 1 chain with parent-child relationship intact.
-- First real alert observed in the SIEM: rule `92213` (T1105 — Ingress Tool Transfer) fired on the legitimate drop of `Sysmon64.exe` to the Administrator's Desktop on DC01, triaged as a contextually-justified false positive.
 - pfSense firewall extended with a single-host exception allowing `WS-CORP-01 → 10.10.99.10:443` for dashboard access; out-of-band policy on VLAN 99 verified and restored after a temporary removal during troubleshooting.
 - Five distinct gotchas surfaced and documented: UFW on the manager, DNS forwarders on DC01, DHCP vs static IP for firewall rule consistency, the dashboard convenience exception design, and the VLAN 99 Block rule restoration.
  
