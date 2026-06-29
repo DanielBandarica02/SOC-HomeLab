@@ -70,7 +70,7 @@ sudo systemctl status auditd
  
 A curated rule set was placed in `/etc/audit/rules.d/soc-monitoring.rules`. The intent was a small, focused set covering privilege escalation and identity file modifications — broad enough to demonstrate detection capabilities, narrow enough to avoid the noise that comes with shipping STIG-style rulesets.
  
-![Auditd SOC L1 Rules](../../screenshots/03-linux-agent/04-auditd-rules.png)`
+![Auditd SOC L1 Rules](../../screenshots/03-linux-agent/04-auditd-rules.png)
  
 Rules were loaded into the kernel:
  
@@ -87,7 +87,7 @@ This is where the deployment took its current shape. The working configuration u
  
 `/var/ossec/etc/ossec.conf` was extended with three blocks:
  
-![Extended Localfiles Blocks](../../screenshots/03-linux-agent/05-extended-localfiles-blocks.png)`
+![Extended Localfiles Blocks](../../screenshots/03-linux-agent/05-extended-localfiles-blocks.png)
  
 ---
  
@@ -102,7 +102,7 @@ This is where the deployment took its current shape. The working configuration u
 | DC01        | Active | `10.10.10.10`  | Microsoft Windows Server 2022 |
 | WS-CORP-01  | Active | `10.10.10.20`  | Microsoft Windows 11 Pro      |
 | WS-DEV-01   | Active | `10.10.20.10`  | Microsoft Windows 11 Pro      |
-| **ws-dev-02** | **Active** | **`10.10.20.20`** | **Ubuntu 24.04**          |
+| **ws-dev-02** | **Active** | **`10.10.20.20`** | **Ubuntu 24.04**     |
  
 Four agents, two operating systems, two VLANs, two identity models — the SIEM data plane is operational across the lab.
  
