@@ -1,4 +1,4 @@
-# Phase 5 — SOC Stack Linux Agent + auditd
+# Phase 3 — SOC Stack Linux Agent + auditd
  
 ## Overview
  
