@@ -117,11 +117,11 @@ agent.name: "ws-dev-02" and decoder.name: "auditd"        # 258 hits
 agent.name: "ws-dev-02" and decoder.name: "sudo"          # 144 hits
 agent.name: "ws-dev-02" and full_log: "priv_esc"          # 30 hits
 ```
-![Dashboard Query 1](../../screenshots/03-linux-agent/06-dashboard-query-1.png)`
+![Dashboard Query 1](../../screenshots/03-linux-agent/06-dashboard-query-1.png)
 
-![Dashboard Query 2](../../screenshots/03-linux-agent/07-dashboard-query-2.png)`
+![Dashboard Query 2](../../screenshots/03-linux-agent/07-dashboard-query-2.png)
 
-![Dashboard Query 3](../../screenshots/03-linux-agent/08-dashboard-query-3.png)`
+![Dashboard Query 3](../../screenshots/03-linux-agent/08-dashboard-query-3.png)
 
  
 Each result represents a distinct view of the same host:
