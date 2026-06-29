@@ -25,13 +25,11 @@ The same wizard-driven approach used for the three Windows agents in Part 2 was 
 | Agent name      | `ws-dev-02`    |
 | Group           | `default`      |
  
-The wizard generated PowerShell-equivalent shell commands. Executed in order on `ws-dev-02`:
+The wizard generated two PowerShell-equivalent shell commands. Executed in order on `ws-dev-02`:
  
 ```bash
-# 1.
 wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.14.5-1_amd64.deb && sudo WAZUH_MANAGER='10.10.99.10' WAZUH_AGENT_NAME='ws-dev-02' dpkg -i ./wazuh-agent_4.14.5-1_amd64.deb
 
-# 2. Enable and start the service
 sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
