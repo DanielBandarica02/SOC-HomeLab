@@ -2,17 +2,15 @@
  
 ## Overview
  
-Three Wazuh agents were deployed across the existing Windows endpoints — `DC01`, `WS-CORP-01`, and `WS-DEV-01` — to bring active telemetry into the SIEM platform established in `01-wazuh-manager.md`. The three endpoints were chosen deliberately to cover **two trust zones and two identity models** with a single agent technology:
+Three Wazuh agents were deployed across the existing Windows endpoints — `DC01`, `WS-CORP-01`, and `WS-DEV-01` to bring active telemetry into the SIEM platform established in `01-wazuh-manager.md`. 
  
 | Host        | Trust zone  | Identity model           | Telemetry profile that justifies inclusion |
 | ----------- | ----------- | ------------------------ | ------------------------------------------ |
 | DC01        | VLAN 10     | AD Domain Controller     | Generates the Kerberos / NTLM authentication events for the entire domain. Highest-value telemetry source in a Windows environment. |
-| WS-CORP-01  | VLAN 10     | AD member (domain-joined) | Endpoint-level view of an authenticated corporate workstation. Receives GPO, talks to DC01, exposes typical user-driven activity. |
-| WS-DEV-01   | **VLAN 20** | **Workgroup (standalone)** | The contrast case — same agent technology, same dashboard, no AD involvement. Demonstrates that the SIEM is independent of the identity layer. |
+| WS-CORP-01  | VLAN 10     | AD member | Endpoint-level view of an authenticated corporate workstation. Receives GPO, talks to DC01, exposes typical user-driven activity. |
+| WS-DEV-01   | VLAN 20 | Workgroup | The contrast case — same agent technology, same dashboard, no AD involvement. Demonstrates that the SIEM is independent of the identity layer. |
  
-After agent deployment, **Sysmon** was installed on all three hosts using the [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration. This transforms the data plane delivered to Wazuh: without Sysmon, the agent forwards only the native Security, System, and Application logs (essentially authentication and service events). With Sysmon, the same agent delivers process creation, network connections per process, registry modifications, file creation, image loads, and DNS queries — the telemetry that turns a SIEM into a de-facto EDR.
- 
-The bulk of this document covers the deployment of the three agents, the Sysmon installation procedure, the `ossec.conf` modification required to pick up the Sysmon event channel, and the end-to-end validation that exercises both native and Sysmon-sourced events. The Troubleshooting section is dense — five distinct gotchas surfaced during the work and each is documented with its methodology.
+After agent deployment, **Sysmon** was installed on all three hosts using the [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration. This transforms the data plane delivered to Wazuh: without Sysmon, the agent forwards only the native Security, System, and Application logs (essentially authentication and service events). With Sysmon, the same agent delivers process creation, network connections per process, registry modifications, file creation, image loads, and DNS queries — the telemetry that turns a SIEM into a EDR.
  
 ---
  
@@ -38,23 +36,11 @@ The three telemetry streams converge at pfSense, are subject to the cross-VLAN a
  
 ## Deployment
  
-### Agent enrollment — open registration, no shared secret
- 
-Wazuh's agent enrollment was configured to accept new agents without a shared registration password. This is the default behavior of the all-in-one installer when no password file is created. The decision was deliberate and traded off against two alternatives:
- 
-| Approach                                | When appropriate                              | Trade-off                                                                  |
-| --------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------- |
-| **Open enrollment (this lab)**          | Closed labs, single operator, all hosts trusted | Any host that can reach TCP 1515 can register; relies on network segmentation as the only barrier |
-| Shared password (`authd.pass`)          | Small production environments                 | Adds a shared secret; rotation needed if any host is compromised           |
-| Certificate-based enrollment            | Larger environments                           | Per-agent revocation; requires PKI lifecycle management                    |
- 
-In this lab, the only sources able to reach the Wazuh Manager on TCP 1515 are VLAN 10 and VLAN 20 — and those VLANs contain exclusively hosts deployed and controlled by the lab operator. The trust boundary is enforced at the firewall layer in Part 1; the agent registration layer adds no additional protection given that constraint. In a future v2 of the lab where the attacker VLAN (66) is active in scenarios, shared-password enrollment would be added as a defense-in-depth measure.
- 
 ### Agent deployment via the Wazuh Dashboard wizard
  
 Each Windows agent was deployed using the **Deploy new agent** wizard from the Wazuh Dashboard (`Server Management → Agents → Deploy new agent`), which is the vendor-recommended path for first-time agent installation. The wizard generates the exact MSI download URL and `msiexec.exe` command line for the target OS, with manager address, agent name, and group pre-populated from form inputs.
- 
-This approach was chosen over manually constructing the `msiexec.exe` command line because (1) it guarantees the agent version matches the manager version, eliminating mismatch warnings; (2) it documents the deployment intent in the dashboard itself, which is auditable; and (3) it is the procedure shown in the official onboarding guide.
+
+![Deploy new agent wizard](../../screenshots/02-windows-agent/01-deploy-agent-wizard.png)
  
 The wizard inputs used for each host:
  
@@ -66,37 +52,39 @@ The wizard inputs used for each host:
  
 The wizard's output is a two-line PowerShell snippet: an `Invoke-WebRequest` to download the MSI, followed by an `msiexec.exe /i ...` with the agent name, manager IP, and group baked in. Both lines were executed inside an elevated PowerShell session on each host.
  
-### Pre-install snapshot of DC01
- 
-Because DC01 hosts the AD DS role for the entire `soclab.local` forest, a snapshot was taken before installing the agent: `dc01-pre-wazuh-agent`, described as "DC operational, AD healthy, pre-Wazuh agent install. Rollback point if agent install affects AD services."
- 
-`WS-CORP-01` and `WS-DEV-01` were considered lower-risk and the snapshot was skipped; rollback for those hosts can rely on the baseline snapshots already taken during Phases 3 and 4.
- 
 ### Agent install — DC01
  
 PowerShell as Administrator on DC01, with the wizard-generated commands:
  
 ```powershell
-Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.14.x-1.msi `
-                  -OutFile $env:TEMP\wazuh-agent.msi
-msiexec.exe /i $env:TEMP\wazuh-agent.msi /q `
-            WAZUH_MANAGER="10.10.99.10" `
-            WAZUH_AGENT_NAME="DC01" `
-            WAZUH_AGENT_GROUP="default"
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.14.5-1.msi -OutFile $env:tmp\wazuh-agent; msiexec.exe /i $env:tmp\wazuh-agent /q WAZUH_MANAGER='10.10.99.10' WAZUH_AGENT_NAME='DC01'
+
 NET START WazuhSvc
 ```
+
+![DC01 Agent Install](../../screenshots/02-windows-agent/02-dc01-agent-install.png)
  
 The `Invoke-WebRequest` step initially failed on DC01 with `The remote name could not be resolved: 'packages.wazuh.com'` — see Troubleshooting #2. After fixing DNS forwarders, the three commands ran to completion in approximately 90 seconds, and DC01 appeared in `Server Management → Agents` with status `Active`.
+
+![DC01 Agent Install Validation](../../screenshots/02-windows-agent/04-dc01-agent-install-validation.png)
  
 ### Agent install — WS-CORP-01
  
-Same procedure on WS-CORP-01, with the agent name adjusted in the `msiexec` line. No DNS gotcha here — WS-CORP-01 uses DC01 as its primary DNS (configured in Phase 3), and once DC01 has working forwarders, all domain-joined clients resolve external names through it. WS-CORP-01 appeared `Active` in the dashboard within seconds.
+Same procedure on WS-CORP-01, with the agent name adjusted in the `msiexec` line. WS-CORP-01 appeared `Active` in the dashboard within seconds.
+
+![WS-CORP-01 Agent Install](../../screenshots/02-windows-agent/03-wscorp01-agent-install.png)
+
+![WS-CORP-01 Agent Install Validation](../../screenshots/05-windows-agent/05-wscorp01-agent-install-validation.png)
  
 ### Agent install — WS-DEV-01
  
 WS-DEV-01 is in VLAN 20, in workgroup mode. Its DNS server is `10.10.20.1` (pfSense) per the Phase 4 configuration. The enrollment traffic crosses from VLAN 20 to VLAN 99 over pfSense via the per-VLAN allow rule created in Part 1 (`Pass VLAN20 net → 10.10.99.10 TCP 1514:1515`).
+
+![WS-DEV-01 Agent Install](../../screenshots/02-windows-agent/06-wsdev01-agent-install.png)
  
-Same `msiexec` procedure with `WAZUH_AGENT_NAME="WS-DEV-01"`. The agent registered successfully and appeared `Active` in the dashboard. This is the moment where the cross-VLAN telemetry path is validated end to end — the path that was provisioned in Part 1 but had not yet been exercised.
+Same `msiexec` procedure with `WAZUH_AGENT_NAME="WS-DEV-01"`. The agent registered successfully and appeared `Active` in the dashboard. 
+
+![WS-DEV-01 Agent Install Validation](../../screenshots/05-windows-agent/07-wsdev01-agent-install-validation.png)
  
 ### Sysmon installation — SwiftOnSecurity configuration
  
