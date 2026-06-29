@@ -46,9 +46,11 @@ This is the moment where the cross-VLAN enrollment is validated for Linux as wel
 Before installing auditd, baseline validation was performed using the localfile blocks the Wazuh agent ships with by default (`/var/log/dpkg.log`, `/var/ossec/logs/active-responses.log`, and the `journald` block). A synthetic failed-sudo event was generated:
  
 ```bash
-sudo -k                    # invalidate sudo cache
-sudo --user=nobody true    # prompts for password; three wrong attempts
+sudo -k                    
+sudo --user=nobody true    
 ```
+After failing the password three times, an alert has to appear on Wazuh Dashboard:
+
 ![ws-dev-02 Validation Logs](../../screenshots/03-linux-agent/02-validation-log.png)
 
 The corresponding PAM authentication failure events appeared in the dashboard within 10 seconds, confirming the agent is forwarding telemetry end-to-end before any custom configuration. This baseline check is what surfaces a broken pipeline early — before the operator starts adding rules and decoders that complicate diagnosis.
