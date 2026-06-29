@@ -140,5 +140,5 @@ Each result represents a distinct view of the same host:
 
 ---
  
-*Previous: [Phase 5 — SOC Stack (Part 2: Windows Agents + Sysmon)](02-windows-agents.md)*
-*Next: [Phase 5 — SOC Stack (Part 4: pfSense Syslog Integration)](04-pfsense-syslog.md)*
+*Previous: [Phase 2 — SOC Stack Windows Agents + Sysmon](02-windows-agent.md)*
+*Next: [Phase 4 — SOC Stack pfSense Syslog Integration](04-pfsense-syslog.md)*
