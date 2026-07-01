@@ -12,30 +12,17 @@ This document covers the syslog transport configuration UDP/514, the activation 
  
 ```mermaid
 flowchart LR
-    subgraph pfsense[pfSense — 10.10.99.1 on VLAN 99]
-        pf_fw[Firewall filterlog]
-        pf_dhcp[DHCP service]
-        pf_vpn[OpenVPN]
-        pf_sys[System events]
-        pf_syslog[syslog client]
-        pf_fw --> pf_syslog
-        pf_dhcp --> pf_syslog
-        pf_vpn --> pf_syslog
-        pf_sys --> pf_syslog
+    subgraph pf["pfSense · 10.10.99.1"]
+        events["Firewall · DHCP<br/>OpenVPN · System"]
     end
-    subgraph wazuh[wazuh-srv — 10.10.99.10]
-        remoted[wazuh-remoted<br/>UDP/514 listener]
-        archives[Wazuh Archives<br/>/var/ossec/logs/archives/]
-        decoder[Custom decoder<br/>pfsense-custom-*]
-        filebeat[Filebeat<br/>archives.enabled: true]
-        indexer[Wazuh Indexer<br/>wazuh-archives-*]
+    subgraph wz["wazuh-srv · 10.10.99.10"]
+        remoted["wazuh-remoted<br/>(UDP 514)"]
+        archives["Wazuh Archives<br/>(logall + JSON)"]
+        indexer["Indexer<br/>(wazuh-archives-*)"]
+        remoted --> archives --> indexer
     end
-    dashboard[Wazuh Dashboard<br/>Discover with wazuh-archives-*]
-    pf_syslog -.->|UDP/514| remoted
-    remoted --> archives
-    archives --> decoder
-    decoder --> filebeat
-    filebeat --> indexer
+    dashboard["Dashboard<br/>Discover"]
+    events -.->|syslog UDP 514| remoted
     indexer --> dashboard
 ```
  
