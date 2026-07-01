@@ -97,7 +97,8 @@ SOC-HomeLab/
     │   ├── 01-wazuh-manager.md
     │   ├── 02-windows-agent.md
     │   ├── 03-linux-agent.md
-    │   └── 04-pfsense-syslog.md
+    │   ├── 04-pfsense-syslog.md
+    │   └── 05-soc-dashboard.md
     ├── 03-adversary/
     ├── 04-attack-scenarios/
     ├── 05-detection-rules/
