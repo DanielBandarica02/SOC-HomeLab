@@ -39,7 +39,7 @@ flowchart LR
     indexer --> dashboard
 ```
  
-The syslog transport travels VLAN 99-internal from `10.10.99.1` (pfSense) to `10.10.99.10:514` (wazuh-srv). Three independent defense layers filter this path: UFW at the OS level restricts by source IP, the `<remote>` block in `ossec.conf` applies `allowed-ips` at the Wazuh application layer, and `local_ip` binds the listener to a specific interface. Once received, events pass through the custom decoder, are stored in the archives (both text and JSON formats), and are shipped by Filebeat to the OpenSearch indexer where they become searchable via the `wazuh-archives-*` index pattern.
+The syslog transport travels VLAN 99-internal from `10.10.99.1` (pfSense) to `10.10.99.10:514` (wazuh-srv). Three independent defense layers filter this path: UFW at the OS level restricts by source IP, the `<remote>` block in `ossec.conf` applies `allowed-ips` at the Wazuh application layer. Once received, events pass through the custom decoder, are stored in the archives (both text and JSON formats), and are shipped by Filebeat to the OpenSearch indexer where they become searchable via the `wazuh-archives-*` index pattern.
  
 ---
  
@@ -53,6 +53,8 @@ The Wazuh manager was configured in Part 1 with a deny-by-default UFW posture. T
 sudo ufw allow proto udp from 10.10.99.1 to any port 514 comment 'pfSense syslog inbound'
 sudo ufw status verbose | grep 514
 ```
+
+ ![](../../screenshots/phase5/01-.png)
  
 The `from 10.10.99.1` restriction is deliberate. Opening `to any port 514` without a source filter would turn the SIEM into a receiver of syslog from any host that can route to the VLAN 99 interface — a needless expansion of attack surface. The restriction acts as the first of three defense layers filtering this path.
  
@@ -417,25 +419,8 @@ For this lab, the custom decoder was kept as a demonstration of the decoder XML 
 - 1,311 pfSense events indexed and searchable at time of validation, growing continuously.
 - Six troubleshooting entries documented with methodology: Floating rule direction, Source Address binding, Archives global flags, Filebeat archives switch, index pattern wildcard vs date, custom vs built-in decoder trade-off.
 - **Phase 5 complete**: five telemetry sources feeding the SIEM (DC01, WS-CORP-01, WS-DEV-01, ws-dev-02, pfSense), covering endpoint + network layer across all trust zones.
+
 ---
  
-## Screenshots
- 
-| Screenshot | Description |
-| ---------- | ----------- |
-| ![Wazuh remoted syslog listener](../Screenshots/phase5/37-wazuh-remoted-syslog.png) | `ss -ulnp \| grep 514` confirming wazuh-remoted binding to `10.10.99.10:514` |
-| ![tcpdump UDP 514 capture](../Screenshots/phase5/38-tcpdump-udp514.png) | UDP/514 traffic from `10.10.99.1` to `10.10.99.10` in `tcpdump` output |
-| ![pfSense Floating rule](../Screenshots/phase5/39-pfsense-floating-rule.png) | The Floating rule with `direction: out` allowing syslog outbound |
-| ![pfSense Remote Logging config](../Screenshots/phase5/40-pfsense-remote-logging.png) | Remote Logging Options with Source Address: VLAN99 and four sub-systems selected |
-| ![Wazuh Archives files](../Screenshots/phase5/41-wazuh-archives-files.png) | `ls -la /var/ossec/logs/archives/` showing archives.log and archives.json growing |
-| ![Filebeat archives enabled](../Screenshots/phase5/42-filebeat-archives-enabled.png) | `filebeat.yml` with `archives.enabled: true` |
-| ![Custom decoder XML](../Screenshots/phase5/43-custom-decoder-xml.png) | `pfsense_custom.xml` with parent + children decoders |
-| ![Index pattern wildcard](../Screenshots/phase5/44-index-pattern-wildcard.png) | Creating `wazuh-archives-*` in Stack Management |
-| ![Discover with 1,311 hits](../Screenshots/phase5/45-discover-filterlog-hits.png) | Discover showing 1,311 filterlog events with the custom decoder applied |
-| ![Expanded event with structured fields](../Screenshots/phase5/46-expanded-event-fields.png) | An individual event with `data.action`, `data.srcip`, `data.dstip` populated |
-| ![Blocked ping end-to-end](../Screenshots/phase5/47-blocked-ping-e2e.png) | The synthetic VLAN 20 → VLAN 10 block appearing in the dashboard |
- 
----
- 
-*Previous: [Phase 5 — SOC Stack (Part 3: Linux Agent + auditd)](03-linux-agent.md)*
-*Next: [Phase 5 — SOC Stack (Part 5: SOC L1 Overview Dashboard)](05-soc-dashboard.md)*
+*Previous: [Phase 3 — SOC Stack Linux Agent + auditd](03-linux-agent.md)*
+*Next: [Phase 5 — SOC Stack SOC L1 Overview Dashboard](05-soc-dashboard.md)*
