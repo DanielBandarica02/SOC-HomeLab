@@ -11,7 +11,22 @@ This document covers the agent installation, the deployment of `auditd` with cus
 ---
  
 ## Architecture
- 
+
+ ```mermaid
+flowchart LR
+    subgraph ws["ws-dev-02 · Ubuntu 24.04 · VLAN 20"]
+        authlog["/var/log/auth.log<br/>(sudo, PAM)"]
+        syslogf["/var/log/syslog<br/>(systemd)"]
+        auditlog["/var/log/audit/audit.log<br/>(kernel syscalls)"]
+        agent["Wazuh agent"]
+        authlog --> agent
+        syslogf --> agent
+        auditlog --> agent
+    end
+    wazuh["wazuh-srv · VLAN 99"]
+    agent -.->|TCP 1514 via pfSense| wazuh
+```
+
 ---
  
 ### Agent deployment via the Wazuh Dashboard wizard
