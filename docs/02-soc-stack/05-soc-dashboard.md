@@ -10,4 +10,4 @@ The narrative of this document is the transition from *"we have logs"* to *"we h
 
 ![Dashboard Overview - 1](../../screenshots/05-soc-dashboard/01-dashboard-overview-1.png)
 
-![Dashboard Overview - 2](../../screenshots/phase5/02-dashboard-overview-2.png)
+![Dashboard Overview - 2](../../screenshots/05-soc-dashboard/02-dashboard-overview-2.png)
