@@ -6,3 +6,8 @@ Parts 1 through 4 deployed the SIEM infrastructure: manager, three Windows agent
  
 The narrative of this document is the transition from *"we have logs"* to *"we have visibility"*. Two custom detection rules were written to identify network-segmentation violations from pfSense telemetry (converting the passive firewall drops into active alerts with MITRE ATT&CK mapping). Seven visualizations were built on the `wazuh-alerts-*` index, each answering a specific question a L1 analyst asks during a shift. Finally, the seven were composed into a single **SOC L1 Overview** dashboard with a four-row layout matching the natural reading order of an incident triage.
 
+## Dashboard Overview
+
+![Dashboard Overview - 1](../../screenshots/05-soc-dashboard/01-dashboard-overview-1.png)
+
+![Dashboard Overview - 2](../../screenshots/phase5/02-dashboard-overview-2.png)
