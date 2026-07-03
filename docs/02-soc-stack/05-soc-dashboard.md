@@ -11,3 +11,5 @@ The narrative of this document is the transition from *"we have logs"* to *"we h
 ![Dashboard Overview - 1](../../screenshots/05-soc-dashboard/01-dashboard-overview-1.png)
 
 ![Dashboard Overview - 2](../../screenshots/05-soc-dashboard/02-dashboard-overview-2.png)
+
+The dashboard is built exclusively over `wazuh-alerts-*`, the index that holds only events that triggered a rule, to ingest pfSense Firewall events—which are originally routed to wazuh-archives-—into wazuh-alerts-, I created custom Wazuh rules.
