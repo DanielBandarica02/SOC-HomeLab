@@ -15,7 +15,6 @@ The narrative of this document is the transition from *"we have logs"* to *"we h
 The dashboard is built exclusively over `wazuh-alerts-*`, the index that holds only events that triggered a rule, to ingest pfSense Firewall events which are originally routed to wazuh-archives into wazuh-alerts, I created custom Wazuh rules.
 
 ---
-
-
-*Previous: Phase 5 — SOC Stack pfSense Syslog Integration](04-pfsense-syslog.md)*
+ 
+*Previous: [Phase 5 — SOC Stack pfSense Syslog Integration](04-pfsense-syslog.md)*
 *Next: Phase 6 — Attacker Environment (VLAN 66 + Kali Linux)*
