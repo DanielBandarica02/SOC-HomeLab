@@ -58,3 +58,7 @@ Note the differences from rule 100011: level 7 (Low-Medium instead of Medium-Hig
 
 ## Dashboard visualizations
 
+Seven visualizations were built, each targeting a specific question a L1 analyst asks during triage. The `wazuh-alerts-*` index pattern is used throughout. All widgets respect the dashboard's global timeframe filter (defaulting to Last 24 Hours).Seven visualizations were built, each targeting a specific question a L1 analyst asks during triage. The `wazuh-alerts-*` index pattern is used throughout. All widgets respect the dashboard's global timeframe filter (defaulting to Last 24 Hours).
+
+### 1. Total Alerts (24h) — Metric widget
+
