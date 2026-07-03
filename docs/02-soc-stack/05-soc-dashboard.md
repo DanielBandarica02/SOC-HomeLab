@@ -14,7 +14,47 @@ The narrative of this document is the transition from *"we have logs"* to *"we h
 
 The dashboard is built exclusively over `wazuh-alerts-*`, the index that holds only events that triggered a rule, to ingest pfSense Firewall events which are originally routed to wazuh-archives into wazuh-alerts, I created custom Wazuh rules.
 
----
+## Custom detection rules
  
-*Previous: [Phase 5 — SOC Stack pfSense Syslog Integration](04-pfsense-syslog.md)*
-*Next: Phase 6 — Attacker Environment (VLAN 66 + Kali Linux)*
+### Context — from Archives to Alerts
+ 
+At the end of Part 4, pfSense telemetry was flowing to `wazuh-archives-*`: filterlog events, DHCP leases, OpenVPN sessions. None of these were reaching `wazuh-alerts-*` because Wazuh's built-in ruleset does not fire alerts on generic pfSense pass/block events by default. To make network telemetry actionable for a SOC L1, custom detection rules were needed that identify **specifically the network behaviors that matter** in this lab's threat model.
+ 
+The lab's segmentation architecture defines VLAN 20 (Dev) and VLAN 10 (Corp) as isolated trust zones. Cross-VLAN traffic is denied by default at pfSense. Any packet blocked between these VLANs is by definition a **policy violation** — either an attack (lateral movement attempt from a compromised host) or a misconfiguration (a service or user trying to reach an endpoint they shouldn't). Both are events a L1 analyst wants to see, but they should not be treated identically.
+ 
+Two custom rules were written to encode this logic.
+
+### Rule 100010 — pfSense block base rule
+
+The parent rule matches any pfSense event where the action is `block`. It fires at level 3 (informational). 
+
+![Custom Rule 1 - Firewall Block Informational](../../screenshots/05-soc-dashboard/03-custom-rule-1.png)
+
+The `<decoded_as>pfsense-custom-header</decoded_as>` conditional ensures the rule only evaluates events already decoded by the custom decoder from Part 4 (the parent decoder that matches `filterlog[PID]:`). The `<match>block</match>` string check finds the word "block" in the raw event. Together they identify any pfSense-originated firewall block, regardless of source, destination, or protocol.
+
+Level 3 is deliberate — an alert on every firewall block would generate hundreds per hour in normal lab operation.
+
+### Rule 100011 — VLAN 20 → VLAN 10 segmentation violation
+
+The specialization rule detects the specific case that matters most: a host in the Dev network attempting to reach the Corp network. This direction is the canonical **lateral movement** pattern — an attacker who has established a foothold in a less-trusted environment attempting to pivot toward more-valuable systems (Active Directory, DC01, corporate workstations).
+
+![Custom Rule 2 - Firewall Block Informational](../../screenshots/05-soc-dashboard/04-custom-rule-2.png)
+
+### Local rule validation
+
+Rules were validated with `wazuh-logtest` before deployment. A representative pfSense filterlog event triggered the expected outcome:
+
+![Custom Rule 2 - Firewall Block Informational Validation](../../screenshots/05-soc-dashboard/05-custom-rule-2-validation.png)
+
+The interpolated description with actual IPs, the resolved MITRE tactic and technique names, and the correct level 10 severity confirmed the rule structure.
+
+### Documented roadmap — the reverse-direction rule
+
+A third rule (id 100012) covering VLAN 10 → VLAN 20 (Corp attempting to reach Dev) was scoped and documented but not deployed. This direction is treated asymmetrically because the threat model is different: Corp attempting to reach Dev is more commonly a legitimate operational mistake (misconfigured service, user error) than a lateral movement attempt. 
+
+![Custom Rule 3 - Firewall Block Informational](../../screenshots/05-soc-dashboard/06-custom-rule-3.png)
+
+Note the differences from rule 100011: level 7 (Low-Medium instead of Medium-High), no MITRE mapping (the direction does not cleanly correspond to an ATT&CK technique), and description phrasing ("policy violation" vs "lateral movement"). This asymmetric severity is the encoded threat model — not every segmentation violation is equally suspicious.
+
+## Dashboard visualizations
+
