@@ -48,7 +48,7 @@ Rules were validated with `wazuh-logtest` before deployment. A representative pf
 
 The interpolated description with actual IPs, the resolved MITRE tactic and technique names, and the correct level 10 severity confirmed the rule structure.
 
-### Documented roadmap — the reverse-direction rule
+### Rule 100012 — The reverse-direction rule 
 
 A third rule (id 100012) covering VLAN 10 → VLAN 20 (Corp attempting to reach Dev) was scoped and documented but not deployed. This direction is treated asymmetrically because the threat model is different: Corp attempting to reach Dev is more commonly a legitimate operational mistake (misconfigured service, user error) than a lateral movement attempt. 
 
