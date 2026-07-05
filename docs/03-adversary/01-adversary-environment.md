@@ -39,7 +39,29 @@ flowchart LR
     kali ==>|"BLOCKED"| soc
     linkStyle 5 stroke:#ff0000,stroke-width:3px
 ```
-The dashed arrows are **allowed attack paths**, the capabilities Kali needs to execute the three modelled vectors. Solid arrows are legitimate traffic (Internet for tool downloads). The crossed-out arrow to VLAN 99 (SOC) is an **immutable boundary**: no rule, in any direction, allows Kali to reach the SIEM. This asymmetry is deliberate — the defender's tooling must remain outside the attacker's reach even under Assume Breach.
+The dashed arrows are **allowed attack paths**, the capabilities Kali needs to execute the three modelled vectors. Solid arrows are legitimate traffic (Internet for tool downloads). The crossed-out arrow to VLAN 99 (SOC) is an **immutable boundary**: no rule, in any direction, allows Kali to reach the SIEM. This asymmetry is deliberate, the defender's tooling must remain outside the attacker's reach even under Assume Breach.
+
+---
+ 
+## Threat model — three attack vectors
+ 
+Each vector is modelled by a specific configuration of firewall rules that permits the traffic pattern the vector requires, while denying everything else.
+ 
+### Vector 1 — Phishing to command-and-control
+ 
+**Real-world scenario:** A user in the Corp environment opens a phishing email, executes the attached document, and a payload installs on their workstation. The payload initiates an outbound HTTPS connection to a command-and-control server on the Internet.
+ 
+**Lab modelling:** WS-CORP-01 (or any endpoint) runs a Sliver-generated implant. The implant is configured to callback to `10.10.66.10` on TCP 443 (or 80, 4444, 8080). Kali receives the callback and issues commands.
+ 
+**Firewall requirements:** VLAN 10 (and VLAN 20) endpoints must be able to **initiate outbound TCP** connections to Kali on the C2 ports. This is contrary to the "Kali cannot reach internal networks" isolation from Vector 2 — here, the internal endpoint reaches out to Kali, not the other way around. The firewall must permit VLAN 10/20 → VLAN 66 on the specific C2 ports.
+ 
+**Rule that enables this vector:**
+
+![Vector 1 - Rules VLAN10](../../screenshots/01-adversary-environment/01-vlan10-c2-ports.png)
+
+![Vector 1 - Rules VLAN20](../../screenshots/01-adversary-environment/02-vlan20-c2-ports.png)
+
+
 
  
 ---
