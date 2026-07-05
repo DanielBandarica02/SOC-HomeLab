@@ -39,5 +39,7 @@ flowchart LR
     kali ==>|"BLOCKED"| soc
     linkStyle 5 stroke:#ff0000,stroke-width:3px
 ```
+The dashed arrows are **allowed attack paths**, the capabilities Kali needs to execute the three modelled vectors. Solid arrows are legitimate traffic (Internet for tool downloads). The crossed-out arrow to VLAN 99 (SOC) is an **immutable boundary**: no rule, in any direction, allows Kali to reach the SIEM. This asymmetry is deliberate — the defender's tooling must remain outside the attacker's reach even under Assume Breach.
+
  
 ---
