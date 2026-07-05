@@ -221,7 +221,7 @@ The `traceroute -n 1.1.1.1` command confirms this behaviour: the first hop (the 
 
 ---
  
-*Previous: [Phase 5 — SOC Stack (Part 5: SOC L1 Overview Dashboard)](../02-soc-stack/05-soc-dashboard.md)*
+*Previous: [Phase 2 — Part 5: SOC Stack SOC L1 Overview Dashboard](../02-soc-stack/05-soc-dashboard.md)*
 *Next: Phase 4 — Attack Scenarios*
 
 
