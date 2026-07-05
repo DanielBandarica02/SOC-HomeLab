@@ -78,7 +78,7 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 - **Purple Team workflow** — offensive simulation feeding detection improvement
 - **Documentation** — professional technical writing, decision rationale, reproducible deployment procedures
 
-## 📋 Project Phases
+##  Project Phases
 
 The lab is structured in six sequential phases, each building on the previous one and documented in its own directory under `docs/`.
 
