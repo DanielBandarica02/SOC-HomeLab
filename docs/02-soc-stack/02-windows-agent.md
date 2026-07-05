@@ -1,4 +1,4 @@
-# Phase 2 — SOC Stack  Windows Agents + Sysmon
+# Phase 2 — Part2: SOC Stack  Windows Agents + Sysmon
  
 ## Overview
  
