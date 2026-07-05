@@ -213,8 +213,8 @@ The dashboard supports global filters that affect all widgets simultaneously. Co
 
 ---
  
-*Previous: [Phase 4 — SOC Stack pfSense Syslog Integration](04-pfsense-syslog.md)*
-*Next: Attacker Environment (VLAN 66 + Kali Linux)*
+*Previous: [Phase 2 — Part 4: SOC Stack pfSense Syslog Integration](04-pfsense-syslog.md)*
+*Next: [# Phase 3 — Adversary Environment](01-adversary-environment.md)*
 
 
 
