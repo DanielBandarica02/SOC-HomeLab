@@ -1,4 +1,4 @@
-# Phase 4 — SOC Stack pfSense Syslog Integration
+# Phase 2 — Part 4: SOC Stack pfSense Syslog Integration
  
 ## Overview
  
