@@ -1,4 +1,4 @@
-# Phase 2 — Part 2: SOC Stack: Wazuh Manager
+# Phase 2 — Part 1: SOC Stack: Wazuh Manager
  
 ## Overview
  
