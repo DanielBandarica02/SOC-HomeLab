@@ -210,6 +210,6 @@ After applying, `nslookup packages.wazuh.com` returned an answer, and the `Invok
  
 ---
  
-*Previous: [Phase 1 — SOC Stack Wazuh Manager](01-wazuh-manager.md)*
-*Next: [Phase 3 — SOC Stack Linux Agent on Ubuntu-Dev](03-linux-agent.md)*
+*Previous: [Phase 2 — Part 1: SOC Stack: Wazuh Manager](01-wazuh-manager.md)*
+*Next: [Phase 2 — Part 3: SOC Stack Linux Agent + auditd](03-linux-agent.md)*
 
