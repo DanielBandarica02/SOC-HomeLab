@@ -13,7 +13,7 @@ Three attack vectors were modelled to bring the attacker into the environment. E
 ---
  
 ## Architecture
- 
+
 ```mermaid
 flowchart LR
     subgraph adv["VLAN 66 · Adversary DMZ · 10.10.66.0/24"]
@@ -27,7 +27,7 @@ flowchart LR
         wsdev["WS-DEV-01<br/>SSH · RDP"]
         wsdev2["ws-dev-02<br/>SSH"]
     end
-    subgraph soc["VLAN 99 · SOC (unreachable)"]
+    subgraph soc["VLAN 99 · SOC"]
         wazuh["wazuh-srv"]
     end
     internet[["Internet"]]
@@ -36,5 +36,8 @@ flowchart LR
     corp -.->|"C2 callback<br/>443 · 80 · 4444"| kali
     dev -.->|"C2 callback<br/>443 · 80 · 4444"| kali
     kali -->|"apt · tools · updates"| internet
-    kali -.x soc
+    kali ==>|"BLOCKED"| soc
+    linkStyle 5 stroke:#ff0000,stroke-width:3px
 ```
+ 
+---
