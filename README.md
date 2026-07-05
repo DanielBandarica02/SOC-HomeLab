@@ -100,7 +100,8 @@ SOC-HomeLab/
     │   ├── 04-pfsense-syslog.md
     │   └── 05-soc-dashboard.md
     ├── 03-adversary/
-    ├── 04-attack-scenarios/
+    │   └── 01-adversary-environment.md
+    ├── 04-attack-scenarios/          <---- Working on
     ├── 05-detection-rules/
     └── 06-incident-reports/
 ```
