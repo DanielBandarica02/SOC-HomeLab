@@ -195,5 +195,5 @@ Restart Filebeat: `sudo systemctl restart filebeat`.
 
 ---
  
-*Previous: [Phase 3 — SOC Stack Linux Agent + auditd](03-linux-agent.md)*
-*Next: [Phase 5 — SOC Stack SOC L1 Overview Dashboard](05-soc-dashboard.md)*
+*Previous: [Phase 2 — Part 3: SOC Stack Linux Agent + auditd](03-linux-agent.md)*
+*Next: [Phase 2 — Part 5: SOC Stack SOC L1 Overview Dashboard](05-soc-dashboard.md)*
