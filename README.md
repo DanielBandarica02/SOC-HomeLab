@@ -84,27 +84,27 @@ The lab is structured in six sequential phases, each building on the previous on
 
 ### Phase 1 — Infrastructure 
 Network foundation: pfSense firewall, VLAN segmentation (Corp, Dev, SOC, MGMT, Adversary DMZ), inter-VLAN routing policies with default-deny between trust zones, and OpenVPN remote access for the Corp environment.
-📂 `docs/01-infrastructure/`
+ `docs/01-infrastructure/`
 
 ### Phase 2 — SOC Stack 
 Wazuh manager deployed on isolated SOC VLAN, four agents (Windows AD Domain Controller, two Windows 11 workstations, Ubuntu 24.04 dev host with auditd), pfSense syslog integration with custom decoder, and an operational SOC L1 dashboard with MITRE ATT&CK coverage view.
-📂 `docs/02-soc-stack/`
+ `docs/02-soc-stack/`
 
 ### Phase 3 — Adversary Environment 
 Kali Linux deployed in an isolated Adversary DMZ (VLAN 66) under the **Assume Breach** threat model. Sliver C2, Mimikatz, hydra, and a curated post-exploitation toolkit mapped to MITRE tactics. Firewall rules act as capability shapers, enabling specific attack vectors (phishing → C2, brute force SSH/RDP, VPN credential compromise) while enforcing immutable boundaries.
-📂 `docs/03-adversary/`
+ `docs/03-adversary/`
 
 ### Phase 4 — Attack Scenarios 
 End-to-end execution of realistic attack chains covering reconnaissance, credential access, lateral movement, and command-and-control. Each scenario is documented with commands executed, telemetry captured, and detection outcomes.
-📂 `docs/04-attack-scenarios/`
+ `docs/04-attack-scenarios/`
 
 ### Phase 5 — Detection Rules 
 Custom Wazuh detection rules developed to close coverage gaps identified during scenarios. Each rule includes threat model rationale, MITRE mapping, false positive analysis, and tuning notes.
-📂 `docs/05-detection-rules/`
+ `docs/05-detection-rules/`
 
 ### Phase 6 — Incident Reports 
 Post-incident analytical reports written from the SOC L1 analyst perspective. Each report documents timeline, telemetry sources correlated, root cause analysis, and lessons learned for a specific scenario.
-📂 `docs/06-incident-reports/`
+ `docs/06-incident-reports/`
 
 ## Repository structure
 
