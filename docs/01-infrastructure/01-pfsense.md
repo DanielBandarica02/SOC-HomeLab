@@ -243,5 +243,5 @@ The default Certificate Type when creating a new internal certificate in `Cert M
 
 ---
  
-Next: [Phase 2 — VLAN10](02-vlan10.md)
+Next: [Phase 1 — Part 2: VLAN 10 (Corporate Environment)](02-vlan10.md)
  
