@@ -130,6 +130,8 @@ SOC-HomeLab/
     ├── 03-adversary/
     │   └── 01-adversary-environment.md
     ├── 04-attack-scenarios/          <---- Working on
+    │   ├── 01-full-kill-chain-ssh-to-windows.md
+    │   └── 02-phishing-c2-persistence.md
     ├── 05-detection-rules/
     └── 06-incident-reports/
 ```
