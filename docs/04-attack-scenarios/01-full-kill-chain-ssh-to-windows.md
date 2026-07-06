@@ -15,7 +15,7 @@ The scenario also surfaces an operational reality that dominates real SOCs: **al
 
 ## Kill Chain Phases
  
-| Phase | Actor | Target | MITRE Tecnic | tool |
+| Phase | Tactic | Actor | Target | MITRE Tecnic |
 | ----- | ------ | --------- | ------------- | ------------- |
 | 1 | Reconnaissance | Kali | Subnet 10.10.20.0/24 | T1046 |
 | 2 | Brute Froce SSH |  Kali | ws-dev-02 (10.10.20.20) | T1110.001 |
