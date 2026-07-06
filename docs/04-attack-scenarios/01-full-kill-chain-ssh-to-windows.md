@@ -34,7 +34,7 @@ The scenario also surfaces an operational reality that dominates real SOCs: **al
 | Phase | Tactic | Technique | Sub-technique |
 | ----- | ------ | --------- | ------------- |
 | 1 | Reconnaissance | T1046 — Network Service Discovery | — |
-| 2 | Credential Access | T1110 — Brute Force | T1110.001 — Password Guessing |
+| 2 | Credential Access | T1110 — Brute Force SSH | T1110.001 — Password Guessing |
 | 3 | Initial Access | T1078 — Valid Accounts | — |
 | 4 | Discovery | T1082 — System Information Discovery | — |
 | 4 | Discovery | T1087 — Account Discovery | — |
