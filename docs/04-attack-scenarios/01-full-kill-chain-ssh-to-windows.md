@@ -15,16 +15,16 @@ The scenario also surfaces an operational reality that dominates real SOCs: **al
 
 ## Kill Chain Phases
  
-| Phase | Tactic | Actor | Target | MITRE Tecnic |
-| ----- | ------ | --------- | ------------- | ------------- | 
-| 1 | Reconnaissance | Kali | Subnet 10.10.20.0/24 | T1046 | 
-| 2 | Brute Froce SSH |  Kali | ws-dev-02 (10.10.20.20) | T1110.001 | 
-| 3 | Initial Access |  Kali | ws-dev-02 | T1078 | SSH |
-| 4 | Discovery post-compromise | Kali (via ws-dev-02) | ws-dev-02 | T1082, T1087, T1057 |
-| 5 | Credential Access | Kali (via ws-dev-02) | ws-dev-02 | T1552.001, T1552.003 | 
-| 6 | Lateral Movement | ws-dev-02 (pivot) | WS-DEV-01 (10.10.20.10) | T1021.001 (RDP) |
-| 7 | Persistence Linux | Kali (via ws-dev-02) | ws-dev-02 | T1053.003 (Cron) |
-| 8 | Persistence SSH | Kali (via ws-dev-02) | ws-dev-02 | T1098.004 (SSH Authorized Keys) |
+| Phase | Tactic | Actor | Target | 
+| ----- | ------ | --------- | ------------- |
+| 1 | Reconnaissance | Kali | Subnet 10.10.20.0/24 | 
+| 2 | Brute Froce SSH |  Kali | ws-dev-02 (10.10.20.20) |
+| 3 | Initial Access |  Kali | ws-dev-02 |
+| 4 | Discovery post-compromise | Kali (via ws-dev-02) | ws-dev-02 |
+| 5 | Credential Access | Kali (via ws-dev-02) | ws-dev-02 |
+| 6 | Lateral Movement | ws-dev-02 (pivot) | WS-DEV-01 (10.10.20.10) |
+| 7 | Persistence Linux | Kali (via ws-dev-02) | ws-dev-02 |
+| 8 | Persistence SSH | Kali (via ws-dev-02) | ws-dev-02 |
 
 
 ---
