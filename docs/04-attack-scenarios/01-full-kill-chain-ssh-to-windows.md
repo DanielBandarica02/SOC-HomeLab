@@ -47,6 +47,12 @@ The scenario also surfaces an operational reality that dominates real SOCs: **al
 | 7 | Persistence | T1053 — Scheduled Task/Job | T1053.003 — Cron |
 | 8 | Persistence | T1098 — Account Manipulation | T1098.004 — SSH Authorized Keys |
 
+---
+ 
+## Environment preparation
+ 
+Before execution, both target hosts were seeded with synthetic credentials and configuration that model a realistic developer environment. This seeding is documented explicitly rather than presented as attacker "discoveries" of pre-existing state — the scenario is a controlled lab exercise, and the seeded data represents what a real developer workstation typically contains
+
 
 
 
