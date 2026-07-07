@@ -418,11 +418,11 @@ The scenario generated **40,034 alerts** across a total execution window of appr
  
 | Alerts | % of total | Source                                                          | Phase(s) |
 | ------ | ---------- | --------------------------------------------------------------- | -------- |
-| 34,800 | **86.9%**  | pfSense firewall block (rule 100010 base + generic firewall)    | 1        |
-| 2,300  | 5.7%       | Syslog authentication failure                                   | 2        |
+| 34,828 | **86.9%**  | pfSense firewall block (rule 100010 base + generic firewall)    | 1        |
+| 2,321  | 5.7%       | Syslog authentication failure                                   | 2        |
 | 390    | 1.0%       | Syslog user authentication failure                              | 2        |
 | 337    | 0.8%       | PAM user login failed                                           | 2        |
-| 230    | 0.6%       | Rule 100011 (pfSense VLAN 20 → VLAN 10 blocked)                | 1        |
+| 256    | 0.7%       | Rule 100011 (pfSense VLAN 20 → VLAN 10 blocked)                | 1        |
 | 230    | 0.6%       | Rule 100012 (pfSense VLAN 10 → VLAN 20 blocked)                | 1        |
 | ~1,747 | 4.4%       | Windows Security 4624/4634, Sysmon Process Create, sudo, others | 3-8      |
 
