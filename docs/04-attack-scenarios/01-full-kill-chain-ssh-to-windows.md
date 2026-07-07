@@ -121,4 +121,29 @@ Two live hosts were identified:
 ![Nmap Hosts Identified](../../screenshots/04-attack/01-kill-chain/02-nmap-scan-identified-2.png)
 
 
+A follow-up service enumeration was performed against the two discovered hosts:
+ 
+```bash
+sudo nmap -Pn -sV -sC -p 22,3389 10.10.20.20 10.10.20.10 -oN /tmp/recon-vlan20.txt
+```
+
+![Nmap Hosts Identified](../../screenshots/04-attack/01-kill-chain/03-nmap-scan-identified-3.png)
+
+The output revealed OpenSSH 9.6p1 on ws-dev-02 and the Windows RDP service on WS-DEV-01. The Linux SSH banner revealed the version, providing the attacker with information useful for identifying known vulnerabilities.
+
+### Detection
+
+The reconnaissance activity was the highest-volume detection event of the entire scenario. The pfSense firewall rules configured in Phase 3 dropped every packet from VLAN 66 that did not match the explicitly permitted paths (SSH and RDP to VLAN 20 and VLAN 10). The `/24` scan across six ports produced approximately 34,800 individual pfSense filterlog events, each processed by the custom `pfsense-custom-header` decoder and forwarded as an alert.
+
+![Wazuh Logs Reconnaissance](../../screenshots/04-attack/01-kill-chain/04-wazuh-logs-reconnaissance-1.png)
+
+These events were triggered after the initial two Nmap scans.
+
+![Wazuh Logs Reconnaissance](../../screenshots/04-attack/01-kill-chain/05-wazuh-logs-reconnaissance-2.png)
+
+These events were triggered after the service enumeration scan.
+
+
+
+
 
