@@ -448,12 +448,12 @@ The 486 total alerts from these two custom rules would be the natural focus of L
 
 ## Lessons Learned
 
-**Custom detection rules must be operationalised, not just written.**  Rule 100011 fired correctly with proper MITRE mapping, but 34,800 low-value alerts dominated the dashboard. Writing a rule is 30% of detection engineering; making it visible under production alert volumes is the other 70%.
-**Alert fatigue is not a theoretical concept.** The scenario produced a real-world example of the phenomenon within a single 90-minute execution. A junior analyst's instinct to see every event misses the operational reality that visibility requires filtering.
-**Rule aggregation is not optional in production SOC.** The frequency/timeframe pattern is standard practice in every mature Wazuh deployment. Its absence in this initial ruleset was a gap identified through operational experience rather than documentation reading — a stronger learning outcome.
-**The Wazuh built-in ruleset provides substantial coverage.** The NTLM RDP detection alert (Phase 6) required no custom engineering — a well-designed built-in rule caught it correctly. Detection engineering should focus on the gaps the built-in ruleset does not cover, not duplicate what already works.
-**Honest documentation of weaknesses is more valuable than concealing them.** The 40,034-alert observation is a demonstrable weakness of the current setup. Documenting it explicitly, analysing it quantitatively, and proposing concrete improvements creates portfolio credibility that omitting it would not.
-**Every attack phase should map to a detection question.** The scenario made this concrete: for each of the eight active phases, the question "does the SIEM see this?" produced a clear yes/no answer with specific evidence. Phases where the answer was "not adequately" became the input for the detection engineering work planned for Phase 5.
+- **Custom detection rules must be operationalised, not just written.**  Rule 100011 fired correctly with proper MITRE mapping, but 34,800 low-value alerts dominated the dashboard. Writing a rule is 30% of detection engineering; making it visible under production alert volumes is the other 70%.
+- **Alert fatigue is not a theoretical concept.** The scenario produced a real-world example of the phenomenon within a single 90-minute execution. A junior analyst's instinct to see every event misses the operational reality that visibility requires filtering.
+- **Rule aggregation is not optional in production SOC.** The frequency/timeframe pattern is standard practice in every mature Wazuh deployment. Its absence in this initial ruleset was a gap identified through operational experience rather than documentation reading — a stronger learning outcome.
+- **The Wazuh built-in ruleset provides substantial coverage.** The NTLM RDP detection alert (Phase 6) required no custom engineering — a well-designed built-in rule caught it correctly. Detection engineering should focus on the gaps the built-in ruleset does not cover, not duplicate what already works.
+- **Honest documentation of weaknesses is more valuable than concealing them.** The 40,034-alert observation is a demonstrable weakness of the current setup. Documenting it explicitly, analysing it quantitatively, and proposing concrete improvements creates portfolio credibility that omitting it would not.
+- **Every attack phase should map to a detection question.** The scenario made this concrete: for each of the eight active phases, the question "does the SIEM see this?" produced a clear yes/no answer with specific evidence. Phases where the answer was "not adequately" became the input for the detection engineering work planned for Phase 5.
 
 ---
  
