@@ -414,7 +414,7 @@ At the conclusion of the attack chain, the SOC L1 Overview dashboard was reviewe
  
 ## Alert Volume Analysis
  
-The scenario generated **40,034 alerts** across a total execution window of approximately 90 minutes. The distribution reveals a critical operational observation for SOC engineering:
+The scenario generated **40,038 alerts** across a total execution window of approximately 90 minutes. The distribution reveals a critical operational observation for SOC engineering:
  
 | Alerts | % of total | Source                                                          | Phase(s) |
 | ------ | ---------- | --------------------------------------------------------------- | -------- |
@@ -426,5 +426,20 @@ The scenario generated **40,034 alerts** across a total execution window of appr
 | 230    | 0.6%       | Rule 100012 (pfSense VLAN 10 → VLAN 20 blocked)                | 1        |
 | ~1,747 | 4.4%       | Windows Security 4624/4634, Sysmon Process Create, sudo, others | 3-8      |
 
+### The 86.9% observation
+ 
+The dominant characteristic of the alert volume is that a single phase — reconnaissance via nmap — produced **86.9% of all alerts**. The attack included high-signal events across every subsequent phase (successful compromise, credential theft, lateral movement, persistence), yet those events are numerically buried under the nmap firewall drop noise.
+ 
+In an operational SOC context, this is an **alert fatigue problem of the highest order**. An L1 analyst reviewing a dashboard showing 40,034 alerts would be unable to identify the six or seven genuinely critical events (the RDP lateral movement alert, the ssh authorized_keys modification, the successful login from a Kali IP address) without significant time-consuming triage.
 
+### Why the volume happened
+ 
+Wazuh's default behaviour for pfSense firewall block events is to emit one alert per blocked packet. During Phase 1's nmap TCP SYN scan against 254 hosts on 6 ports, followed by service enumeration against 2 hosts on 2 ports each, tens of thousands of individual TCP packets attempted to traverse the firewall. Each blocked packet became an individual alert. Rule 100010 (the pfSense block base rule from Phase 5 Part 5) fires at level 3 per event with no aggregation logic, resulting in the observed volume.
+ 
+This is not a defect of rule 100010 — it functions exactly as designed, providing raw per-packet visibility for archive queries and forensic analysis. It is a defect of **the operational alert layer**, which should be filtered or aggregated before reaching the dashboard the SOC L1 uses for triage.
 
+### The rule 100011 result
+ 
+An important positive result appears within the numbers: **rule 100011 fired 256 times**. This rule was written in Phase 5 Part 5 to detect specifically the "VLAN 20 → VLAN 10 blocked" segmentation violation with level 10 severity and MITRE T1021/T1210 mapping. The fact that rule 100011 fired 230 times during this scenario confirms that the custom detection engineering from Phase 5 activated correctly under real attack conditions. Similarly, rule 100012 (the reverse-direction rule mentioned as roadmap in Phase 5 Part 5 and subsequently deployed) also fired 230 times, providing bidirectional visibility of cross-VLAN attempts.
+ 
+The 486 total alerts from these two custom rules would be the natural focus of L1 investigation in a production environment — they carry MITRE mapping, elevated severity, and specifically describe segmentation policy violations. They are not lost in the noise if the analyst filters by rule severity or MITRE tactic. The problem is that the default dashboard view does not filter, and 34,800 level-3 events dominate the visualisation.
