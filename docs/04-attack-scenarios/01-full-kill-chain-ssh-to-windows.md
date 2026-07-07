@@ -194,6 +194,32 @@ The multiple counts reflect Wazuh's layered decoding — the same underlying eve
 
 ![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/11-wazuh-logs-brute-force-3.png)
 
+---
+ 
+## Phase 3 — Initial access
+ 
+**Objective:** Authenticate with the cracked credentials and establish a foothold.
+ 
+**Tools used:** OpenSSH client
+ 
+**MITRE mapping:** T1078 — Valid Accounts
+ 
+### Execution
+ 
+With valid credentials in hand, direct SSH access was established:
+ 
+![SSH Initial Access](../../screenshots/04-attack/01-kill-chain/12-initial-access-ssh.png)
+ 
+Login succeeded. The attacker was now inside the environment as `arodriguez`, with all the privileges of the legitimate user.
+ 
+### Detection
+ 
+A successful authentication event was generated in the same auth.log stream that had been generating failures for the previous minutes. The Wazuh sudo/PAM decoder identified the success event and produced an alert with `rule.groups: authentication_success`.
+ 
+The forensic signal is not the success itself (successful logins are normal), but the **temporal correlation**: hundreds of failures immediately followed by a success from the same source IP is the canonical brute force success pattern. A mature SOC correlates these into a single "brute force succeeded" alert. The default Wazuh ruleset generates them as separate alerts, requiring the analyst to look at the timeline manually — an observation with implications for the rule aggregation roadmap discussed later.
+
+![SSH Initial Access Detection](../../screenshots/04-attack/01-kill-chain/13-initial-access-ssh-detection.png)
+
 
 
 
