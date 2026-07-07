@@ -92,7 +92,7 @@ Both hosts were snapshotted post-preparation as `scenario-1-ready`, enabling rap
 
 # Phase 1 — Reconnaissance
  
-**Objective:** Enumerate accessible hosts and services in VLAN 20 from the adversary DMZ.
+**Objective:** Enumerate the VLAN 20 subnet from Kali to identify reachable hosts and open services. This is the first activity a post-perimeter attacker performs, establishing the internal attack surface.
  
 **Tools used:** nmap
  
@@ -151,7 +151,7 @@ The volume of these alerts represents a real SOC challenge that will be analysed
  
 ## Phase 2 — Credential brute force
  
-**Objective:** Obtain valid credentials for the discovered SSH service.
+**Objective:** Obtain valid credentials for SSH access to ws-dev-02 by dictionary attack against the known user `arodriguez`.
  
 **Tools used:** hydra with `rockyou.txt`
  
@@ -180,13 +180,11 @@ The brute force generated three distinct alert categories in Wazuh, each corresp
 
 ![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/06-wazuh-logs.png)
 
-| Alert type | Count | Wazuh decoder |
-| ---------- | ----------------- | ------------- |
-| `syslog: User authentication failure` | 2,321 | syslog (auth.log) |
-| `syslog: User authentication failure` (secondary rule) | 390 | syslog (auth.log) |
-| `PAM: User login failed` | 337 | pam (auth.log via journald) |
+- **2,321 syslog authentication failure events** — SSH's own logging of each failed attempt
+- **390 syslog user authentication failure events** — supplementary auth log entries
+- **337 PAM login failure events** — the PAM subsystem's independent record of each failure
 
-The multiple counts reflect Wazuh's layered decoding — the same underlying event (a failed SSH login) is captured by the syslog decoder reading `/var/log/auth.log` and by the PAM decoder recognising the specific PAM failure signature. Both produce alerts, providing defence-in-depth against decoder-specific detection gaps.
+The correct password attempt was logged as `authentication_success`. Combined with the 3,027 failure events from the same source IP within 45 seconds, this pattern would trigger an obvious "brute force detected" analysis in a mature SOC. Wazuh's built-in ruleset detected each individual failure but did not currently aggregate them into a single high-severity alert, a gap identified for detection engineering improvement.
 
 ![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/09-wazuh-logs-brute-force.png)
 
@@ -198,7 +196,7 @@ The multiple counts reflect Wazuh's layered decoding — the same underlying eve
  
 ## Phase 3 — Initial access
  
-**Objective:** Authenticate with the cracked credentials and establish a foothold.
+**Objective:** Establish an interactive SSH session on ws-dev-02 using the credentials recovered in Phase 2. This transitions the attacker from "external observer" to "local user on internal host".
  
 **Tools used:** OpenSSH client
  
@@ -210,13 +208,11 @@ With valid credentials in hand, direct SSH access was established:
  
 ![SSH Initial Access](../../screenshots/04-attack/01-kill-chain/12-initial-access-ssh.png)
  
-Login succeeded. The attacker was now inside the environment as `arodriguez`, with all the privileges of the legitimate user.
+The login succeeded. The prompt changed to `arodriguez@ws-dev-02:~$`, indicating shell access.
  
 ### Detection
  
-A successful authentication event was generated in the same auth.log stream that had been generating failures for the previous minutes. The Wazuh sudo/PAM decoder identified the success event and produced an alert with `rule.groups: authentication_success`.
- 
-The forensic signal is not the success itself (successful logins are normal), but the **temporal correlation**: hundreds of failures immediately followed by a success from the same source IP is the canonical brute force success pattern. A mature SOC correlates these into a single "brute force succeeded" alert. The default Wazuh ruleset generates them as separate alerts, requiring the analyst to look at the timeline manually — an observation with implications for the rule aggregation roadmap discussed later.
+A single `authentication_success` event was generated, with `srcip: 10.10.66.10`. In isolation, this event carries level 3 severity (informational). Its criticality is context-dependent — a successful login from Kali's IP address to a dev workstation, immediately following 3,027 authentication failures from the same source, is highly indicative of a successful brute-force compromise. This kind of temporal correlation is exactly what a mature SOC ruleset would flag as a compound alert.
 
 ![SSH Initial Access Detection](../../screenshots/04-attack/01-kill-chain/13-initial-access-ssh-detection.png)
 
