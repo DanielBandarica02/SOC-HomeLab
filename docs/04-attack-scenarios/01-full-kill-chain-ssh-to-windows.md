@@ -1,4 +1,4 @@
-# Scenario 1 — Full Kill Chain against the Dev VLAN
+# Phase 4 — Attack Scenarios (Part 1: Full Kill Chain against VLAN Dev)
  
 ## Overview
  
@@ -90,15 +90,11 @@ Both hosts were snapshotted post-preparation as `scenario-1-ready`, enabling rap
 
 ---
 
-# Phase 1 — Reconnaissance
+## Phase 1 — Reconnaissance (T1046)
  
 ### Objective
 
 Enumerate the VLAN 20 subnet from Kali to identify reachable hosts and open services. This is the first activity a post-perimeter attacker performs, establishing the internal attack surface.
- 
-**Tools used:** nmap
- 
-**MITRE mapping:** T1046 — Network Service Discovery
  
 ### Execution
  
@@ -151,15 +147,11 @@ The volume of these alerts represents a real SOC challenge that will be analysed
 
 ---
  
-## Phase 2 — Credential brute force
+## Phase 2 — Brute Force SSH (T1110.001)
  
 ### Objective
 
 Obtain valid credentials for SSH access to ws-dev-02 by dictionary attack against the known user `arodriguez`.
- 
-**Tools used:** hydra with `rockyou.txt`
- 
-**MITRE mapping:** T1110.001 — Password Guessing
  
 ### Execution
  
@@ -198,7 +190,7 @@ The correct password attempt was logged as `authentication_success`. Combined wi
 
 ---
  
-## Phase 3 — Initial access
+## Phase 3 — Initial Access (T1078)
  
 ### Objective
 
@@ -306,6 +298,133 @@ Credentials harvested from the host:
 ### Wazuh detection
  
 The credential access phase generated the least telemetry of any active phase. Reading files with `cat` produces syscall events but is not flagged by default rules, a legitimate user reads their own files continuously during normal work. Detection engineering opportunity: an auditd watch on `~/.env` and `~/.ssh/` reads would catch this pattern with acceptable false-positive rate on production servers where these files rarely change or are accessed programmatically.
+
+---
+ 
+## Phase 6 — Lateral Movement to WS-DEV-01 (T1021.001)
+ 
+### Objective
+ 
+Using the credentials harvested in Phase 5 to pivot from the Linux foothold to a Windows workstation in the same VLAN. RDP was chosen as the vector because the target service is well-known, the credential works, and the resulting authentication produces highly-detectable Windows Security events.
+ 
+### Execution
+ 
+**Establish SSH port-forward from Kali through the pivot:**
+ 
+In a new terminal on Kali:
+
+![Establishing SSH port-forward](../../screenshots/04-attack/01-kill-chain/18-ssh-port-forward.png)
+
+![Connection Succeeded](../../screenshots/04-attack/01-kill-chain/17-connection-succeded.png)
+
+This creates an SSH tunnel from `Kali:3389` → `ws-dev-02` → `WS-DEV-01:3389`. Kali can now RDP to itself on port 3389 and reach WS-DEV-01 through the compromised host.
+ 
+**RDP to WS-DEV-01 via the tunnel:**
+
+![RDP to WS-DEV-01 via the tunnel](../../screenshots/04-attack/01-kill-chain/19-rdp-tunnel.png)
+ 
+The RDP session was established and the Windows 11 desktop of WS-DEV-01 appeared. The `kevin hernandez` account was authenticated using the credentials leaked in `notes.txt` on the compromised Linux host.
+
+![RDP to WS-DEV-01 via the tunnel Connection Succesfull](../../screenshots/04-attack/01-kill-chain/24-rdp-tunnel-connection-succesfull.png)
+
+### Wazuh detection
+ 
+This phase produced the most operationally significant single alert of the scenario:
+ 
+![RDP to WS-DEV-01 via the tunnel Detection](../../screenshots/04-attack/01-kill-chain/20-rdp-tunnel-detection.png)
+
+![RDP to WS-DEV-01 via the tunnel Detection](../../screenshots/04-attack/01-kill-chain/23-rdp-tunnel-detection.png)
+
+![RDP to WS-DEV-01 via the tunnel Detection](../../screenshots/04-attack/01-kill-chain/23-rdp-tunnel-detection.png)
+ 
+Multiple aspects of this alert are noteworthy:
+ 
+1. The Wazuh built-in ruleset correctly identifies the authentication as NTLM (not Kerberos), which is unusual in a domain environment and is a canonical indicator of pass-the-hash or credential replay attacks.
+2. The rule description explicitly includes the source workstation name ("kali"). In an enterprise SOC, a workstation named `kali` triggering RDP into a corporate host is an immediate escalation.
+3. The rule level 6 is appropriately elevated — high enough to appear in the top-firing rules widget, low enough to avoid alert fatigue for legitimate NTLM RDP.
+This alert alone, in a real production SOC, would trigger an L1 investigation ticket within minutes of being generated.
+
+---
+ 
+## Phase 7 — Persistence via Cron (T1053.003)
+ 
+### Objective
+ 
+Establish a mechanism to regain access to ws-dev-02 after the current session ends, even if the arodriguez password is rotated. Cron provides periodic execution that survives reboots.
+ 
+### Execution
+ 
+Returning to the original SSH session on ws-dev-02, a cron entry was added to the user's crontab, the entry schedules a reverse shell callback to Kali on port 4444 every 10 minutes. 
+ 
+![Cron Persistence](../../screenshots/04-attack/01-kill-chain/21-cron-persistence.png)
+
+### Wazuh detection
+ 
+The Wazuh built-in rules include some coverage for cron modifications, but the specific pattern of "cron entry containing `/dev/tcp/` reverse shell" is not a default detection. This is a clear opportunity for a custom rule targeting the reverse-shell pattern in scheduled tasks.
+
+![Cron Persistence Detection](../../screenshots/04-attack/01-kill-chain/22-cron-persistence-detection.png)
+
+---
+ 
+## Phase 8 — Persistence via SSH Authorized Keys (T1098.004)
+ 
+### Objective
+ 
+Add a redundant persistence mechanism independent of the cron entry. SSH key-based authentication survives password changes and requires only the attacker's private key to regain access.
+ 
+### Execution
+ 
+**Generate attacker key on Kali:**
+
+![SSH Key Persistance](../../screenshots/04-attack/01-kill-chain/25-ssh-persistance.png)
+ 
+**Add the public key to ws-dev-02's authorized_keys:**
+
+![SSH Key Persistance](../../screenshots/04-attack/01-kill-chain/26-ssh-persistance-2.png)
+ 
+**Verify persistence:**
+ 
+From Kali:
+
+![SSH Key Persistance](../../screenshots/04-attack/01-kill-chain/27-ssh-persistance-3.png)
+ 
+The login succeeded without a password prompt, confirming the persistence mechanism operates independently of the account password.
+
+### Wazuh detection
+ 
+Modification of `~/.ssh/authorized_keys` is a high-signal event in auditd if watches are configured on `.ssh/` directories. The Wazuh built-in ruleset covers this modification pattern under group `ssh_authorized_keys` with a medium severity. On a well-tuned system, this alert would fire immediately upon the append operation, providing near-real-time detection of key-based persistence.
+
+![SSH Authorized Keys Modification](../../screenshots/04-attack/01-kill-chain/28-ssh-authorized-key-modification.png)
+
+Events after SSH connection.
+
+![SSH Connection](../../screenshots/04-attack/01-kill-chain/29-ssh-connection.png)
+
+---
+ 
+## Phase 9 — SIEM Verification
+ 
+At the conclusion of the attack chain, the SOC L1 Overview dashboard was reviewed to catalogue the detection coverage produced by the scenario. The dashboard displayed the full impact of the attack across all seven widgets.
+
+![Dashboard Part 1](../../screenshots/04-attack/01-kill-chain/30-dashboard-1.png)
+![Dashboard Part 2](../../screenshots/04-attack/01-kill-chain/31-dashboard-2.png)
+![Dashboard Part 3](../../screenshots/04-attack/01-kill-chain/32-dashboard-3.png)
+
+---
+ 
+## Alert Volume Analysis
+ 
+The scenario generated **40,034 alerts** across a total execution window of approximately 90 minutes. The distribution reveals a critical operational observation for SOC engineering:
+ 
+| Alerts | % of total | Source                                                          | Phase(s) |
+| ------ | ---------- | --------------------------------------------------------------- | -------- |
+| 34,800 | **86.9%**  | pfSense firewall block (rule 100010 base + generic firewall)    | 1        |
+| 2,300  | 5.7%       | Syslog authentication failure                                   | 2        |
+| 390    | 1.0%       | Syslog user authentication failure                              | 2        |
+| 337    | 0.8%       | PAM user login failed                                           | 2        |
+| 230    | 0.6%       | Rule 100011 (pfSense VLAN 20 → VLAN 10 blocked)                | 1        |
+| 230    | 0.6%       | Rule 100012 (pfSense VLAN 10 → VLAN 20 blocked)                | 1        |
+| ~1,747 | 4.4%       | Windows Security 4624/4634, Sysmon Process Create, sudo, others | 3-8      |
 
 
 
