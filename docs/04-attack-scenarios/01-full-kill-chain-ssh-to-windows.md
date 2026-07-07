@@ -92,7 +92,9 @@ Both hosts were snapshotted post-preparation as `scenario-1-ready`, enabling rap
 
 # Phase 1 — Reconnaissance
  
-**Objective:** Enumerate the VLAN 20 subnet from Kali to identify reachable hosts and open services. This is the first activity a post-perimeter attacker performs, establishing the internal attack surface.
+### Objective
+
+Enumerate the VLAN 20 subnet from Kali to identify reachable hosts and open services. This is the first activity a post-perimeter attacker performs, establishing the internal attack surface.
  
 **Tools used:** nmap
  
@@ -151,7 +153,9 @@ The volume of these alerts represents a real SOC challenge that will be analysed
  
 ## Phase 2 — Credential brute force
  
-**Objective:** Obtain valid credentials for SSH access to ws-dev-02 by dictionary attack against the known user `arodriguez`.
+### Objective
+
+Obtain valid credentials for SSH access to ws-dev-02 by dictionary attack against the known user `arodriguez`.
  
 **Tools used:** hydra with `rockyou.txt`
  
@@ -196,7 +200,9 @@ The correct password attempt was logged as `authentication_success`. Combined wi
  
 ## Phase 3 — Initial access
  
-**Objective:** Establish an interactive SSH session on ws-dev-02 using the credentials recovered in Phase 2. This transitions the attacker from "external observer" to "local user on internal host".
+### Objective
+
+Establish an interactive SSH session on ws-dev-02 using the credentials recovered in Phase 2. This transitions the attacker from "external observer" to "local user on internal host".
  
 **Tools used:** OpenSSH client
  
@@ -216,6 +222,91 @@ A single `authentication_success` event was generated, with `srcip: 10.10.66.10`
 
 ![SSH Initial Access Detection](../../screenshots/04-attack/01-kill-chain/13-initial-access-ssh-detection.png)
 
+---
+ 
+## Phase 4 — Discovery (T1082, T1087.001, T1057, T1049)
+ 
+### Objective
+
+Enumerate the compromised host to understand the environment, identify additional targets, and locate credentials or elevation opportunities.
+ 
+### Execution
+ 
+The following commands were executed from the SSH session:
+ 
+```bash
+uname -a                           # kernel version, host name
+lsb_release -a                     # OS distribution
+whoami                             # current user
+id                                 # UID, GID, groups
+cat /etc/passwd | grep -v nologin  # human users on the system
+last -n 20                         # recent login history
+w                                  # currently logged-in users
+ps auxf                            # process tree
+ss -tulpn                          # listening services
+ip a                               # network interfaces
+sudo -l                            # sudo privileges for arodriguez
+crontab -l                         # user's cron entries
+ls -la /etc/cron*                  # system cron directories
+```
+ 
+Key findings:
+- Host: `ws-dev-02` running Ubuntu 24.04.1 LTS
+- User `arodriguez` (UID 1001), member of `sudo` group
+- `sudo -l` revealed `(ALL : ALL) ALL` — full sudo privileges
+- Additional local user `¨kevin hernandez¨` visible in `/etc/passwd` (though not the RDP target — that's on WS-DEV-01)
+- No unusual services listening beyond sshd
+- No suspicious cron entries yet (persistence would be added in Phase 7)
+
+### Wazuh detection
+ 
+The discovery commands were logged by auditd to the extent the audit rules covered them. Commands executed via bash shell generated syscall events indirectly through auditd's process monitoring, though the Wazuh built-in ruleset does not fire prominent alerts for individual discovery commands — this is by design, as flagging every `whoami` or `ps` would produce untenable false-positive rates in normal operation.
+ 
+Two notable exceptions did fire:
+- `sudo -l` produced a "sudo command executed" event
+- The `w` command's read of `/var/run/utmp` was captured by auditd if watch rules on that path were configured
+
+---
+ 
+## Phase 5 — Credential Access (T1552.001, T1552.003, T1552.004)
+ 
+### Objective
+ 
+Harvest credentials from the compromised host's filesystem. This phase leverages the seeded artefacts from Environment Preparation.
+ 
+### Execution
+ 
+**Search for common credential-containing files:**
+```bash
+find /home -type f -name "*.env" 2>/dev/null
+find /home -type f -name "*password*" 2>/dev/null
+find /home -type f -name "*.key" 2>/dev/null
+find /home -type f -name "notes*" 2>/dev/null
+```
+ 
+**Read the discovered files:**
+```bash
+cat ~/.env                 # database credentials, API keys
+cat ~/notes.txt            # plaintext credentials for multiple systems
+cat ~/.ssh/service_key     # private SSH key
+cat ~/.bash_history         # commands with embedded passwords
+```
+ 
+**Grep for password references in system paths:**
+```bash
+sudo grep -r "password" /var/log 2>/dev/null | head -20
+```
+ 
+Credentials harvested from the host:
+- **DB access:** `devadmin` / `DevPassw0rd2024!` (from `.env`)
+- **API key:** `sk_test_abcdef1234567890` (from `.env`)
+- **WS-DEV-01 RDP:** `kevin hernandez` / `Kevin2026!` (from `notes.txt`) — this is the key credential enabling lateral movement in Phase 6
+- **VPN backup:** `dbandarica` / `DAniel2026!` (from `notes.txt`)
+- **SSH service key** for automated authentication
+
+### Wazuh detection
+ 
+The credential access phase generated the least telemetry of any active phase. Reading files with `cat` produces syscall events but is not flagged by default rules — a legitimate user reads their own files continuously during normal work. Detection engineering opportunity: an auditd watch on `~/.env`, `~/.ssh/`, and `~/.bash_history` reads would catch this pattern with acceptable false-positive rate on production servers where these files rarely change or are accessed programmatically.
 
 
 
