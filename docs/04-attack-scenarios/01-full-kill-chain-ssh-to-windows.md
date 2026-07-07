@@ -53,7 +53,72 @@ The scenario also surfaces an operational reality that dominates real SOCs: **al
  
 Before execution, both target hosts were seeded with synthetic credentials and configuration that model a realistic developer environment. This seeding is documented explicitly rather than presented as attacker "discoveries" of pre-existing state — the scenario is a controlled lab exercise, and the seeded data represents what a real developer workstation typically contains
 
+### ws-dev-02 seeding
+ 
+Local user `arodriguez` was set with the password `summer2024`, deliberately chosen as a common password appearing in the first pages of the `rockyou.txt` wordlist. This models the reality that developer accounts frequently use weak passwords when the environment is treated as "internal" and low-risk.
+ 
+Two artefacts were placed in the user's home directory to model credential-hoarding patterns commonly found on developer workstations:
+ 
+**~/.env** — A file simulating environment variables for a local development stack:
 
+```
+DB_HOST=10.10.20.10
+DB_USER=devadmin
+DB_PASSWORD=DevPassw0rd2024!
+API_KEY=sk_test_abcdef1234567890
+```
+ 
+**~/notes.txt** — A plain-text notes file simulating an ad-hoc password reminder:
+
+```
+Reminders:
+- WS-DEV-01 login: ¨kevin hernandez¨ / Kevin2026!
+- Wifi office: SoclabWifi / SocLab2026!
+- VPN backup: dbandarica / DAniel2026!
+```
+
+
+The key fingerprint is: SHA256:/HQT9NG+KnLFqJz5tiTb6sTgK/FLL7hZwxe5al337eQ
+
+### WS-DEV-01 preparation
+ 
+The user `kevin hernandez` was assigned the password `Kevin2026!` — the same password referenced in the ws-dev-02 notes file, creating a credential chain that would allow lateral movement once the notes were discovered.
+
+### Snapshots
+ 
+Both hosts were snapshotted post-preparation as `scenario-1-ready`, enabling rapid reset after the scenario for future re-execution or variation.
+
+---
+
+# Phase 1 — Reconnaissance
+ 
+**Objective:** Enumerate accessible hosts and services in VLAN 20 from the adversary DMZ.
+ 
+**Tools used:** nmap
+ 
+**MITRE mapping:** T1046 — Network Service Discovery
+ 
+### Execution
+ 
+An initial ping sweep was attempted to identify live hosts:
+
+```bash
+nmap -sn 10.10.20.0/24
+```
+ 
+As expected, this returned no hosts up. The pfSense firewall rules from Phase 3 do not permit ICMP from VLAN 66 to VLAN 20, and the ping probes were silently dropped. Every dropped packet, however, generated a pfSense filterlog event forwarded to Wazuh via syslog.
+
+The attack pivoted to a TCP SYN scan against common service ports, using `-Pn` to skip the ICMP host discovery phase:
+ 
+```bash
+sudo nmap -Pn -sS -p 22,3389,445,80,443,3306 10.10.20.0/24
+```
+
+Two live hosts were identified:
+
+![Nmap Hosts Identified](../../screenshots/04-attack/01-kill-chain/01-nmap-scan-identified-1.png)
+
+![Nmap Hosts Identified](../../screenshots/04-attack/01-kill-chain/02-nmap-scan-identified-2.png)
 
 
 
