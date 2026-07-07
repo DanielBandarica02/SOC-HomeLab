@@ -72,7 +72,7 @@ API_KEY=sk_test_abcdef1234567890
 
 ```
 Reminders:
-- WS-DEV-01 login: ¨kevin hernandez¨ / Kevin2026!
+- WS-DEV-01 login: kevin hernandez / Kevin2026!
 - Wifi office: SoclabWifi / SocLab2026!
 - VPN backup: dbandarica / DAniel2026!
 ```
@@ -180,7 +180,7 @@ The brute force generated three distinct alert categories in Wazuh, each corresp
 - **390 syslog user authentication failure events** — supplementary auth log entries
 - **337 PAM login failure events** — the PAM subsystem's independent record of each failure
 
-The correct password attempt was logged as `authentication_success`. Combined with the 3,027 failure events from the same source IP within 45 seconds, this pattern would trigger an obvious "brute force detected" analysis in a mature SOC. Wazuh's built-in ruleset detected each individual failure but did not currently aggregate them into a single high-severity alert, a gap identified for detection engineering improvement.
+The correct password attempt was logged as `authentication_success`. Combined with the 3,027 failure events from the same source IP within 240 seconds, this pattern would trigger an obvious "brute force detected" analysis in a mature SOC. Wazuh's built-in ruleset detected each individual failure but did not currently aggregate them into a single high-severity alert, a gap identified for detection engineering improvement.
 
 ![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/09-wazuh-logs-brute-force.png)
 
@@ -246,7 +246,7 @@ Key findings:
 - Host: `ws-dev-02` running Ubuntu 24.04.1 LTS
 - User `arodriguez` (UID 1001), member of `sudo` group
 - `sudo -l` revealed `(ALL : ALL) ALL` — full sudo privileges
-- Additional local user `¨kevin hernandez¨` visible in `/etc/passwd` (though not the RDP target — that's on WS-DEV-01)
+- Additional local user `kevin hernandez` visible in `/etc/passwd` (though not the RDP target — that's on WS-DEV-01)
 - No unusual services listening beyond sshd
 - No suspicious cron entries yet (persistence would be added in Phase 7)
 
@@ -461,13 +461,13 @@ The 486 total alerts from these two custom rules would be the natural focus of L
  
 - End-to-end kill chain executed successfully against VLAN Dev, exercising 13 MITRE ATT&CK techniques across 6 tactics: Reconnaissance, Credential Access, Initial Access, Discovery, Lateral Movement, and Persistence.
 - Environment preparation phase seeded ws-dev-02 with synthetic credentials in `.env`, `notes.txt` and `~/.ssh/service_key`, and set the `arodriguez` password to a wordlist-crackable value. Documented explicitly as lab modelling.
-- Reconnaissance phase produced 34,823 pfSense firewall block alerts from nmap TCP SYN scanning and service enumeration.
+- Reconnaissance phase produced 34,828 pfSense firewall block alerts from nmap TCP SYN scanning and service enumeration.
 - Brute force phase cracked `arodriguez` credentials in approximately 45 seconds against a 1,000-entry rockyou.txt subset, generating 3,027 authentication failure alerts across three overlapping detection groups.
 - Initial Access via SSH from Kali produced a single `authentication_success` event — the compound pattern (thousands of failures followed by one success from the same IP) is the canonical brute-force compromise signature.
 - Credential Access phase harvested six sets of credentials from the compromised host's filesystem, including the RDP credentials for lateral movement.
 - Lateral movement to WS-DEV-01 via SSH port-forwarded RDP triggered the Wazuh built-in NTLM/pass-the-hash detection alert, with rule description explicitly naming the source workstation as "kali".
 - Two persistence mechanisms established: cron reverse-shell backdoor with 10-minute callback interval, and SSH authorized_keys modification enabling passwordless access.
-- Total scenario alert volume: 40,038 events, of which 34,823 (86.9%) originated from unaggregated pfSense block events during the reconnaissance phase.
+- Total scenario alert volume: 40,038 events, of which 34,828 (86.9%) originated from unaggregated pfSense block events during the reconnaissance phase.
 - Custom detection rules 100011 and 100012 fired 256 and 230 times during the scenario, confirming correct operation of the Phase 5 detection engineering under real attack conditions.
 - Alert volume analysis identified eight detection engineering gaps to be addressed in Phase 5 before Scenario 2 execution, covering reconnaissance aggregation, brute force aggregation, initial access correlation, discovery pattern detection, credential file access, and two persistence patterns.
   
