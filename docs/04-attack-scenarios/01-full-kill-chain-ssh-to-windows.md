@@ -2,11 +2,11 @@
  
 ## Overview
  
-This scenario is the first end-to-end attack executed against the lab. It exercises a complete kill chain — reconnaissance, initial access, discovery, credential access, lateral movement, and persistence — from the adversary DMZ (Kali, VLAN 66) against the development network (VLAN 20). The scenario chains ten discrete phases, each producing observable telemetry in the SIEM, and concludes with an honest analysis of the 40,034 alerts generated during execution.
+This scenario is the first end-to-end attack executed against the lab. It exercises a complete kill chain — reconnaissance, initial access, discovery, credential access, lateral movement, and persistence — from the adversary DMZ (Kali, VLAN 66) against the development network (VLAN 20). The scenario chains ten discrete phases, each producing observable telemetry in the SIEM, and concludes with an honest analysis of the 40,038 alerts generated during execution.
  
 The narrative arc mirrors a realistic intrusion pattern: an attacker with an established foothold in a low-trust zone identifies exposed services in a peer network, brute-forces credentials on a Linux dev host, uses the compromised account to enumerate the environment and harvest additional credentials from the host's filesystem, pivots via SSH port-forwarding to a Windows workstation using stolen credentials, and finally establishes multiple persistence mechanisms on the initial foothold to survive session termination.
  
-The scenario also surfaces an operational reality that dominates real SOCs: **alert fatigue**. The 10 phases generated 40,034 alerts, of which 87% were duplicates of a single detection rule triggered by the reconnaissance scan. This ratio, and the response to it, is documented at the end of this document as the primary lesson learned from executing the scenario at production-realistic scale.
+The scenario also surfaces an operational reality that dominates real SOCs: **alert fatigue**. The 10 phases generated 40,038 alerts, of which 87% were duplicates of a single detection rule triggered by the reconnaissance scan. This ratio, and the response to it, is documented at the end of this document as the primary lesson learned from executing the scenario at production-realistic scale.
  
 ---
 
@@ -131,7 +131,7 @@ The output revealed OpenSSH 9.6p1 on ws-dev-02 and the Windows RDP service on WS
 
 ### Detection
 
-The reconnaissance activity was the highest-volume detection event of the entire scenario. The pfSense firewall rules configured in Phase 3 dropped every packet from VLAN 66 that did not match the explicitly permitted paths (SSH and RDP to VLAN 20 and VLAN 10). The `/24` scan across six ports produced approximately 34,800 individual pfSense filterlog events, each processed by the custom `pfsense-custom-header` decoder and forwarded as an alert.
+The reconnaissance activity was the highest-volume detection event of the entire scenario. The pfSense firewall rules configured in Phase 3 dropped every packet from VLAN 66 that did not match the explicitly permitted paths (SSH and RDP to VLAN 20 and VLAN 10). The `/24` scan across six ports produced approximately 34,828 individual pfSense filterlog events, each processed by the custom `pfsense-custom-header` decoder and forwarded as an alert.
 
 ![Wazuh Events Reconnaissance](../../screenshots/04-attack/01-kill-chain/04-wazuh-logs-reconnaissance-1.png)
 
@@ -430,7 +430,7 @@ The scenario generated **40,038 alerts** across a total execution window of appr
  
 The dominant characteristic of the alert volume is that a single phase — reconnaissance via nmap — produced **86.9% of all alerts**. The attack included high-signal events across every subsequent phase (successful compromise, credential theft, lateral movement, persistence), yet those events are numerically buried under the nmap firewall drop noise.
  
-In an operational SOC context, this is an **alert fatigue problem of the highest order**. An L1 analyst reviewing a dashboard showing 40,034 alerts would be unable to identify the six or seven genuinely critical events (the RDP lateral movement alert, the ssh authorized_keys modification, the successful login from a Kali IP address) without significant time-consuming triage.
+In an operational SOC context, this is an **alert fatigue problem of the highest order**. An L1 analyst reviewing a dashboard showing 40,038 alerts would be unable to identify the six or seven genuinely critical events (the RDP lateral movement alert, the ssh authorized_keys modification, the successful login from a Kali IP address) without significant time-consuming triage.
 
 ### Why the volume happened
  
@@ -442,17 +442,17 @@ This is not a defect of rule 100010 — it functions exactly as designed, provid
  
 An important positive result appears within the numbers: **rule 100011 fired 256 times**. This rule was written in Phase 5 Part 5 to detect specifically the "VLAN 20 → VLAN 10 blocked" segmentation violation with level 10 severity and MITRE T1021/T1210 mapping. The fact that rule 100011 fired 230 times during this scenario confirms that the custom detection engineering from Phase 5 activated correctly under real attack conditions. Similarly, rule 100012 (the reverse-direction rule mentioned as roadmap in Phase 5 Part 5 and subsequently deployed) also fired 230 times, providing bidirectional visibility of cross-VLAN attempts.
  
-The 486 total alerts from these two custom rules would be the natural focus of L1 investigation in a production environment — they carry MITRE mapping, elevated severity, and specifically describe segmentation policy violations. They are not lost in the noise if the analyst filters by rule severity or MITRE tactic. The problem is that the default dashboard view does not filter, and 34,800 level-3 events dominate the visualisation.
+The 486 total alerts from these two custom rules would be the natural focus of L1 investigation in a production environment — they carry MITRE mapping, elevated severity, and specifically describe segmentation policy violations. They are not lost in the noise if the analyst filters by rule severity or MITRE tactic. The problem is that the default dashboard view does not filter, and 34,828 level-3 events dominate the visualisation.
 
 ---
 
 ## Lessons Learned
 
-- **Custom detection rules must be operationalised, not just written.**  Rule 100011 fired correctly with proper MITRE mapping, but 34,800 low-value alerts dominated the dashboard. Writing a rule is 30% of detection engineering; making it visible under production alert volumes is the other 70%.
+- **Custom detection rules must be operationalised, not just written.**  Rule 100011 fired correctly with proper MITRE mapping, but 34,828 low-value alerts dominated the dashboard. Writing a rule is 30% of detection engineering; making it visible under production alert volumes is the other 70%.
 - **Alert fatigue is not a theoretical concept.** The scenario produced a real-world example of the phenomenon within a single 90-minute execution. A junior analyst's instinct to see every event misses the operational reality that visibility requires filtering.
 - **Rule aggregation is not optional in production SOC.** The frequency/timeframe pattern is standard practice in every mature Wazuh deployment. Its absence in this initial ruleset was a gap identified through operational experience rather than documentation reading — a stronger learning outcome.
 - **The Wazuh built-in ruleset provides substantial coverage.** The NTLM RDP detection alert (Phase 6) required no custom engineering — a well-designed built-in rule caught it correctly. Detection engineering should focus on the gaps the built-in ruleset does not cover, not duplicate what already works.
-- **Honest documentation of weaknesses is more valuable than concealing them.** The 40,034-alert observation is a demonstrable weakness of the current setup. Documenting it explicitly, analysing it quantitatively, and proposing concrete improvements creates portfolio credibility that omitting it would not.
+- **Honest documentation of weaknesses is more valuable than concealing them.** The 40,038-alert observation is a demonstrable weakness of the current setup. Documenting it explicitly, analysing it quantitatively, and proposing concrete improvements creates portfolio credibility that omitting it would not.
 - **Every attack phase should map to a detection question.** The scenario made this concrete: for each of the eight active phases, the question "does the SIEM see this?" produced a clear yes/no answer with specific evidence. Phases where the answer was "not adequately" became the input for the detection engineering work planned for Phase 5.
 
 ---
