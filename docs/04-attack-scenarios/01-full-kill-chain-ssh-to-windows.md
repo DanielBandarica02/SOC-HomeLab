@@ -443,3 +443,35 @@ This is not a defect of rule 100010 — it functions exactly as designed, provid
 An important positive result appears within the numbers: **rule 100011 fired 256 times**. This rule was written in Phase 5 Part 5 to detect specifically the "VLAN 20 → VLAN 10 blocked" segmentation violation with level 10 severity and MITRE T1021/T1210 mapping. The fact that rule 100011 fired 230 times during this scenario confirms that the custom detection engineering from Phase 5 activated correctly under real attack conditions. Similarly, rule 100012 (the reverse-direction rule mentioned as roadmap in Phase 5 Part 5 and subsequently deployed) also fired 230 times, providing bidirectional visibility of cross-VLAN attempts.
  
 The 486 total alerts from these two custom rules would be the natural focus of L1 investigation in a production environment — they carry MITRE mapping, elevated severity, and specifically describe segmentation policy violations. They are not lost in the noise if the analyst filters by rule severity or MITRE tactic. The problem is that the default dashboard view does not filter, and 34,800 level-3 events dominate the visualisation.
+
+---
+
+## Lessons Learned
+
+**Custom detection rules must be operationalised, not just written.**  Rule 100011 fired correctly with proper MITRE mapping, but 34,800 low-value alerts dominated the dashboard. Writing a rule is 30% of detection engineering; making it visible under production alert volumes is the other 70%.
+**Alert fatigue is not a theoretical concept.** The scenario produced a real-world example of the phenomenon within a single 90-minute execution. A junior analyst's instinct to see every event misses the operational reality that visibility requires filtering.
+**Rule aggregation is not optional in production SOC.** The frequency/timeframe pattern is standard practice in every mature Wazuh deployment. Its absence in this initial ruleset was a gap identified through operational experience rather than documentation reading — a stronger learning outcome.
+**The Wazuh built-in ruleset provides substantial coverage.** The NTLM RDP detection alert (Phase 6) required no custom engineering — a well-designed built-in rule caught it correctly. Detection engineering should focus on the gaps the built-in ruleset does not cover, not duplicate what already works.
+**Honest documentation of weaknesses is more valuable than concealing them.** The 40,034-alert observation is a demonstrable weakness of the current setup. Documenting it explicitly, analysing it quantitatively, and proposing concrete improvements creates portfolio credibility that omitting it would not.
+**Every attack phase should map to a detection question.** The scenario made this concrete: for each of the eight active phases, the question "does the SIEM see this?" produced a clear yes/no answer with specific evidence. Phases where the answer was "not adequately" became the input for the detection engineering work planned for Phase 5.
+
+---
+ 
+## Result
+ 
+- End-to-end kill chain executed successfully against VLAN Dev, exercising 13 MITRE ATT&CK techniques across 6 tactics: Reconnaissance, Credential Access, Initial Access, Discovery, Lateral Movement, and Persistence.
+- Environment preparation phase seeded ws-dev-02 with synthetic credentials in `.env`, `notes.txt` and `~/.ssh/service_key`, and set the `arodriguez` password to a wordlist-crackable value. Documented explicitly as lab modelling.
+- Reconnaissance phase produced 34,823 pfSense firewall block alerts from nmap TCP SYN scanning and service enumeration.
+- Brute force phase cracked `arodriguez` credentials in approximately 45 seconds against a 1,000-entry rockyou.txt subset, generating 3,027 authentication failure alerts across three overlapping detection groups.
+- Initial Access via SSH from Kali produced a single `authentication_success` event — the compound pattern (thousands of failures followed by one success from the same IP) is the canonical brute-force compromise signature.
+- Credential Access phase harvested six sets of credentials from the compromised host's filesystem, including the RDP credentials for lateral movement.
+- Lateral movement to WS-DEV-01 via SSH port-forwarded RDP triggered the Wazuh built-in NTLM/pass-the-hash detection alert, with rule description explicitly naming the source workstation as "kali".
+- Two persistence mechanisms established: cron reverse-shell backdoor with 10-minute callback interval, and SSH authorized_keys modification enabling passwordless access.
+- Total scenario alert volume: 40,038 events, of which 34,823 (86.9%) originated from unaggregated pfSense block events during the reconnaissance phase.
+- Custom detection rules 100011 and 100012 fired 256 and 230 times during the scenario, confirming correct operation of the Phase 5 detection engineering under real attack conditions.
+- Alert volume analysis identified eight detection engineering gaps to be addressed in Phase 5 before Scenario 2 execution, covering reconnaissance aggregation, brute force aggregation, initial access correlation, discovery pattern detection, credential file access, and two persistence patterns.
+  
+---
+
+*Previous: [Phase 3 — Adversary Environment](../03-adversary/01-adversary-environment.md)*
+*Next: Phase 4 — Attack Scenarios (Scenario 2: Phishing to C2 with Persistence)*
