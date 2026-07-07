@@ -180,9 +180,9 @@ The brute force generated three distinct alert categories in Wazuh, each corresp
 
 ![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/06-wazuh-logs.png)
 
-| Alert type | Approximate count | Wazuh decoder |
+| Alert type | Count | Wazuh decoder |
 | ---------- | ----------------- | ------------- |
-| `syslog: User authentication failure` | 2,300 | syslog (auth.log) |
+| `syslog: User authentication failure` | 2,321 | syslog (auth.log) |
 | `syslog: User authentication failure` (secondary rule) | 390 | syslog (auth.log) |
 | `PAM: User login failed` | 337 | pam (auth.log via journald) |
 
