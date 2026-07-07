@@ -135,14 +135,64 @@ The output revealed OpenSSH 9.6p1 on ws-dev-02 and the Windows RDP service on WS
 
 The reconnaissance activity was the highest-volume detection event of the entire scenario. The pfSense firewall rules configured in Phase 3 dropped every packet from VLAN 66 that did not match the explicitly permitted paths (SSH and RDP to VLAN 20 and VLAN 10). The `/24` scan across six ports produced approximately 34,800 individual pfSense filterlog events, each processed by the custom `pfsense-custom-header` decoder and forwarded as an alert.
 
-![Wazuh Logs Reconnaissance](../../screenshots/04-attack/01-kill-chain/04-wazuh-logs-reconnaissance-1.png)
+![Wazuh Events Reconnaissance](../../screenshots/04-attack/01-kill-chain/04-wazuh-logs-reconnaissance-1.png)
 
 These events were triggered after the initial two Nmap scans.
 
-![Wazuh Logs Reconnaissance](../../screenshots/04-attack/01-kill-chain/05-wazuh-logs-reconnaissance-2.png)
+![Wazuh Events Reconnaissance](../../screenshots/04-attack/01-kill-chain/05-wazuh-logs-reconnaissance-2.png)
 
 These events were triggered after the service enumeration scan.
 
+![Wazuh Events](../../screenshots/04-attack/01-kill-chain/06-wazuh-logs.png)
+
+The volume of these alerts represents a real SOC challenge that will be analysed in the Alert Volume Analysis section at the end of this document.
+
+---
+ 
+## Phase 2 — Credential brute force
+ 
+**Objective:** Obtain valid credentials for the discovered SSH service.
+ 
+**Tools used:** hydra with `rockyou.txt`
+ 
+**MITRE mapping:** T1110.001 — Password Guessing
+ 
+### Execution
+ 
+A wordlist subset was prepared to keep the brute force bounded within the demo timeframe:
+ 
+```bash
+sudo gunzip -k /usr/share/wordlists/rockyou.txt.gz
+head -n 1000 /usr/share/wordlists/rockyou.txt > /home/wordlist_small.txt
+```
+ 
+The `arodriguez` username was chosen as the target based on prior enumeration of the Dev environment context. The brute force ran with four parallel threads and verbose output:
+
+![Hydra Brute Force](../../screenshots/04-attack/01-kill-chain/07-hydra-attempts.png)
+
+The `-f` flag terminates the attack on the first successful match, minimising noise. The password was cracked after approximately 240 seconds of attempts:
+
+![Hydra Brute Force Completed](../../screenshots/04-attack/01-kill-chain/08-hydra-completed.png)
+
+### Detection
+ 
+The brute force generated three distinct alert categories in Wazuh, each corresponding to a different decoder layer processing the authentication events:
+
+![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/06-wazuh-logs.png)
+
+| Alert type | Approximate count | Wazuh decoder |
+| ---------- | ----------------- | ------------- |
+| `syslog: User authentication failure` | 2,300 | syslog (auth.log) |
+| `syslog: User authentication failure` (secondary rule) | 390 | syslog (auth.log) |
+| `PAM: User login failed` | 337 | pam (auth.log via journald) |
+
+The multiple counts reflect Wazuh's layered decoding — the same underlying event (a failed SSH login) is captured by the syslog decoder reading `/var/log/auth.log` and by the PAM decoder recognising the specific PAM failure signature. Both produce alerts, providing defence-in-depth against decoder-specific detection gaps.
+
+![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/09-wazuh-logs-brute-force.png)
+
+![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/10-wazuh-logs-brute-force-2.png)
+
+![Hydra Brute Force Detection](../../screenshots/04-attack/01-kill-chain/11-wazuh-logs-brute-force-3.png)
 
 
 
