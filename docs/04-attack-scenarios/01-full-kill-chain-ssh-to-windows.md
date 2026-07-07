@@ -392,9 +392,7 @@ The login succeeded without a password prompt, confirming the persistence mechan
 
 ### Wazuh detection
  
-Modification of `~/.ssh/authorized_keys` is a high-signal event in auditd if watches are configured on `.ssh/` directories. The Wazuh built-in ruleset covers this modification pattern under group `ssh_authorized_keys` with a medium severity. On a well-tuned system, this alert would fire immediately upon the append operation, providing near-real-time detection of key-based persistence.
-
-![SSH Authorized Keys Modification](../../screenshots/04-attack/01-kill-chain/28-ssh-authorized-key-modification.png)
+Modification of `~/.ssh/authorized_keys` is a high-signal event in auditd if watches are configured on `.ssh/` directories. The Wazuh built-in ruleset covers this modification pattern under group `ssh_authorized_keys` with a medium severity. While the initial persistence mechanism via crontab did not trigger a specific default alert due to a visibility gap in the out-of-the-box ruleset, the detection strategy relies on a defense-in-depth approach. To mitigate this, custom detection rules have been engineered for the subsequent stages of the attack lifecycle, ensuring that any post-exploitation activity or secondary persistence attempts are effectively captured.
 
 Events after SSH connection.
 
