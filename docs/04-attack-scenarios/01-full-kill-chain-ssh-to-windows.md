@@ -2,11 +2,9 @@
  
 ## Overview
  
-The first attack scenario of the lab exercises the full kill chain against the development environment (VLAN 20): reconnaissance, credential brute force, initial access, host discovery, credential harvesting from local files, lateral movement to a Windows workstation, and two independent persistence layers. Ten distinct phases were executed end-to-end from the Adversary DMZ (Kali on VLAN 66), each phase mapped to a MITRE ATT&CK technique and each phase's telemetry captured in the SIEM.
+This scenario is the first end-to-end attack executed against the lab. It exercises a complete kill chain — reconnaissance, initial access, discovery, credential access, lateral movement, and persistence — from the adversary DMZ (Kali, VLAN 66) against the development network (VLAN 20). The scenario chains ten discrete phases, each producing observable telemetry in the SIEM, and concludes with an honest analysis of the 40,034 alerts generated during execution.
  
-The scenario is deliberately end-to-end. Rather than isolating a single technique, the intent is to demonstrate that the SOC pipeline responds coherently to a **realistic intrusion chain** — one where the attacker moves through the environment in stages, each stage building on the previous. The narrative parallels real incidents: a foothold established via credential attack becomes credential harvesting becomes lateral movement becomes persistence. Every stage produces telemetry, and the SIEM's job is to make each stage visible to the analyst investigating the incident.
- 
-The scenario was executed against pre-seeded targets: a Linux dev workstation (ws-dev-02) with synthetic credentials placed in developer-typical locations, and a Windows dev workstation (WS-DEV-01) with RDP enabled. This seeding is documented explicitly as environment preparation, not concealed as "found artefacts" — the intent is to model realistic developer workstations, not to fake attacker discoveries.
+The narrative arc mirrors a realistic intrusion pattern: an attacker with an established foothold in a low-trust zone identifies exposed services in a peer network, brute-forces credentials on a Linux dev host, uses the compromised account to enumerate the environment and harvest additional credentials from the host's filesystem, pivots via SSH port-forwarding to a Windows workstation using stolen credentials, and finally establishes multiple persistence mechanisms on the initial foothold to survive session termination.
  
 The scenario also surfaces an operational reality that dominates real SOCs: **alert fatigue**. The 10 phases generated 40,034 alerts, of which 87% were duplicates of a single detection rule triggered by the reconnaissance scan. This ratio, and the response to it, is documented at the end of this document as the primary lesson learned from executing the scenario at production-realistic scale.
  
@@ -31,21 +29,23 @@ The scenario also surfaces an operational reality that dominates real SOCs: **al
  
 ## MITRE ATT&CK coverage
  
-| Phase | Tactic | Technique | Sub-technique |
-| ----- | ------ | --------- | ------------- |
-| 1 | Reconnaissance | T1046 — Network Service Discovery | — |
-| 2 | Credential Access | T1110 — Brute Force | T1110.001 — Password Guessing |
-| 3 | Initial Access | T1078 — Valid Accounts | — |
-| 4 | Discovery | T1082 — System Information Discovery | — |
-| 4 | Discovery | T1087 — Account Discovery | — |
-| 4 | Discovery | T1057 — Process Discovery | — |
-| 5 | Credential Access | T1552 — Unsecured Credentials | T1552.001 — Credentials In Files |
-| 5 | Credential Access | T1552 — Unsecured Credentials | T1552.003 — Bash History |
-| 5 | Credential Access | T1552 — Unsecured Credentials | T1552.004 — Private Keys |
-| 6 | Lateral Movement | T1021 — Remote Services | T1021.001 — Remote Desktop Protocol |
-| 6 | Command and Control | T1572 — Protocol Tunneling | — |
-| 7 | Persistence | T1053 — Scheduled Task/Job | T1053.003 — Cron |
-| 8 | Persistence | T1098 — Account Manipulation | T1098.004 — SSH Authorized Keys |
+The scenario exercises 13 techniques across 6 tactics:
+ 
+| Tactic              | Technique   | Sub-technique / description                         | Phase |
+| ------------------- | ----------- | --------------------------------------------------- | ----- |
+| Reconnaissance      | T1046       | Network Service Discovery (nmap scans)              | 1     |
+| Credential Access   | T1110.001   | Brute Force: Password Guessing (hydra)              | 2     |
+| Initial Access      | T1078       | Valid Accounts (compromised SSH credentials)        | 3     |
+| Discovery           | T1082       | System Information Discovery                        | 4     |
+| Discovery           | T1087.001   | Account Discovery: Local Accounts                   | 4     |
+| Discovery           | T1057       | Process Discovery                                   | 4     |
+| Discovery           | T1049       | System Network Connections Discovery                | 4     |
+| Credential Access   | T1552.001   | Unsecured Credentials in Files (.env, notes.txt)    | 5     |
+| Credential Access   | T1552.003   | Bash History                                        | 5     |
+| Credential Access   | T1552.004   | Private Keys (SSH service_key)                      | 5     |
+| Lateral Movement    | T1021.001   | Remote Services: Remote Desktop Protocol            | 6     |
+| Persistence         | T1053.003   | Scheduled Task/Job: Cron                            | 7     |
+| Persistence         | T1098.004   | Account Manipulation: SSH Authorized Keys           | 8     |
 
 ---
  
@@ -64,7 +64,7 @@ Two artefacts were placed in the user's home directory to model credential-hoard
 ```
 DB_HOST=10.10.20.10
 DB_USER=devadmin
-DB_PASSWORD=DevPassw0rd2024!
+DB_PASSWORD=DevPassw0rd2026!
 API_KEY=sk_test_abcdef1234567890
 ```
  
@@ -279,7 +279,6 @@ Harvest credentials from the compromised host's filesystem. This phase leverages
 **Search for common credential-containing files:**
 ```bash
 find /home -type f -name "*.env" 2>/dev/null
-find /home -type f -name "*password*" 2>/dev/null
 find /home -type f -name "*.key" 2>/dev/null
 find /home -type f -name "notes*" 2>/dev/null
 ```
@@ -289,16 +288,16 @@ find /home -type f -name "notes*" 2>/dev/null
 cat ~/.env                 # database credentials, API keys
 cat ~/notes.txt            # plaintext credentials for multiple systems
 cat ~/.ssh/service_key     # private SSH key
-cat ~/.bash_history         # commands with embedded passwords
 ```
- 
-**Grep for password references in system paths:**
-```bash
-sudo grep -r "password" /var/log 2>/dev/null | head -20
-```
+
+![Reading the discovered Files - 1](../../screenshots/04-attack/01-kill-chain/14-cat-env.png)
+
+![Reading the discovered Files - 2](../../screenshots/04-attack/01-kill-chain/15-cat-notes.png)
+
+![Reading the discovered Files - 3](../../screenshots/04-attack/01-kill-chain/16-cat-key.png)
  
 Credentials harvested from the host:
-- **DB access:** `devadmin` / `DevPassw0rd2024!` (from `.env`)
+- **DB access:** `devadmin` / `DevPassw0rd2026!` (from `.env`)
 - **API key:** `sk_test_abcdef1234567890` (from `.env`)
 - **WS-DEV-01 RDP:** `kevin hernandez` / `Kevin2026!` (from `notes.txt`) — this is the key credential enabling lateral movement in Phase 6
 - **VPN backup:** `dbandarica` / `DAniel2026!` (from `notes.txt`)
@@ -306,7 +305,7 @@ Credentials harvested from the host:
 
 ### Wazuh detection
  
-The credential access phase generated the least telemetry of any active phase. Reading files with `cat` produces syscall events but is not flagged by default rules — a legitimate user reads their own files continuously during normal work. Detection engineering opportunity: an auditd watch on `~/.env`, `~/.ssh/`, and `~/.bash_history` reads would catch this pattern with acceptable false-positive rate on production servers where these files rarely change or are accessed programmatically.
+The credential access phase generated the least telemetry of any active phase. Reading files with `cat` produces syscall events but is not flagged by default rules, a legitimate user reads their own files continuously during normal work. Detection engineering opportunity: an auditd watch on `~/.env` and `~/.ssh/` reads would catch this pattern with acceptable false-positive rate on production servers where these files rarely change or are accessed programmatically.
 
 
 
