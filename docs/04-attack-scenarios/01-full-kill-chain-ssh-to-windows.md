@@ -446,6 +446,24 @@ The 486 total alerts from these two custom rules would be the natural focus of L
 
 ---
 
+## Custom Rules
+
+The attack scenario triggered multiple events, resulting in 40,038 total alerts and highlighting a significant alert fatigue issue. Consequently, establishing robust persistence rules is essential to securing the environment. These rules will apply to future scenarios and are documented in 05-detection-rules.
+
+| Rule ID | Name                                | Tactic            | 
+| ------  | ----------------------------------- | ----------------- | 
+| 100013  | Port scan aggregation               | Reconnaissance    | 
+| 100014   | Multi-target port scan aggregation | Reconnaissance    | 
+| 100015    | SSH brute force aggregation       | Credential Access | 
+| 100016    | Compound brute force + success    | Initial Access    |
+| 100017   | Credential file access             | Credential Access |
+| 100018    | Reverse shell in cron             | Persistence       |
+| 100019  | SSH authorized_keys modification    | Persistence       |
+| 100020  | Auth success from adversary VLAN    | Initial Access    |
+| 100021  | Discovery command sequence          | Discovery         |
+
+---
+
 ## Lessons Learned
 
 - **Custom detection rules must be operationalised, not just written.**  Rule 100011 fired correctly with proper MITRE mapping, but 34,828 low-value alerts dominated the dashboard. Writing a rule is 30% of detection engineering; making it visible under production alert volumes is the other 70%.
