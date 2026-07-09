@@ -68,7 +68,7 @@ Not applicable — the rule fires per matched event.
 From any host in VLAN 20 (for example WS-DEV-01 at `10.10.20.10`):
 
 ```bash
-ping -c 8 10.10.10.20
+ping -n 8 10.10.10.20
 ```
  
 ### Expected Result
