@@ -77,7 +77,7 @@ Four alerts in `wazuh-alerts-*` (one per ICMP echo request blocked) with:
 - `rule.mitre.id: ["T1021", "T1210"]`
 - `rule.mitre.tactic: ["Lateral Movement"]`
 ### Validation Screenshot
-![Rule 100011 validation](../../screenshots/05-detection-rules/02-rule-100011-vlan10-segmentation.png)
+![Rule 100011 validation](../../screenshots/05-detection-rules/02-rule-100011-vlan20-to-vlan10-segmentation.png)
  
 ---
  
