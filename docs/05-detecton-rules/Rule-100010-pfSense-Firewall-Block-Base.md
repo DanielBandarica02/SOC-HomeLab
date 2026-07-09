@@ -59,21 +59,21 @@ Not applicable — the rule fires once per matched event without aggregation.
 ## Atomic Testing
  
 ### Test Command
-From Kali (VLAN 66) targeting a denied port on VLAN 20:
+From Kali (VLAN 66) targeting a denied port on VLAN 10:
 ```bash
-nmap -Pn -sS -p 10.10.20.10 445
+nmap -Pn -sS -p 10.10.10.89 445
 ```
  
 ### Expected Result
 A single alert in `wazuh-alerts-*` with:
+- `data.srcip: 10.10.66.10`
+- `data.dstip: 10.10.20.89`
 - `rule.id: 100010`
 - `rule.level: 3`
 - `rule.description: "pfSense: firewall blocked a packet"`
-- `data.action: block`
-- `data.srcip: 10.10.66.10`
-- `data.dstip: 10.10.20.10`
-- `data.dstport: 445`
+
 ### Validation Screenshot
+
 ![Rule 100010 Validation](../../screenshots/05-detection-rules/01-rule-100010-pfsense-firewall.png)
  
 ---
@@ -83,12 +83,15 @@ A single alert in `wazuh-alerts-*` with:
 ### Known FP Scenarios
 - Legitimate traffic hitting default-deny rules during normal network operation — this is expected baseline noise in a segmented network, not a false positive in the traditional sense.
 - Broadcast and multicast traffic reaching interfaces where it is not permitted — many protocols emit periodic frames that pfSense correctly blocks.
+
 ### Mitigations
 - No mitigation required at this rule level; the low severity (3) prevents dashboard pollution.
 - Specialisation rules (100011, 100012, 100013) apply context-specific filters to identify the subset of blocks that carry operational meaning.
+
 ---
  
 ## References
+
 - [Wazuh documentation — Custom rules](https://documentation.wazuh.com/current/user-manual/ruleset/rules/custom.html)
 - [pfSense documentation — Firewall logging](https://docs.netgate.com/pfsense/en/latest/monitoring/logs/firewall.html)
 - Internal reference: `docs/02-soc-stack/04-pfsense-syslog.md`
