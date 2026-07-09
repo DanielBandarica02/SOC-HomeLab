@@ -65,7 +65,7 @@ Note the absence of `<mitre>` tags — this rule does not map to an ATT&CK techn
 From any host in VLAN 10 (for example WS-CORP-01 at `10.10.10.20`):
 
 ```cmd
-ping 10.10.20.10
+ping -n 8 10.10.20.10
 ```
  
 ### Expected Result
