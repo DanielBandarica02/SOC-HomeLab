@@ -3,7 +3,7 @@
 ## Metadata
 | Field | Value |
 |-------|-------|
-| Rule ID | `custom-XXXXX` |
+| Rule ID | `XXXXXX` |
 | Severity | Low / Medium / High / Critical |
 | MITRE ATT&CK Tactic | [Tactic] |
 | MITRE ATT&CK Technique | [TXXXX.XXX — Technique Name] |
