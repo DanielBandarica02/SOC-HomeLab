@@ -61,7 +61,7 @@ Not applicable — the rule fires once per matched event without aggregation.
 ### Test Command
 From Kali (VLAN 66) targeting a denied port on VLAN 20:
 ```bash
-nc -zvn 10.10.20.10 445
+nmap -Pn -sS -p 10.10.20.10 445
 ```
  
 ### Expected Result
