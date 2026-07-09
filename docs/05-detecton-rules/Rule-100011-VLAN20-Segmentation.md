@@ -35,6 +35,7 @@ Inherits from rule 100010 via `<if_sid>`, ensuring the event is a validated pfSe
 - Source: rule 100010 event stream (which itself derives from pfSense syslog)
 - Required fields: `srcip`, `dstip`
 - Prerequisites: rule 100010 must be deployed and firing correctly
+  
 ### Thresholds
 Not applicable — the rule fires per matched event.
  
@@ -64,19 +65,23 @@ Not applicable — the rule fires per matched event.
 ## Atomic Testing
  
 ### Test Command
-From any host in VLAN 20 (for example ws-dev-02 at `10.10.20.20`):
+From any host in VLAN 20 (for example WS-DEV-01 at `10.10.20.10`):
+
 ```bash
-ping -c 4 10.10.10.10
+ping -c 8 10.10.10.20
 ```
  
 ### Expected Result
-Four alerts in `wazuh-alerts-*` (one per ICMP echo request blocked) with:
+
+Eight alerts in `wazuh-alerts-*` (one per ICMP echo request blocked) with:
+- data.srcip: 10.10.20.10
+- data.dstip: 10.10.10.20
 - `rule.id: 100011`
 - `rule.level: 10`
-- `rule.description` containing "VLAN 20 (Dev) → VLAN 10 (Corp) blocked - segmentation violation from 10.10.20.20 to 10.10.10.10"
-- `rule.mitre.id: ["T1021", "T1210"]`
-- `rule.mitre.tactic: ["Lateral Movement"]`
+- `rule.description` containing "VLAN 20 (Dev) → VLAN 10 (Corp) blocked - segmentation violation from 10.10.20.10 to 10.10.10.20"
+  
 ### Validation Screenshot
+
 ![Rule 100011 validation](../../screenshots/05-detection-rules/02-rule-100011-vlan20-to-vlan10-segmentation.png)
  
 ---
@@ -87,12 +92,15 @@ Four alerts in `wazuh-alerts-*` (one per ICMP echo request blocked) with:
 - Misconfigured dev application attempting to reach a service migrated to Corp infrastructure — a DNS entry may point developers to the wrong environment.
 - Developer manual testing of production connectivity from a dev workstation during troubleshooting.
 - Automation scripts scheduled on dev hosts that were not updated when a corporate service was decommissioned or relocated.
+  
 ### Mitigations
 - Investigate each alert — legitimate operational issues still represent security policy violations that warrant remediation (relocating the service, updating configuration, granting explicit exceptions).
 - If a specific host is a known source of legitimate cross-VLAN traffic, the source can be excluded via `<not_srcip>`.
+
 ---
  
 ## References
+
 - [MITRE ATT&CK T1021 — Remote Services](https://attack.mitre.org/techniques/T1021/)
 - [MITRE ATT&CK T1210 — Exploitation of Remote Services](https://attack.mitre.org/techniques/T1210/)
 - [CISA advisory AA22-249A — Iranian actors leveraging lateral movement](https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-249a)
