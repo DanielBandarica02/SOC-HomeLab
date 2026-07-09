@@ -74,7 +74,7 @@ A single alert in `wazuh-alerts-*` with:
 - `data.dstip: 10.10.20.10`
 - `data.dstport: 445`
 ### Validation Screenshot
-![Rule 100010 validation](../screenshots/phase5/rule-100010-validation.png)
+![Rule 100010 Validation](../../screenshots/05-detection-rules/01-rule-100010-pfsense-firewall.png)
  
 ---
  
