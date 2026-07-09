@@ -74,8 +74,8 @@ ping -c 8 10.10.10.20
 ### Expected Result
 
 Eight alerts in `wazuh-alerts-*` (one per ICMP echo request blocked) with:
-- data.srcip: 10.10.20.10
-- data.dstip: 10.10.10.20
+- `data.srcip: 10.10.20.10`
+- `data.dstip: 10.10.10.20`
 - `rule.id: 100011`
 - `rule.level: 10`
 - `rule.description` containing "VLAN 20 (Dev) → VLAN 10 (Corp) blocked - segmentation violation from 10.10.20.10 to 10.10.10.20"
