@@ -89,6 +89,6 @@ A single alert in `wazuh-alerts-*` with:
 ---
  
 ## References
-- [Wazuh documentation — Custom rules](https://https://documentation.wazuh.com/current/user-manual/ruleset/rules/custom.html)
+- [Wazuh documentation — Custom rules](https://documentation.wazuh.com/current/user-manual/ruleset/rules/custom.html)
 - [pfSense documentation — Firewall logging](https://docs.netgate.com/pfsense/en/latest/monitoring/logs/firewall.html)
 - Internal reference: `docs/02-soc-stack/04-pfsense-syslog.md`
