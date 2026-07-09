@@ -73,8 +73,9 @@ Four alerts in `wazuh-alerts-*` (one per blocked ICMP echo request) with:
 - `rule.level: 7`
 - `rule.description` containing "VLAN 10 (Corp) → VLAN 20 (Dev) blocked - segmentation policy violation from 10.10.10.20 to 10.10.20.20"
 - No MITRE mapping present
+
 ### Validation Screenshot
-![Rule 100012 validation](../screenshots/phase5/rule-100012-validation.png)
+![Rule 100012 validation](../../screenshots/05-detection-rules/03-rule-100012-vlan10-to-vlan20-segmentation.png)
  
 ---
  
