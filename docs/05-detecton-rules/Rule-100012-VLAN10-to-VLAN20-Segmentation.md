@@ -63,12 +63,15 @@ Note the absence of `<mitre>` tags — this rule does not map to an ATT&CK techn
  
 ### Test Command
 From any host in VLAN 10 (for example WS-CORP-01 at `10.10.10.20`):
+
 ```cmd
-ping 10.10.20.20
+ping 10.10.20.10
 ```
  
 ### Expected Result
 Four alerts in `wazuh-alerts-*` (one per blocked ICMP echo request) with:
+- `data.srcip: 10.10.10.20`
+- `data.dstip: 10.10.20.10`
 - `rule.id: 100012`
 - `rule.level: 7`
 - `rule.description` containing "VLAN 10 (Corp) → VLAN 20 (Dev) blocked - segmentation policy violation from 10.10.10.20 to 10.10.20.20"
@@ -85,10 +88,12 @@ Four alerts in `wazuh-alerts-*` (one per blocked ICMP echo request) with:
 - Corporate user attempting to SSH or RDP to a dev workstation using an obsolete IP address.
 - Corporate monitoring script performing legitimate reachability checks against dev hosts (typically results from misconfigured monitoring targets).
 - Software updates or licensing checks that attempt to reach dev-hosted internal services.
+  
 ### Mitigations
 - Level 7 is deliberately low to accept these scenarios as noise rather than flag them as attacks.
 - Recurring FP sources should be investigated for policy hygiene: either the corporate host is misconfigured, or a legitimate cross-VLAN need exists that should be formalised with an explicit pass rule.
 - Aggregate by `srcip` in dashboard queries to identify hosts generating repeated violations for targeted remediation.
+  
 ---
  
 ## References
