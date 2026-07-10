@@ -39,7 +39,7 @@ The `<if_matched_group>` pattern is more elegant than inheriting from a specific
 - Prerequisites: Wazuh built-in ruleset for `sshd`, `pam`, and `syslog` deployed (default in standard Wazuh installations); Linux agent forwarding SSH and PAM events to the manager
 ### Thresholds
 - **frequency = 10** — chosen deliberately above the range of realistic human error. A human typing incorrect credentials 10 times in 2 minutes is not a mistake, it is an automated tool. This threshold eliminates false positives from users mistyping passwords during legitimate troubleshooting or after credential rotation.
-- **timeframe = 120 seconds** — a 2-minute sliding window captures burst-mode brute forcing (hydra with default threading generates dozens of attempts per second) while remaining short enough to produce distinct alerts if the attacker pauses and resumes.
+- **timeframe = 120 seconds** — a 2 minute sliding window captures burst-mode brute forcing (hydra with default threading generates dozens of attempts per second) while remaining short enough to produce distinct alerts if the attacker pauses and resumes.
 - **Level 12** — Critical severity. Successful triggering of this rule indicates a near-certain attack in progress; no legitimate operational activity matches the pattern.
 ---
  
