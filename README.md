@@ -129,10 +129,17 @@ SOC-HomeLab/
     │   └── 05-soc-dashboard.md
     ├── 03-adversary/
     │   └── 01-adversary-environment.md
-    ├── 04-attack-scenarios/                        <---------------  Working on
+    ├── 04-attack-scenarios/                                                       <---------------  Working on
     │   ├── 01-full-kill-chain-ssh-to-windows.md
     │   └── 02-phishing-c2-persistence.md
     ├── 05-detection-rules/
+    │   ├── Rule-100010-pfSense-Firewall-Block-Base.md
+    │   ├── Rule-100011-VLAN20-to-VLAN10-Segmentation.md
+    │   ├── Rule-100012-VLAN10-to-VLAN20-Segmentation.md
+    │   ├── Rule-100013-Port-Scan-Detection.md
+    │   ├── Rule-100014-Multi-Target-Port-Scan.md
+    │   ├── Rule-100015-SSH-Brute-Force.md
+    │   └── Rule-100016-Brute-Force-Successful-Login.md
     └── 06-incident-reports/
 ```
 
