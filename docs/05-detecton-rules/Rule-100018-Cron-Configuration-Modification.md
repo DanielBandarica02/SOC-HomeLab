@@ -41,6 +41,7 @@ The auditd approach is more robust than parsing `/var/log/cron.log` because it o
   - Cron path watches deployed in `/etc/audit/rules.d/persistence-detection.rules` (see Implementation section)
   - Wazuh Linux agent configured with audit log ingestion
   - Wazuh built-in ruleset group `audit` operational
+  
 ### Thresholds
 Not applicable — this rule fires per matched event. Every cron modification generates one alert. Aggregation is intentionally avoided because cron modifications are individually significant; a single persistence attempt at 3 AM is exactly what the SOC L1 needs to see distinctly.
  
@@ -111,7 +112,7 @@ One or more alerts in `wazuh-alerts-*` with:
 - `rule.level: 10`
 - `rule.description` containing the modified file path (e.g., "Cron configuration modified - /usr/bin/crontab modified /var/spool/cron/crontabs/arodriguez by uid 1000")
 
-**Note on alert count:** The `crontab` command internally creates temporary files and performs multiple syscalls to update the target crontab. A single `crontab -` invocation may generate 2-3 audit events (temp file creation, atomic move, permission change), producing 2-3 alerts of rule 100018 in the SIEM. This is expected behaviour; the alerts describe distinct kernel-level events during the single logical modification.
+**Note on alert count:** The `crontab` command internally creates temporary files and performs multiple syscalls to update the target crontab. A single `crontab -` invocation may generate 3-4 audit events (temp file creation, atomic move, permission change), producing 3-4 alerts of rule 100018 in the SIEM. This is expected behaviour; the alerts describe distinct kernel-level events during the single logical modification.
  
 ### Validation Screenshot
 ![Rule 100018 validation](../../screenshots/05-detection-rules/09-rule-100018-cron-configuration-modification.png)
