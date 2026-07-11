@@ -128,8 +128,10 @@ SOC-HomeLab/
     │   ├── Rule-100012-VLAN10-to-VLAN20-Segmentation.md
     │   ├── Rule-100013-Port-Scan-Detection.md
     │   ├── Rule-100014-Multi-Target-Port-Scan.md
-    │   ├── Rule-100015-SSH-Brute-Force.md
-    │   └── Rule-100016-Brute-Force-Successful-Login.md
+    │   ├── Rule-100015-SSH-Brute-Force.md 
+    │   ├── Rule-100016-Brute-Force-Successful-Login.md
+    │   ├── Rule-100016-Brute-Force-Successful-Login.md
+    │   └── Rule-100017-Credential-Files-Access.md
     └── 06-incident-reports/
 ```
 
