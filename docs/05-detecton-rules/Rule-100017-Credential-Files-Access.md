@@ -117,12 +117,11 @@ cat /home/arodriguez/.ssh/service_key
  
 ### Expected Result
 Four alerts in `wazuh-alerts-*`, one per file access, with:
+- `agent.name: ws-dev-02`
+- `agent.ip: 10.10.20.20`
 - `rule.id: 100017`
 - `rule.level: 12`
 - `rule.description` containing the accessed file path (e.g., "Credential file access detected - /usr/bin/cat accessed /home/arodriguez/.env by uid 1000")
-- `rule.mitre.id: ["T1552.001", "T1552.003", "T1552.004"]`
-- `rule.mitre.tactic: ["Credential Access"]`
-- `data.audit.key` indicating the specific credential artefact type
   
 ### Validation Screenshot
 
