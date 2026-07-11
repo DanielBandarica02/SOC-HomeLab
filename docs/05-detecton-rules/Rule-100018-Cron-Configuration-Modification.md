@@ -52,7 +52,7 @@ Not applicable — this rule fires per matched event. Every cron modification ge
  
 ### Prerequisite — auditd watch configuration
  
-Deploy the following watch rules on each Linux host under detection. Create `/etc/audit/rules.d/persistence-detection.rules`:
+Deploy the following watch rules on each Linux host under detection. 
  
 ```bash
 sudo tee /etc/audit/rules.d/persistence-detection.rules > /dev/null <<'EOF'
@@ -66,15 +66,7 @@ sudo tee /etc/audit/rules.d/persistence-detection.rules > /dev/null <<'EOF'
 -w /etc/cron.monthly/ -p wa -k cron_modification
 EOF
 ```
- 
-Load the rules:
- 
-```bash
-sudo auditctl -D
-sudo augenrules --load
-sudo auditctl -l | grep cron_modification
-```
- 
+
 Notes on the watch configuration:
 - `-p wa` monitors write and attribute changes (creation, modification, deletion of cron entries, and permission changes).
 - The seven paths cover all standard cron locations: user crontabs, the system crontab file, and the five time-based system cron directories.
@@ -99,6 +91,7 @@ Key structural decisions:
 - `<if_group>audit</if_group>` restricts matching to events processed by the Wazuh built-in audit ruleset.
 - `<field name="audit.key">cron_modification</field>` matches only events tagged with the persistence-detection key.
 - Description interpolates the executing binary, the modified file path, and the acting user for immediate triage context.
+
 ---
  
 ## Atomic Testing
@@ -112,16 +105,16 @@ From an SSH session on the target host, reproduce the cron-based reverse shell p
  
 ### Expected Result
 One or more alerts in `wazuh-alerts-*` with:
+- `agent.name: ws-dev-02`
+- `agent.ip: 10.10.20.20`
 - `rule.id: 100018`
 - `rule.level: 10`
 - `rule.description` containing the modified file path (e.g., "Cron configuration modified - /usr/bin/crontab modified /var/spool/cron/crontabs/arodriguez by uid 1000")
-- `rule.mitre.id: ["T1053.003"]`
-- `rule.mitre.tactic: ["Persistence"]`
-- `data.audit.key: cron_modification`
+
 **Note on alert count:** The `crontab` command internally creates temporary files and performs multiple syscalls to update the target crontab. A single `crontab -` invocation may generate 2-3 audit events (temp file creation, atomic move, permission change), producing 2-3 alerts of rule 100018 in the SIEM. This is expected behaviour; the alerts describe distinct kernel-level events during the single logical modification.
  
 ### Validation Screenshot
-![Rule 100018 validation](../screenshots/phase5/rule-100018-validation.png)
+![Rule 100018 validation](../../screenshots/05-detection-rules/09-rule-100018-cron-configuration-modification.png)
  
 ---
  
@@ -132,6 +125,7 @@ One or more alerts in `wazuh-alerts-*` with:
 - Configuration management tools (Ansible, Puppet, Chef, Salt) deploying cron entries during scheduled runs.
 - Administrators legitimately editing cron entries during maintenance windows or deploying new scheduled jobs.
 - Docker or container runtimes that provision cron entries as part of container initialisation.
+  
 ### Mitigations
 - Correlate alerts with change management windows and CI/CD pipeline execution logs. Modifications during authorised change windows can be de-prioritised.
 - Exclude known configuration management tool executables via `<field name="audit.exe" negate="yes">/usr/bin/ansible|/opt/puppetlabs</field>` in a variant of the rule. This must be maintained as tooling changes.
