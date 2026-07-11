@@ -61,8 +61,8 @@ sudo tee /etc/audit/rules.d/credential-access.rules > /dev/null <<'EOF'
 -w /home/arodriguez/notes.txt -p r -k notes_file_access
 -w /home/arodriguez/.bash_history -p r -k bash_history_access
  
-# Watch SSH directory for read, write, and attribute change
--w /home/arodriguez/.ssh/ -p rwa -k ssh_dir_access
+# Watch SSH directory for read 
+-w /home/arodriguez/.ssh/ -p r -k ssh_dir_access
 EOF
 ```
  
@@ -75,7 +75,6 @@ sudo auditctl -l | grep -E "env_file|notes_file|bash_history|ssh_dir"
  
 Notes on the watch configuration:
 - `-p r` enables read-only monitoring (sufficient for credential harvest detection).
-- `-p rwa` on the `.ssh/` directory catches read (harvesting), write (adding attacker keys — covered separately by rule 100019), and attribute changes.
 - The keys (`env_file_access`, etc.) are the pivotal field that the Wazuh rule filters on. Distinct keys per path enable dashboard drill-down and per-artefact reporting.
 - In production environments, watches would be applied to all user home directories with pattern-based rules (`-w /home/*/`) rather than named users. The named-user approach is used here to match the lab's fixed user set.
 ### Wazuh Rule (XML)
