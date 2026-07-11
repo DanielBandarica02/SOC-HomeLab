@@ -35,16 +35,6 @@ A course teaches you to use tools. This lab forces me to use them in a system I 
 
 Full reasoning behind each choice in [`docs/00-architecture/design-decisions.md`](docs/00-architecture/design-decisions.md).
 
-## Roadmap
-
-| Phase                                |  Content                                            |
-| ------------------------------------ |-------------------------------------------------- |
-| 0 — Design and prerequisites         | Diagram, decisions, checklist                      |
-| 1 — Base infrastructure              | pfSense, AD, Windows and Linux endpoints           |
-| 2 — SOC stack                        | Wazuh Manager + Indexer + Dashboard, Suricata      |
-| 3 — Adversary                        | Kali Linux + offensive toolkit                     |
-| 4 — Attack scenarios and detection   | Execution, detection, tuning, incident report      |
-
 ## Planned attack scenarios
 
 Each scenario includes: attack execution, observed detection, custom detection rule (where the native one isn't enough), and an L1-format incident report.
