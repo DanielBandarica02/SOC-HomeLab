@@ -131,7 +131,10 @@ SOC-HomeLab/
     │   ├── Rule-100015-SSH-Brute-Force.md 
     │   ├── Rule-100016-Brute-Force-Successful-Login.md
     │   ├── Rule-100016-Brute-Force-Successful-Login.md
-    │   └── Rule-100017-Credential-Files-Access.md
+    │   ├── Rule-100017-Credential-Files-Access.md
+    │   ├── Rule-100018-Cron-Configuration-Modification.md
+    │   ├── Rule-100019-SSH-Authorized-Keys-Modification.md
+    │   └── Rule-100020-Discover-Command-Sequence-Detection.md
     └── 06-incident-reports/
 ```
 
