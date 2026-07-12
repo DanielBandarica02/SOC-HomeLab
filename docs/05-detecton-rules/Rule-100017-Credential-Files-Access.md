@@ -52,10 +52,11 @@ Not applicable — this rule fires per matched event. Every access to a watched 
  
 ### Prerequisite — auditd watch configuration
  
-The following watch rules must be deployed on each Linux host under detection. Create `/etc/audit/rules.d/credential-access.rules`:
+The following watch rules must be deployed on each Linux host under detection. 
  
 ```bash
-sudo tee /etc/audit/rules.d/credential-access.rules > /dev/null <<'EOF'
+/etc/audit/rules.d/credential-access.rules
+
 # Watch sensitive credential files for read access
 -w /home/arodriguez/.env -p r -k env_file_access
 -w /home/arodriguez/notes.txt -p r -k notes_file_access
@@ -63,20 +64,13 @@ sudo tee /etc/audit/rules.d/credential-access.rules > /dev/null <<'EOF'
  
 # Watch SSH directory for read 
 -w /home/arodriguez/.ssh/ -p r -k ssh_dir_access
-EOF
-```
- 
-Load the rules:
- 
-```bash
-sudo augenrules --load
-sudo auditctl -l | grep -E "env_file|notes_file|bash_history|ssh_dir"
 ```
  
 Notes on the watch configuration:
 - `-p r` enables read-only monitoring (sufficient for credential harvest detection).
 - The keys (`env_file_access`, etc.) are the pivotal field that the Wazuh rule filters on. Distinct keys per path enable dashboard drill-down and per-artefact reporting.
 - In production environments, watches would be applied to all user home directories with pattern-based rules (`-w /home/*/`) rather than named users. The named-user approach is used here to match the lab's fixed user set.
+
 ### Wazuh Rule (XML)
  
 ```xml
