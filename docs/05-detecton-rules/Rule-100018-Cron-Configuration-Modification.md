@@ -38,7 +38,7 @@ The auditd approach is more robust than parsing `/var/log/cron.log` because it o
 - Required fields: `audit.key`, `audit.exe`, `audit.file.name`, `audit.uid`
 - Prerequisites:
   - auditd installed and running
-  - Cron path watches deployed in `/etc/audit/rules.d/persistence-detection.rules` (see Implementation section)
+  - Cron path watches deployed in `/etc/audit/rules.d/persistence-detection.rules` 
   - Wazuh Linux agent configured with audit log ingestion
   - Wazuh built-in ruleset group `audit` operational
   
@@ -56,7 +56,8 @@ Not applicable — this rule fires per matched event. Every cron modification ge
 Deploy the following watch rules on each Linux host under detection. 
  
 ```bash
-sudo tee /etc/audit/rules.d/persistence-detection.rules > /dev/null <<'EOF'
+/etc/audit/rules.d/persistence-detection.rules
+
 # Watch cron directories and files for any modification
 -w /var/spool/cron/ -p wa -k cron_modification
 -w /etc/crontab -p wa -k cron_modification
@@ -65,7 +66,7 @@ sudo tee /etc/audit/rules.d/persistence-detection.rules > /dev/null <<'EOF'
 -w /etc/cron.daily/ -p wa -k cron_modification
 -w /etc/cron.weekly/ -p wa -k cron_modification
 -w /etc/cron.monthly/ -p wa -k cron_modification
-EOF
+
 ```
 
 Notes on the watch configuration:
