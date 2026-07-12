@@ -53,11 +53,11 @@ Not applicable — this rule fires per matched event. Every modification of the 
 Add the following watch to `/etc/audit/rules.d/credential-access.rules` (the same file used by rule 100017):
  
 ```bash
-sudo tee -a /etc/audit/rules.d/credential-access.rules > /dev/null <<'EOF'
+/etc/audit/rules.d/credential-access.rules
  
 # Watch SSH authorized_keys file specifically for write (persistence detection)
 -w /home/arodriguez/.ssh/authorized_keys -p wa -k authorized_keys_write
-EOF
+
 ```
 
 ### Wazuh Rule (XML)
