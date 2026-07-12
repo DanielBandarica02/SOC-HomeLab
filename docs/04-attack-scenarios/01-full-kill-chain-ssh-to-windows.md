@@ -459,8 +459,7 @@ The attack scenario triggered multiple events, resulting in 40,038 total alerts 
 | 100017   | Credential file access             | Credential Access |
 | 100018    | Reverse shell in cron             | Persistence       |
 | 100019  | SSH authorized_keys modification    | Persistence       |
-| 100020  | Auth success from adversary VLAN    | Initial Access    |
-| 100021  | Discovery command sequence          | Discovery         |
+| 100020  | Discovery command sequence          | Discovery         |
 
 ---
 
