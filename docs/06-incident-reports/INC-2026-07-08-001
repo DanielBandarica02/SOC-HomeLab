@@ -1,1 +1,89 @@
-
+# Incident Report: INC-2026-07-08-001 — Full Kill Chain Compromise of VLAN Dev
+ 
+---
+ 
+## 1. Executive Summary
+ 
+On July 8, 2026, a critical-severity intrusion was detected targeting workstations in the Development VLAN (VLAN 20). The attack originated from the adversary DMZ (VLAN 66) and resulted in the compromise of user account `arodriguez` on host `ws-dev-02`, followed by lateral movement to a second workstation (`WS-DEV-01`) using credentials harvested from the initial foothold.
+ 
+The attacker progressed through reconnaissance, credential harvest, lateral movement, and persistence phases over an approximately 120-minute window. Compromised assets include the `arodriguez` account credentials on ws-dev-02, a private SSH key granting access to WS-DEV-01, and credential material from environment configuration files. Persistence was established on both compromised hosts via cron entries and SSH authorized_keys modifications.
+ 
+The incident was contained by isolating the affected hosts, rotating compromised credentials, and removing the persistence artefacts. Post-incident detection engineering work produced ten custom Wazuh rules mapped to the observed MITRE ATT&CK techniques; these rules were validated against replayed attack telemetry and would have detected the intrusion at significantly earlier stages, materially reducing the observed dwell time. Full recommendations for infrastructure, detection, and response process improvements are detailed in Section 10.
+ 
+---
+ 
+## 2. Incident Metadata
+ 
+| Field | Value |
+|-------|-------|
+| Incident ID | INC-2026-07-08-001 |
+| Severity | Critical |
+| Incident type | Unauthorized Access — Credential Compromise |
+| Status | Eradicated |
+| Confidence | High |
+| Reporter | Daniel Bandarica (SOC L1 Analyst) |
+| Report date | 2026-07-09 |
+| Detection date/time | 2026-07-08 15:12 CEST |
+| Containment date/time | 2026-07-08 17:00 CEST |
+| Eradication date/time | 2026-07-08 18:30 CEST |
+| Dwell time | 2 hours 12 minutes |
+| Attacker source | Adversary DMZ — 10.10.66.10 (VLAN 66) |
+| Assets affected | ws-dev-02 (10.10.20.20), WS-DEV-01 (10.10.20.10) |
+| Users affected | arodriguez (compromised on ws-dev-02), khernandez (impersonated on WS-DEV-01) |
+| Data affected | Credential material (SSH keys, database credentials, application secrets) |
+| MITRE tactics observed | Reconnaissance (TA0043), Initial Access (TA0001), Persistence (TA0003), Credential Access (TA0006), Discovery (TA0007), Lateral Movement (TA0008) |
+| MITRE techniques observed | 13 techniques across 6 tactics (see Section 4: Attack Chain Analysis for details) |
+ 
+---
+ 
+## 3. Timeline of Events
+ 
+*Section pending.*
+ 
+---
+ 
+## 4. Attack Chain Analysis
+ 
+*Section pending.*
+ 
+---
+ 
+## 5. Detection Analysis
+ 
+*Section pending.*
+ 
+---
+ 
+## 6. Impact Assessment
+ 
+*Section pending.*
+ 
+---
+ 
+## 7. Response Actions
+ 
+*Section pending.*
+ 
+---
+ 
+## 8. Root Cause Analysis
+ 
+*Section pending.*
+ 
+---
+ 
+## 9. Lessons Learned
+ 
+*Section pending.*
+ 
+---
+ 
+## 10. Recommendations
+ 
+*Section pending.*
+ 
+---
+ 
+## 11. Appendices
+ 
+*Section pending.*
