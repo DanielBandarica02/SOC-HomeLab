@@ -39,13 +39,14 @@ Full reasoning behind each choice in [`docs/00-architecture/design-decisions.md`
 
 Each scenario includes: attack execution, observed detection, custom detection rule (where the native one isn't enough), and an L1-format incident report.
 
-| #  | Technique                              | MITRE ATT&CK |
-| -- | -------------------------------------- | ------------ |
-| 01 | Network reconnaissance                 | T1046        | 
-| 02 | Phishing with macro payload            | T1566.001    |
-| 03 | Lateral movement via SMB / RDP         | T1021.002    |
-| 04 | Credential dumping (LSASS)             | T1003.001    | 
-| 05 | Exfiltration over alternative channel  | T1048        |
+| #  | Scenario                                     | 
+| -- | -------------------------------------------- | 
+| 01 | Full kill chain against Dev workstation      | 
+| 02 | Phishing with macro payload and C2 callback  | 
+| 03 | Active Directory attack chain                | 
+| 04 | Lateral movement via SMB and RDP             | 
+| 05 | Ransomware simulation with impact detection  | 
+| 06 | Data exfiltration over alternative channel   | 
 
 As I continue my cybersecurity journey, new attack methods and techniques will be added to this homelab.
 
