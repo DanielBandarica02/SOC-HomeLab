@@ -26,12 +26,13 @@ A course teaches you to use tools. This lab forces me to use them in a system I 
 
 ![SOC HomeLab Architecture](docs/00-architecture/architecture.svg)
 
-| Segment  | CIDR           | Purpose                                    |
-| -------- | -------------- | ------------------------------------------ |
-| VLAN 10  | 10.10.10.0/24  | Corporate domain (AD DC + workstation)     |
-| VLAN 20  | 10.10.20.0/24  | Software Development (Windows + Ubuntu)    |
-| VLAN 66  | 10.10.66.0/24  | Attacker DMZ (Kali Linux)                  |
-| VLAN 99  | 10.10.99.0/24  | SOC Management (Wazuh all-in-one)          |
+| Segment  | CIDR           | Purpose                                           |
+| -------- | -------------- | ------------------------------------------------- |
+| VLAN 10  | 10.10.10.0/24  | Corporate domain (AD DC + workstation)            |
+| VLAN 20  | 10.10.20.0/24  | Software Development (Windows + Ubuntu)           |
+| VLAN 66  | 10.10.66.0/24  | Attacker DMZ (Kali Linux)                         |
+| VLAN 99  | 10.10.99.0/24  | SOC Management (Wazuh SIEM + TheHive/Cortex/MISP) |
+
 
 Full reasoning behind each choice in [`docs/00-architecture/design-decisions.md`](docs/00-architecture/design-decisions.md).
 
