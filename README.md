@@ -136,8 +136,9 @@ SOC-HomeLab/
     │   ├── Rule-100018-Cron-Configuration-Modification.md
     │   ├── Rule-100019-SSH-Authorized-Keys-Modification.md
     │   └── Rule-100020-Discover-Command-Sequence-Detection.md 
-    └──  06-incident-reports/
-        └── INC-2026-07-08-001.md
+    ├── 06-incident-reports/
+    │   └── INC-2026-07-08-001.md
+    └── 07-soc-platform/                                                                <---- Working on updates to improve the HomeLab
 
 ```
 
