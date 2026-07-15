@@ -80,7 +80,7 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 
 ##  Project Phases
 
-The lab is structured in six sequential phases, each building on the previous one and documented in its own directory under `docs/`.
+The lab is structured in seven sequential phases, each building on the previous one and documented in its own directory under `docs/`.
 
 ### Phase 1 — Infrastructure 
 Network foundation: pfSense firewall, VLAN segmentation (Corp, Dev, SOC, MGMT, Adversary DMZ), inter-VLAN routing policies with default-deny between trust zones, and OpenVPN remote access for the Corp environment.
