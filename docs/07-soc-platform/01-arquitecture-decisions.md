@@ -23,7 +23,7 @@ The Phase 7 stack consists of four tools deployed across two hosts.
  
 **Suricata** — Network-based Intrusion Detection System (IDS). Deployed as a native pfSense package with sensors on the Corp, Dev, and Adversary DMZ VLANs. Suricata inspects network traffic at packet level, matches against the Emerging Threats Open ruleset, and generates EVE JSON alerts that are consumed by the Wazuh Agent installed on pfSense. Suricata operates in Legacy Mode (IDS-only, no packet blocking) to preserve the attack traffic for detection engineering documentation.
  
-### On a new dedicated VM (`soc-platform`, 10.10.99.20)
+### On a new dedicated VM (soc-platform, 10.10.99.20)
  
 **TheHive** — Security incident response platform providing case management, task tracking, and observable management. Wazuh alerts of severity level 10 or higher trigger the automatic creation of a TheHive case via webhook integration. TheHive is deployed as the entry point for the response layer of the SOC.
  
