@@ -114,4 +114,5 @@ Phase 7 extends the lab with the tooling that turns a SIEM-only environment into
 - **A SOC analyst's job doesn't end at the SIEM dashboard.** In a production SOC, a relevant alert triggers case creation, gets enriched with WHOIS / VirusTotal / MISP context, and is worked through to closure. Documenting only the detection side leaves the L1 role portrait incomplete. Adding TheHive + Cortex + MISP reproduces the flow that a real L1 executes every day.
 - **Network-based detection complements host-based detection.** Wazuh + Sysmon + Auditd cover the endpoint layer well. Suricata adds signature-based visibility over the traffic itself — port scans, exploitation attempts on the wire, C2 patterns — which the host agents can miss when the payload never lands on disk. Combining EDR/SIEM with NDR is a standard defence-in-depth pattern in real SOCs.
 
+**As my knowledge keeps growing, more updates will come out.**
 
