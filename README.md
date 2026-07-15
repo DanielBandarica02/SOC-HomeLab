@@ -53,12 +53,17 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 
 ## Tech stack
 
-- **Perimeter:** pfSense CE · Suricata IDS · OpenVPN
+- **Perimeter:** pfSense CE · OpenVPN
+- **Network detection:** Suricata IDS on pfSense (ET Open ruleset)
 - **Identity:** Active Directory (Windows Server 2022)
 - **Endpoints:** Windows 11 Pro · Ubuntu Desktop 24.04
 - **SIEM / EDR:** Wazuh Manager + Indexer + Dashboard (all-in-one)
 - **Endpoint telemetry:** Sysmon (Windows) · Auditd (Linux)
-- **Adversary:** Kali Linux + toolkit 
+- **Case management:** TheHive
+- **Analysis / enrichment:** Cortex
+- **Threat intelligence:** MISP
+- **Containerization:** Docker · Docker Compose
+- **Adversary:** Kali Linux + toolkit
 - **Virtualization:** Oracle VirtualBox
 
 ## Capabilities Demonstrated
@@ -66,9 +71,12 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 - **Network architecture** — VLAN design, firewall policy, inter-segment routing, perimeter detection
 - **SOC operations** — out-of-band management, telemetry pipelines, log forwarding, HEC integration
 - **Detection engineering** — custom rule development, MITRE ATT&CK mapping, atomic testing, threshold calibration
+- **Network intrusion detection** — Suricata deployment, ruleset selection, IDS-to-SIEM integration
 - **Blue Team operations** — alert triage, incident investigation, forensic timeline reconstruction
 - **Purple Team workflow** — offensive simulation feeding detection improvement
-- **Documentation** — professional technical writing, decision rationale, reproducible deployment procedures
+- **Incident response** — case management workflow, IoC enrichment, threat intelligence lookup
+- **Threat intelligence** — feed aggregation, IoC contextualization, MISP platform operations
+- **Container operations** — Docker Compose deployment, multi-service stack orchestration
 
 ##  Project Phases
 
@@ -97,6 +105,10 @@ Custom Wazuh detection rules developed to close coverage gaps identified during 
 ### Phase 6 — Incident Reports 
 Post-incident analytical reports written from the SOC L1 analyst perspective. Each report documents timeline, telemetry sources correlated, root cause analysis, and lessons learned for a specific scenario.
  `docs/06-incident-reports/`
+
+### Phase 7 — SOC Platform
+Extension of the SIEM-only environment into a complete SOC platform combining network intrusion detection and response tooling. **Suricata** deployed as a native pfSense package with sensors on VLANs 10, 20 and 66, integrated with Wazuh via EVE JSON output. **TheHive** deployed as case management platform, with **Cortex** as analysis engine and **MISP** as threat intelligence platform, all containerized via Docker Compose on a dedicated `soc-platform` VM (10.10.99.20) under the SOC Management VLAN. 
+ `docs/07-soc-platform/`
 
 ## Repository structure
 
