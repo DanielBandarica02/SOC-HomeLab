@@ -92,3 +92,26 @@ Benefits:
 - Tunnel subnet: `10.10.50.0/24` (logical overlay handled by pfSense + OpenVPN; not a VirtualBox Internal Network).
 - Pushed route to clients: `10.10.20.0/24`.
 - Firewall rules on pfSense restrict tunnel clients to specific services on VLAN 20 (RDP `3389`, SSH `22`). I configure these manually as the lab evolves rather than locking them in upfront.
+
+## Updates
+
+This section captures decisions taken after the initial end-to-end lab was complete.
+
+### Phase 7: Extending to a complete SOC platform
+
+Phases 1 to 6 delivered a working end-to-end detection engineering loop: segmented infrastructure, Wazuh SIEM with custom rules, an adversary environment, a full kill-chain attack scenario, ten MITRE-mapped detection rules, and an L1-level incident report. That closed the fundamentals loop for a junior SOC portfolio.
+
+Phase 7 extends the lab with the tooling that turns a SIEM-only environment into a complete SOC platform:
+
+- **Suricata** as network IDS deployed as a native pfSense package on VLANs 10, 20 and 66.
+- **TheHive** as case management platform, running in Docker on a new dedicated VM (`soc-platform`, 10.10.99.20).
+- **Cortex** as automated analysis engine alongside TheHive, providing IoC enrichment via analyzers.
+- **MISP** as threat intelligence platform on the same Docker host, feeding IoC context back to Cortex.
+
+**Why now and not from day one:**
+
+- **Detection has to exist before response tooling makes sense.** A case management platform with no meaningful alerts turns into an empty backlog. TheHive without Wazuh producing quality signals would be shelfware. Deploying it now, on top of the ten custom rules from Phase 5, means every case that lands there has real content behind it.
+- **A SOC analyst's job doesn't end at the SIEM dashboard.** In a production SOC, a relevant alert triggers case creation, gets enriched with WHOIS / VirusTotal / MISP context, and is worked through to closure. Documenting only the detection side leaves the L1 role portrait incomplete. Adding TheHive + Cortex + MISP reproduces the flow that a real L1 executes every day.
+- **Network-based detection complements host-based detection.** Wazuh + Sysmon + Auditd cover the endpoint layer well. Suricata adds signature-based visibility over the traffic itself — port scans, exploitation attempts on the wire, C2 patterns — which the host agents can miss when the payload never lands on disk. Combining EDR/SIEM with NDR is a standard defence-in-depth pattern in real SOCs.
+
+
