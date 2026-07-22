@@ -178,8 +178,6 @@ RDP ports are enabled on both OS, SSH port is enabled only on Linux, Linux and W
 
 ![Brute Force RDP Validation](../../screenshots/01-adversary-environment/07-brute-force-3389-RDP-validation.png)
 
-![Brute Force SSH Validation](../../screenshots/01-adversary-environment/08-brute-force-22-SSH-validation.png)
-
 All three responded `open`, confirming Vector 2 outbound is enabled.
 
 ### Denied paths 
