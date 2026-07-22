@@ -107,7 +107,7 @@ Post-incident analytical reports written from the SOC L1 analyst perspective. Ea
  `docs/06-incident-reports/`
 
 ### Phase 7 — SOC Platform
-Extension of the SIEM-only environment into a complete SOC platform combining network intrusion detection and response tooling. **Suricata** deployed as a native pfSense package with sensors on VLANs 10, 20 and 66, integrated with Wazuh via EVE JSON output. **TheHive** deployed as case management platform, with **Cortex** as analysis engine and **MISP** as threat intelligence platform, all containerized via Docker Compose on a dedicated `soc-platform` VM (10.10.99.20) under the SOC Management VLAN. 
+Extension of the SIEM-only environment into a complete SOC platform combining network intrusion detection and response tooling. Suricata deployed as a native pfSense package with sensors on VLANs 10, 20 and 66, integrated with Wazuh via EVE JSON output. TheHive deployed as case management platform, with Cortex as analysis engine and MISP as threat intelligence platform, all containerized via Docker Compose on a dedicated `soc-platform` VM (10.10.99.20) under the SOC Management VLAN. 
  `docs/07-soc-platform/`
 
 ## Repository structure
