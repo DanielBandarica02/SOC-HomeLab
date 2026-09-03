@@ -93,14 +93,13 @@ Total additional resource footprint for Phase 7: approximately **10 GB RAM, 60 G
  
 The Phase 7 deployment is broken into sequential steps. Each step produces a functional milestone that can be validated independently before proceeding.
  
-**Step 1 — soc-platform VM and Docker infrastructure**
-Provision the `soc-platform` VM on VLAN 99 (10.10.99.20). Deploy Ubuntu Server 24.04 LTS. Install Docker Engine and Docker Compose. Validate connectivity to the Wazuh Manager and to external networks.
+**Step 1 — soc-platform VM and Docker infrastructure** Provision the `soc-platform` VM on VLAN 99 (10.10.99.20). Deploy Ubuntu Server 24.04 LTS. Install Docker Engine and Docker Compose. Validate connectivity to the Wazuh Manager and to external networks.
  
-**Step 2 — TheHive and Cortex deployment**
-Deploy TheHive, Cortex, Cassandra, Elasticsearch, and MinIO via a single Docker Compose file. Complete initial configuration (admin accounts, organisation, API integration between TheHive and Cortex). Enable a baseline Cortex analyzer. Verify by creating a test case and running an analyzer against an observable.
+**Step 2 — TheHive and Cortex deployment** Deploy TheHive, Cortex, Cassandra, Elasticsearch, and MinIO via a single Docker Compose file. Complete initial configuration (admin accounts, organisation, API integration between TheHive and Cortex). Enable a baseline Cortex analyzer. Verify by creating a test case and running an analyzer against an observable.
  
-**Step 3 — Wazuh-to-TheHive integration**
-Configure the Wazuh Integrator to send alerts of level ≥ 10 as webhooks to TheHive, producing automatic case creation. Validate with a replay of a Phase 4 attack scenario: Wazuh alert → TheHive case → Cortex enrichment.
+**Step 3 — Cortex analyzers (external enrichment)** Register with the external intelligence services (VirusTotal, AbuseIPDB, and others with a usable free tier), obtain their API keys, and configure the corresponding Cortex analyzers. Validate each analyzer against a known indicator.
+ 
+**Step 4 — Wazuh-to-TheHive integration** Configure the Wazuh Integrator to send alerts of level ≥ 10 as webhooks to TheHive, producing automatic case creation. Validate with a replay of a Phase 4 attack scenario: Wazuh alert → TheHive case → Cortex enrichment.
  
 ---
 
