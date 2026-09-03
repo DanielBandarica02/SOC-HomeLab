@@ -87,9 +87,9 @@ The Phase 7 stack introduces the following resource requirements on the homelab 
 | Component | RAM | Disk | CPU | Notes |
 |-----------|-----|------|-----|-------|
 | soc-platform VM (new) | 10 GB | 60 GB | 4 vCPU | Hosts Docker with TheHive, Cortex, MISP and their backends |
-| Docker: TheHive + Cassandra + Elasticsearch + MinIO | ~4 GB of the total | 20 GB | Shared | Cassandra, Elasticsearch and MinIO are backends for TheHive |
-| Docker: Cortex | ~1 GB of the total | 5 GB | Shared | Analysis engine (runs analyzers as containers) |
-| Docker: MISP + MariaDB + Redis | ~3 GB of the total | 20 GB | Shared | Includes MISP dependencies |
+| Docker: TheHive + Cassandra + Elasticsearch + MinIO | 4 GB | 20 GB | Shared | Cassandra, Elasticsearch and MinIO are backends for TheHive |
+| Docker: Cortex | 1 GB | 5 GB | Shared | Analysis engine (runs analyzers as containers) |
+| Docker: MISP + MariaDB + Redis | 3 GB  | 20 GB | Shared | Includes MISP dependencies |
  
 Total additional resource footprint for Phase 7: approximately **10 GB RAM, 60 GB disk, 4 vCPU**, comfortably accommodated on a 32 GB host.
  
