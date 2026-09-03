@@ -190,8 +190,8 @@ While configuring Cortex, the Analyzers management view could not be found. The 
  
 ---
  
-*Previous: [Phase 7 — Architecture](00-architecture.md)*
-*Next: Phase 7 — Part 2: MISP Deployment (`02-misp-deployment.md`)*
+*Previous: [Phase 7 — Architecture](01-architecture.md)*
+*Next: [Phase 7 — Part 2: MISP Deployment](03-misp-deployment.md)*
 
 
 
