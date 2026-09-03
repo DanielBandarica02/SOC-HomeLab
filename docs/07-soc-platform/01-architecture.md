@@ -48,7 +48,7 @@ flowchart TB
     subgraph vlan99[VLAN 99 — SOC]
         wazuhsrv[wazuh-srv<br/>10.10.99.10<br/>Wazuh Manager + Indexer + Dashboard]
         socplatform[soc-platform<br/>10.10.99.20<br/>Docker Host]
-        subgraph docker
+        subgraph 
             thehive[TheHive]
             cortex[Cortex]
             misp[MISP]
