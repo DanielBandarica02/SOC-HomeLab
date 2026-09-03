@@ -33,7 +33,7 @@ flowchart TB
     cortex -.->|"runs analyzers<br/>as containers"| dockersock["/var/run/docker.sock"]
 ```
  
-All five containers share a single Docker bridge network (`soc-net`), so services address each other by name (`cortex`, `cassandra`, `elasticsearch`) rather than by IP. TheHive is the operational entry point on port 9000; Cortex sits behind it on 9001, invoked over its API. Cassandra, Elasticsearch, and MinIO are backing stores that TheHive requires and that an analyst never touches directly. The dashed webhook from Wazuh is the integration that closes the loop between detection and response — it is documented and deployed in a later part; here the platform is built and validated in isolation so that any fault is attributable to the platform itself, not to the integration.
+All five containers share a single Docker bridge network, so services address each other by name (`cortex`, `cassandra`, `elasticsearch`) rather than by IP. TheHive is the operational entry point on port 9000; Cortex sits behind it on 9001, invoked over its API. Cassandra, Elasticsearch, and MinIO are backing stores that TheHive requires and that an analyst never touches directly. The dashed webhook from Wazuh is the integration that closes the loop between detection and response, it is documented and deployed in a later part; here the platform is built and validated in isolation so that any fault is attributable to the platform itself, not to the integration.
  
 ---
  
@@ -47,11 +47,11 @@ All five containers share a single Docker bridge network (`soc-net`), so service
 | OS | Ubuntu Server 24.04 LTS |
 | RAM | 10 GB |
 | CPU | 4 vCPUs |
-| Disk | 60 GB (dynamically allocated) |
+| Disk | 60 GB |
 | Network | Internal Network (VLAN 99) |
 | Static IP | 10.10.99.20 |
 | Gateway | 10.10.99.1 (pfSense VLAN99) |
  
-The VM was placed on VLAN 99 alongside the existing Wazuh host. Before any container was deployed, connectivity was validated in both directions that matter: reachability to the Wazuh Manager (`10.10.99.10`, required for the future webhook) and reachability to external networks (required to pull container images and to let Cortex analyzers query online services).
+The VM was placed on VLAN 99 alongside the existing Wazuh host. Before any container was deployed, connectivity was validated in both directions that matter: reachability to the Wazuh Manager (`10.10.99.10`) and reachability to external networks (required to pull container images and to let Cortex analyzers query online services).
  
 ![soc-platform network validation](../../screenshots/07-soc-platform/01-network-validation.png)
