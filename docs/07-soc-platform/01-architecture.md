@@ -45,10 +45,6 @@ flowchart TB
         wsdev02[ws-dev-02<br/>10.10.20.20]
     end
  
-    subgraph pfsense[pfSense — Perimeter]
-        fw[Firewall + filterlog]
-    end
- 
     subgraph vlan99[VLAN 99 — SOC]
         wazuhsrv[wazuh-srv<br/>10.10.99.10<br/>Wazuh Manager + Indexer + Dashboard]
         socplatform[soc-platform<br/>10.10.99.20<br/>Docker Host]
@@ -63,7 +59,6 @@ flowchart TB
     kali -.->|attack traffic| vlan20
     vlan10 -->|logs via agent| wazuhsrv
     vlan20 -->|logs via agent| wazuhsrv
-    pfsense -->|filterlog via syslog| wazuhsrv
     wazuhsrv -->|webhook on level >= 10| thehive
     thehive -->|analyzer requests| cortex
     cortex -->|IoC lookups| misp
