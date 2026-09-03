@@ -23,8 +23,6 @@ The Phase 7 stack consists of three tools deployed as Docker containers on a new
  
 **Cortex** — Analysis and enrichment engine that integrates with TheHive. Cortex hosts analyzers (IP geolocation, WHOIS, VirusTotal, AbuseIPDB, MISP lookup, and others) that are invoked from TheHive cases to enrich observables automatically. Cortex is deployed alongside TheHive as part of the StrangeBee ecosystem.
  
-**MISP** — Malware Information Sharing Platform for threat intelligence management. MISP aggregates IoC feeds from public sources (CIRCL, Botvrij, Malware Bazaar) and provides context lookup for observables surfaced during case investigation. MISP integrates with Cortex as an analyzer target, allowing cases to enrich their IoCs with threat intelligence context automatically.
- 
 ---
  
 ## Architecture diagram
@@ -51,7 +49,6 @@ flowchart TB
         subgraph docker
             thehive[TheHive]
             cortex[Cortex]
-            misp[MISP]
         end
     end
  
@@ -61,7 +58,6 @@ flowchart TB
     vlan20 -->|logs via agent| wazuhsrv
     wazuhsrv -->|webhook on level >= 10| thehive
     thehive -->|analyzer requests| cortex
-    cortex -->|IoC lookups| misp
 ```
  
 ---
@@ -74,8 +70,7 @@ The Phase 7 stack implements the following end-to-end workflow for a typical ale
 2. **Wazuh Manager processes the events** and applies both built-in rules and the custom detection rules developed in Phase 5.
 3. **Alerts of severity level 10 or higher trigger a webhook** to TheHive on the `soc-platform` VM (10.10.99.20). TheHive automatically creates a new case containing the alert data and observables.
 4. **Analyst reviews the case in TheHive**. From the case interface, the analyst can invoke Cortex analyzers against the case observables (IPs, domains, hashes, URLs).
-5. **Cortex executes the requested analyzers**, some of which query MISP for threat intelligence context. Results are returned to TheHive and attached to the case.
-6. **Analyst uses the enriched context** to decide response actions (containment, escalation, closure).
+5. **Analyst uses the enriched context** to decide response actions (containment, escalation, closure).
 This flow represents the operational workflow that a SOC L1/L2 analyst executes for each significant alert in a production environment.
  
 ---
@@ -86,10 +81,9 @@ The Phase 7 stack introduces the following resource requirements on the homelab 
  
 | Component | RAM | Disk | CPU | Notes |
 |-----------|-----|------|-----|-------|
-| soc-platform VM (new) | 10 GB | 60 GB | 4 vCPU | Hosts Docker with TheHive, Cortex, MISP and their backends |
+| soc-platform VM (new) | 10 GB | 60 GB | 4 vCPU | Hosts Docker with TheHive, Cortex |
 | Docker: TheHive + Cassandra + Elasticsearch + MinIO | 4 GB | 20 GB | Shared | Cassandra, Elasticsearch and MinIO are backends for TheHive |
 | Docker: Cortex | 1 GB | 5 GB | Shared | Analysis engine (runs analyzers as containers) |
-| Docker: MISP + MariaDB + Redis | 3 GB  | 20 GB | Shared | Includes MISP dependencies |
  
 Total additional resource footprint for Phase 7: approximately **10 GB RAM, 60 GB disk, 4 vCPU**, comfortably accommodated on a 32 GB host.
  
@@ -105,14 +99,8 @@ Provision the `soc-platform` VM on VLAN 99 (10.10.99.20). Deploy Ubuntu Server 2
 **Step 2 — TheHive and Cortex deployment**
 Deploy TheHive, Cortex, Cassandra, Elasticsearch, and MinIO via a single Docker Compose file. Complete initial configuration (admin accounts, organisation, API integration between TheHive and Cortex). Enable a baseline Cortex analyzer. Verify by creating a test case and running an analyzer against an observable.
  
-**Step 3 — MISP deployment**
-Deploy MISP, MariaDB, and Redis via a separate Docker Compose file (MISP has its own stack). Complete initial configuration (admin account, organisation, encryption keys). Enable public IoC feeds from CIRCL and Botvrij. Verify by importing feed data and querying an IoC.
- 
-**Step 4 — MISP integration with Cortex**
-Configure the MISP analyzer in Cortex so that observables in a TheHive case can be enriched with MISP threat intelligence context.
- 
-**Step 5 — Wazuh-to-TheHive integration**
-Configure the Wazuh Integrator to send alerts of level ≥ 10 as webhooks to TheHive, producing automatic case creation. Validate with a replay of a Phase 4 attack scenario: Wazuh alert → TheHive case → Cortex enrichment → MISP context lookup.
+**Step 3 — Wazuh-to-TheHive integration**
+Configure the Wazuh Integrator to send alerts of level ≥ 10 as webhooks to TheHive, producing automatic case creation. Validate with a replay of a Phase 4 attack scenario: Wazuh alert → TheHive case → Cortex enrichment.
  
 ---
 
