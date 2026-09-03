@@ -24,7 +24,7 @@ flowchart TB
             minio["MinIO<br/>attachments"]
         end
     end
-    wazuh -.->|"webhook · level ≥ 10<br/>(pending)"| thehive
+    wazuh -.->|"webhook · level ≥ 10<br/>"| thehive
     thehive -->|"analyzer requests<br/>API + bearer key"| cortex
     thehive --> cassandra
     thehive --> elastic
