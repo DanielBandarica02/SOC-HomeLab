@@ -36,7 +36,7 @@ Level 3 is deliberate, an alert on every firewall block would generate hundreds 
 
 ### Rule 100011 — VLAN 20 → VLAN 10 segmentation violation
 
-The specialization rule detects the specific case that matters most: a host in the Dev network attempting to reach the Corp network. This direction is the canonical **lateral movement** pattern — an attacker who has established a foothold in a less-trusted environment attempting to pivot toward more-valuable systems (Active Directory, DC01, corporate workstations).
+The specialization rule detects the specific case that matters most: a host in the Dev network attempting to reach the Corp network. This direction is the canonical **lateral movement** pattern, an attacker who has established a foothold in a less-trusted environment attempting to pivot toward more-valuable systems (Active Directory, DC01, corporate workstations).
 
 ![Custom Rule 2 - Firewall Block Informational](../../screenshots/05-soc-dashboard/04-custom-rule-2.png)
 
