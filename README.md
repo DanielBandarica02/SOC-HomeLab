@@ -1,6 +1,6 @@
 # SOC HomeLab — From Infrastructure to Incident Analysis
 
-> A personal Security Operations Center built from scratch in a fully segmented virtualized environment to build SOC L1 skill. The lab replicates a small enterprise architecture with corporate, development, attacker and SOC management VLANs, and is operated as a real SOC — including detection engineering, attack simulation, and incident response. 
+> A personal Security Operations Center built from scratch in a fully segmented virtualized environment to build SOC L1 skill. The lab replicates a small enterprise architecture with corporate, development, attacker and SOC management VLANs, and is operated as a real SOC, including detection engineering, attack simulation, and incident response. 
 
 ### Architectural Evolution
 
