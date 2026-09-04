@@ -8,9 +8,9 @@ Three Wazuh agents were deployed across the existing Windows endpoints — `DC01
 | ----------- | ----------- | ------------------------ | ------------------------------------------ |
 | DC01        | VLAN 10     | AD Domain Controller     | Generates the Kerberos / NTLM authentication events for the entire domain. Highest-value telemetry source in a Windows environment. |
 | WS-CORP-01  | VLAN 10     | AD member | Endpoint-level view of an authenticated corporate workstation. Receives GPO, talks to DC01, exposes typical user-driven activity. |
-| WS-DEV-01   | VLAN 20 | Workgroup | The contrast case — same agent technology, same dashboard, no AD involvement. Demonstrates that the SIEM is independent of the identity layer. |
+| WS-DEV-01   | VLAN 20 | Workgroup | The contrast case, same agent technology, same dashboard, no AD involvement. Demonstrates that the SIEM is independent of the identity layer. |
  
-After agent deployment, **Sysmon** was installed on all three hosts using the [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration. This transforms the data plane delivered to Wazuh: without Sysmon, the agent forwards only the native Security, System, and Application logs (essentially authentication and service events). With Sysmon, the same agent delivers process creation, network connections per process, registry modifications, file creation, image loads, and DNS queries — the telemetry that turns a SIEM into a EDR.
+After agent deployment, **Sysmon** was installed on all three hosts using the [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration. This transforms the data plane delivered to Wazuh: without Sysmon, the agent forwards only the native Security, System, and Application logs (essentially authentication and service events). With Sysmon, the same agent delivers process creation, network connections per process, registry modifications, file creation, image loads, and DNS queries, the telemetry that turns a SIEM into a EDR.
  
 ---
  
@@ -64,7 +64,7 @@ NET START WazuhSvc
 
 ![DC01 Agent Install](../../screenshots/02-windows-agent/02-dc01-agent-install.png)
  
-The `Invoke-WebRequest` step initially failed on DC01 with `The remote name could not be resolved: 'packages.wazuh.com'` — see Troubleshooting #2. After fixing DNS forwarders, the commands ran to completion and DC01 appeared in `Server Management → Agents` with status `Active`.
+The `Invoke-WebRequest` step initially failed on DC01 with `The remote name could not be resolved: 'packages.wazuh.com'`, see Troubleshooting #2. After fixing DNS forwarders, the commands ran to completion and DC01 appeared in `Server Management → Agents` with status `Active`.
 
 ![DC01 Agent Install Validation](../../screenshots/02-windows-agent/04-dc01-agent-install-validation.png)
  
@@ -125,7 +125,7 @@ To ensure logs are being actively generated, execute `Get-WinEvent -LogName 'Mic
  
 ### Wazuh agent — enabling the Sysmon channel in `ossec.conf`
  
-The agent forwards whatever event channels it is told to monitor — by default, that is `Security`, `System`, and `Application`. Sysmon writes to a separate channel (`Microsoft-Windows-Sysmon/Operational`) that must be added explicitly to the agent configuration.
+The agent forwards whatever event channels it is told to monitor, by default, that is `Security`, `System`, and `Application`. Sysmon writes to a separate channel (`Microsoft-Windows-Sysmon/Operational`) that must be added explicitly to the agent configuration.
  
 On each host, `C:\Program Files (x86)\ossec-agent\ossec.conf` was edited with Notepad running as Administrator. A new `<localfile>` block was added after the existing Security/System/Application blocks:
  
@@ -175,7 +175,7 @@ sudo ufw allow 1515/tcp comment 'Wazuh agent enrollment'
 sudo ufw status verbose
 ```
  
-**Lesson:** in a defense-in-depth network, the perimeter firewall (pfSense) and the host firewall (UFW) are independent control planes. A packet passing pfSense does not automatically pass UFW. Both must be coordinated explicitly. The order applied here — restrictive UFW baseline before Wazuh install, opening the Wazuh ports immediately after install verifies — is deliberate: it ensures no port is open during the brief window between OS hardening and SIEM installation when an attacker scanning the segment could find an exposed, unconfigured service.
+**Lesson:** in a defense-in-depth network, the perimeter firewall (pfSense) and the host firewall (UFW) are independent control planes. A packet passing pfSense does not automatically pass UFW. Both must be coordinated explicitly. The order applied here, restrictive UFW baseline before Wazuh install, opening the Wazuh ports immediately after install verifies, is deliberate: it ensures no port is open during the brief window between OS hardening and SIEM installation when an attacker scanning the segment could find an exposed, unconfigured service.
  
 ### 2. DC01 — DNS forwarders not configured for non-local lookups
  
@@ -187,7 +187,7 @@ The `Invoke-WebRequest https://packages.wazuh.com/...` step from DC01 failed wit
 | `nslookup dc01.soclab.local`                    | Resolves                        | Internal AD DNS operational     |
 | `nslookup packages.wazuh.com`                   | `Non-existent domain`           | No upstream DNS forwarding      |
  
-DC01 is the DNS server for `soclab.local`. After AD DS promotion in Phase 3, its own DNS service was set as the primary resolver for the host itself (so the DC can resolve its own domain records). For any name outside `soclab.local`, the DC's DNS service must forward to an upstream resolver — and no upstream was configured at promotion time.
+DC01 is the DNS server for `soclab.local`. After AD DS promotion in Phase 3, its own DNS service was set as the primary resolver for the host itself (so the DC can resolve its own domain records). For any name outside `soclab.local`, the DC's DNS service must forward to an upstream resolver, and no upstream was configured at promotion time.
  
 **Solution:** configure DNS forwarders on DC01's DNS Server pointing to pfSense (which itself forwards to public resolvers per the global config in Part 1).
  
