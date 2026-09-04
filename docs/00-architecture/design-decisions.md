@@ -10,13 +10,13 @@ An attacker sitting in my DMZ shouldn't see raw traffic from my corporate workst
 - Inspect traffic with Suricata.
 - Generate useful logs that flow into the SIEM.
 
-Without segmentation I lose visibility of the lateral movement I specifically want to detect — and a flat lab doesn't let me practice realistic incident reports.
+Without segmentation I lose visibility of the lateral movement I specifically want to detect, and a flat lab doesn't let me practice realistic incident reports.
 
 **Accepted trade-off:** higher initial configuration complexity.
 
 ## 2. Why Wazuh and not Splunk / pure ELK?
 
-- **Wazuh is one of the most-used open-source SIEMs** in junior and mid-tier environments — I want to learn the tool I'm most likely to touch in a real job.
+- **Wazuh is one of the most-used open-source SIEMs** in junior and mid-tier environments, I want to learn the tool I'm most likely to touch in a real job.
 - **All-in-one** (Manager + Indexer + Dashboard) fits in a single VM, which lowers infrastructure cost.
 - It combines **SIEM + EDR + FIM + vulnerability detection** in one package; covering this with pure ELK would force me to integrate several components by hand.
 - Rules are written in readable XML, not a proprietary DSL like SPL. The learning curve is transferable.
@@ -27,7 +27,7 @@ Splunk would be more "professional" but the free license is heavily capped, and 
 
 The Wazuh agent collects native OS logs. That's not enough for a real SOC:
 
-- On Windows, native events are verbose but limited — I don't see child processes with their command line, I don't see pipe creation, I don't see network connections per process.
+- On Windows, native events are verbose but limited, I don't see child processes with their command line, I don't see pipe creation, I don't see network connections per process.
 - **Sysmon** fills exactly those gaps, and Sysmon events are well covered by public detection rules (SwiftOnSecurity baseline config, Olaf Hartong's ruleset, MITRE mapping).
 - On Linux, **Auditd** gives me equivalent visibility over syscalls, executions, and modifications of sensitive files.
 
@@ -55,7 +55,7 @@ Pragmatic choice:
 
 **Trade-offs explicitly accepted:**
 
-- VirtualBox **doesn't support native 802.1Q VLAN tagging** the way Proxmox or ESXi do. The "VLANs" from the diagram are implemented in VirtualBox as separate **Internal Networks**. Functionally equivalent from pfSense's perspective (it remains the only router between them), but conceptually they're not real VLANs — they're hypervisor-level isolated networks.
+- VirtualBox **doesn't support native 802.1Q VLAN tagging** the way Proxmox or ESXi do. The "VLANs" from the diagram are implemented in VirtualBox as separate **Internal Networks**. Functionally equivalent from pfSense's perspective (it remains the only router between them), but conceptually they're not real VLANs, they're hypervisor-level isolated networks.
 - Lower performance than a Type-1 hypervisor.
 - More limited networking (no LACP, no SR-IOV, no 802.1Q trunks).
 
@@ -63,17 +63,17 @@ If I scale the lab later, I'll migrate to Proxmox and document the transition as
 
 ## 7. Why is the management VLAN (99) separated out-of-band?
 
-The Wazuh console **shouldn't be reachable from the segments where the monitored workloads run**. If an attacker compromises a workstation and finds the SIEM on the same subnet, the next logical step is to try to compromise it — to wipe their tracks or blind the analyst.
+The Wazuh console **shouldn't be reachable from the segments where the monitored workloads run**. If an attacker compromises a workstation and finds the SIEM on the same subnet, the next logical step is to try to compromise it, to wipe their tracks or blind the analyst.
 
 An out-of-band VLAN with strict rules (telemetry only inbound from agents on TCP 1514/1515, management only from my admin machine over HTTPS) shrinks that attack surface. It's a basic principle of SOC architecture and I want the lab to reflect it from day one.
 
 ## 8. Why OpenVPN as the bridge between VLAN 10 and VLAN 20?
 
-VLAN 10 (Corporate) and VLAN 20 (Software Development) are separate trust zones, but in a real company they're not isolated — corporate users (PMs, analysts, support) need to reach dev workstations to run RDP sessions, troubleshoot builds, or assist developers. Two ways to allow that crossing:
+VLAN 10 (Corporate) and VLAN 20 (Software Development) are separate trust zones, but in a real company they're not isolated, corporate users (PMs, analysts, support) need to reach dev workstations to run RDP sessions, troubleshoot builds, or assist developers. Two ways to allow that crossing:
 
 **Option A (rejected):** open a direct firewall rule allowing VLAN 10 → VLAN 20 on RDP / SSH. Simple, but:
 
-- Any compromised endpoint on VLAN 10 has automatic line-of-sight into dev — too generous.
+- Any compromised endpoint on VLAN 10 has automatic line-of-sight into dev, too generous.
 - No additional authentication layer beyond Windows credentials.
 - Hard to audit *who* crossed *when*.
 
@@ -84,7 +84,7 @@ Benefits:
 - **Defense in depth.** Even if a VLAN 10 host is compromised, the attacker still needs valid VPN credentials to pivot.
 - **Auditable.** pfSense logs every VPN connection (user, source IP, timestamp). Wazuh ingests those logs, creating a high-fidelity signal that's hard to bypass.
 - **Realistic enterprise pattern.** Controlled crossings between trust zones via authenticated tunnels are standard in segmented enterprise networks.
-- **Attack scenario opportunity.** "Compromised VPN credentials → unauthorized dev access" becomes a credible Phase 4 exercise — much more interesting than walking through an open firewall rule.
+- **Attack scenario opportunity.** "Compromised VPN credentials → unauthorized dev access" becomes a credible Phase 4 exercise, much more interesting than walking through an open firewall rule.
 
 **Implementation overview:**
 
@@ -112,9 +112,9 @@ When Phase 7 was first scoped, the response stack was going to be **TheHive + Co
 
 What MISP does, and why it looked like a fit. MISP is a threat-intelligence platform: it aggregates feeds of known-bad indicators (IPs, domains, hashes) and lets you look them up for context. In a real SOC, when an IP shows up in an alert, MISP tells you whether it's already tied to a known campaign. On paper it completes the "SOC stack" picture.
 
-Why it doesn't fit this lab. My attacks are generated by me, from Kali, using internal IPs (`10.10.66.10`) and payloads I build myself. None of that exists in any public threat-intelligence feed, because it isn't real malware circulating on the Internet. So if I enrich an IoC from my own scenarios against MISP, MISP has nothing to say about it — my "adversary" doesn't exist in any real-world threat database. In an Assume Breach lab with a simulated adversary, MISP has little to enrich organically.
+Why it doesn't fit this lab. My attacks are generated by me, from Kali, using internal IPs (`10.10.66.10`) and payloads I build myself. None of that exists in any public threat-intelligence feed, because it isn't real malware circulating on the Internet. So if I enrich an IoC from my own scenarios against MISP, MISP has nothing to say about it, my "adversary" doesn't exist in any real-world threat database. In an Assume Breach lab with a simulated adversary, MISP has little to enrich organically.
 
-What replaces it. Cortex already delivers threat-intelligence enrichment through analyzers that query established external services — VirusTotal, AbuseIPDB, Shodan, and others. These consult real threat intelligence directly, which is more useful in a lab than a self-hosted MISP I'd have to populate and maintain. The enrichment need — "give context to an IoC" — is met without MISP.
+What replaces it. Cortex already delivers threat-intelligence enrichment through analyzers that query established external services, VirusTotal, AbuseIPDB, Shodan, and others. These consult real threat intelligence directly, which is more useful in a lab than a self-hosted MISP I'd have to populate and maintain. The enrichment need, "give context to an IoC", is met without MISP.
 
 **Why now and not from day one:**
 
