@@ -20,7 +20,7 @@ The dashboard is built exclusively over `wazuh-alerts-*`, the index that holds o
  
 At the end of Part 4, pfSense telemetry was flowing to `wazuh-archives-*`: filterlog events, DHCP leases, OpenVPN sessions. None of these were reaching `wazuh-alerts-*` because Wazuh's built-in ruleset does not fire alerts on generic pfSense pass/block events by default. To make network telemetry actionable for a SOC L1, custom detection rules were needed that identify **specifically the network behaviors that matter** in this lab's threat model.
  
-The lab's segmentation architecture defines VLAN 20 (Dev) and VLAN 10 (Corp) as isolated trust zones. Cross-VLAN traffic is denied by default at pfSense. Any packet blocked between these VLANs is by definition a **policy violation** — either an attack (lateral movement attempt from a compromised host) or a misconfiguration (a service or user trying to reach an endpoint they shouldn't). Both are events a L1 analyst wants to see, but they should not be treated identically.
+The lab's segmentation architecture defines VLAN 20 (Dev) and VLAN 10 (Corp) as isolated trust zones. Cross-VLAN traffic is denied by default at pfSense. Any packet blocked between these VLANs is by definition a **policy violation**, either an attack (lateral movement attempt from a compromised host) or a misconfiguration (a service or user trying to reach an endpoint they shouldn't). Both are events a L1 analyst wants to see, but they should not be treated identically.
  
 Two custom rules were written to encode this logic.
 
@@ -32,7 +32,7 @@ The parent rule matches any pfSense event where the action is `block`. It fires 
 
 The `<decoded_as>pfsense-custom-header</decoded_as>` conditional ensures the rule only evaluates events already decoded by the custom decoder from Part 4 (the parent decoder that matches `filterlog[PID]:`). The `<match>block</match>` string check finds the word "block" in the raw event. Together they identify any pfSense-originated firewall block, regardless of source, destination, or protocol.
 
-Level 3 is deliberate — an alert on every firewall block would generate hundreds per hour in normal lab operation.
+Level 3 is deliberate, an alert on every firewall block would generate hundreds per hour in normal lab operation.
 
 ### Rule 100011 — VLAN 20 → VLAN 10 segmentation violation
 
@@ -54,7 +54,7 @@ A third rule (id 100012) covering VLAN 10 → VLAN 20 (Corp attempting to reach 
 
 ![Custom Rule 3 - Firewall Block Informational](../../screenshots/05-soc-dashboard/06-custom-rule-3.png)
 
-Note the differences from rule 100011: level 7 (Low-Medium instead of Medium-High), no MITRE mapping (the direction does not cleanly correspond to an ATT&CK technique), and description phrasing ("policy violation" vs "lateral movement"). This asymmetric severity is the encoded threat model — not every segmentation violation is equally suspicious.
+Note the differences from rule 100011: level 7 (Low-Medium instead of Medium-High), no MITRE mapping (the direction does not cleanly correspond to an ATT&CK technique), and description phrasing ("policy violation" vs "lateral movement"). This asymmetric severity is the encoded threat model, not every segmentation violation is equally suspicious.
 
 ## Dashboard visualizations
 
