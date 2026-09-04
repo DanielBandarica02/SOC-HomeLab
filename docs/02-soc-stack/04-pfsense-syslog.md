@@ -2,7 +2,7 @@
  
 ## Overview
  
-The fifth telemetry source of the SOC stack is `pfSense` itself. Adding pfSense as a syslog source transforms the SIEM from *endpoint-centric* to *endpoint+network*: firewall pass/block events, DHCP leases, OpenVPN session lifecycle, and system events all become searchable and correlatable alongside the four agents deployed in Parts 2 and 3. If an attacker compromises a monitored host and disables its Wazuh agent, the network-layer telemetry from pfSense still flows into the SIEM independently — telemetry survives the endpoint.
+The fifth telemetry source of the SOC stack is `pfSense` itself. Adding pfSense as a syslog source transforms the SIEM from *endpoint-centric* to *endpoint+network*: firewall pass/block events, DHCP leases, OpenVPN session lifecycle, and system events all become searchable and correlatable alongside the four agents deployed in Parts 2 and 3. If an attacker compromises a monitored host and disables its Wazuh agent, the network-layer telemetry from pfSense still flows into the SIEM independently, telemetry survives the endpoint.
  
 This document covers the syslog transport configuration UDP/514, the activation of Wazuh Archives for storing raw events beyond just alerts, the deployment of a custom decoder that extracts structured fields from filterlog messages, and the OpenSearch index pattern setup that surfaces the archived events in the dashboard.
  
