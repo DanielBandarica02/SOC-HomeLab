@@ -27,7 +27,7 @@
 
 ## VM resource allocation
  
-These are the per-VM allocations I'll configure in VirtualBox. The numbers below are the minimum I consider healthy under normal lab usage — running below this is possible but trades stability for headroom on the host.
+These are the per-VM allocations I'll configure in VirtualBox. The numbers below are the minimum I consider healthy under normal lab usage, running below this is possible but trades stability for headroom on the host.
  
 | VM                       | vCPU | RAM    | Disk    |
 | ------------------------ | :--: | :----: | :-----: |
@@ -53,7 +53,7 @@ Since VirtualBox doesn't implement 802.1Q VLAN tagging, I translate the diagram'
 | `internal-vlan66-dmz`   | VLAN 66 — Attacker DMZ        | pfSense · Kali                          |
 | `internal-vlan99-soc`   | VLAN 99 — SOC Management      | pfSense · Ubuntu-Server (Wazuh)         |
 
-**pfSense will have 5 network adapters:** one per Internal Network. It will be the only routing point between segments — exactly like a physical firewall in a real corporate network.
+**pfSense will have 5 network adapters:** one per Internal Network. It will be the only routing point between segments, exactly like a physical firewall in a real corporate network.
 
 ## IP map
 
@@ -75,7 +75,7 @@ Since VirtualBox doesn't implement 802.1Q VLAN tagging, I translate the diagram'
 | Resource         | Value              | Notes                                                                     |
 | ---------------- | ------------------ | ------------------------------------------------------------------------- |
 | Server endpoint  | `10.10.10.1:1194`  | pfSense, bound to the VLAN 10 gateway interface, UDP                       |
-| Client pool      | `10.10.50.0/24`    | Logical subnet — no VirtualBox Internal Network required                  |
+| Client pool      | `10.10.50.0/24`    | Logical subnet, no VirtualBox Internal Network required                  |
 | Pushed routes    | `10.10.20.0/24`    | Tunnel clients reach VLAN 20 through pfSense after authenticating         |
 | Allowed services | RDP 3389 · SSH 22  | Enforced by pfSense firewall rules on the OpenVPN interface (manual)      |
 
