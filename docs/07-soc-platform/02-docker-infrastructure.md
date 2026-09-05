@@ -191,7 +191,7 @@ While configuring Cortex, the Analyzers management view could not be found. The 
 ---
  
 *Previous: [Phase 7 — Architecture](01-architecture.md)*
-*Next: [Phase 7 — Part 2: MISP Deployment](03-cortex-analyzers.md)*
+*Next: [# Phase 7 — Part 2: Cortex Analyzers — External Enrichment](03-cortex-analyzers.md)*
 
 
 
