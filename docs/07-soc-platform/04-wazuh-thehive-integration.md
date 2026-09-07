@@ -132,4 +132,4 @@ Auto-generated alert in TheHive before troubleshooting.
  
 ---
  
-*Previous: [Phase 7 — Part 2: Cortex Analyzers](02-cortex-analyzers.md)*
+*Previous: [Phase 7 — Part 2: Cortex Analyzers](03-cortex-analyzers.md)*
