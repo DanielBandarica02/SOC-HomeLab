@@ -54,28 +54,25 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 ## Tech stack
 
 - **Perimeter:** pfSense CE · OpenVPN
-- **Network detection:** Suricata IDS on pfSense (ET Open ruleset)
 - **Identity:** Active Directory (Windows Server 2022)
 - **Endpoints:** Windows 11 Pro · Ubuntu Desktop 24.04
 - **SIEM / EDR:** Wazuh Manager + Indexer + Dashboard (all-in-one)
 - **Endpoint telemetry:** Sysmon (Windows) · Auditd (Linux)
 - **Case management:** TheHive
-- **Analysis / enrichment:** Cortex
-- **Threat intelligence:** MISP
+- **Analysis / enrichment:** Cortex + analyzers (VirusTotal · AbuseIPDB)
 - **Containerization:** Docker · Docker Compose
-- **Adversary:** Kali Linux + toolkit
+- **Adversary:** Kali Linux · Sliver C2 · offensive toolkit
 - **Virtualization:** Oracle VirtualBox
 
 ## Capabilities Demonstrated
- 
+
 - **Network architecture** — VLAN design, firewall policy, inter-segment routing, perimeter detection
-- **SOC operations** — out-of-band management, telemetry pipelines, log forwarding, HEC integration
+- **SOC operations** — out-of-band management, telemetry pipelines, log forwarding, alert triage
 - **Detection engineering** — custom rule development, MITRE ATT&CK mapping, atomic testing, threshold calibration
-- **Network intrusion detection** — Suricata deployment, ruleset selection, IDS-to-SIEM integration
 - **Blue Team operations** — alert triage, incident investigation, forensic timeline reconstruction
 - **Purple Team workflow** — offensive simulation feeding detection improvement
-- **Incident response** — case management workflow, IoC enrichment, threat intelligence lookup
-- **Threat intelligence** — feed aggregation, IoC contextualization, MISP platform operations
+- **Incident response** — automated case creation, observable enrichment, alert deduplication
+- **SOAR-style integration** — Wazuh-to-TheHive alert forwarding, Cortex-driven enrichment
 - **Container operations** — Docker Compose deployment, multi-service stack orchestration
 
 ##  Project Phases
@@ -157,4 +154,4 @@ SOC-HomeLab/
 
 ## About This Project
  
-Built as a personal cyber range to develop and demonstrate the full skill set required for SOC Analyst and Detection Engineer roles. The lab is continuously evolving — new rules, attack scenarios, and automation playbooks are added as part of ongoing learning. Network segmentation, out-of-band SOC management, and a dedicated attacker DMZ make this lab a realistic environment for both detection engineering and incident response practice. All documentation is written in English to align with international industry standards.
+Built as a personal cyber range to develop and demonstrate the full skill set required for SOC Analyst and Detection Engineer roles. The lab is continuously evolving , new rules, attack scenarios, and automation playbooks are added as part of ongoing learning. Network segmentation, out-of-band SOC management, and a dedicated attacker DMZ make this lab a realistic environment for both detection engineering and incident response practice. All documentation is written in English to align with international industry standards.
