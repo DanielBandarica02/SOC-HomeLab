@@ -53,27 +53,27 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 
 ## Tech stack
 
-- **Perimeter:** pfSense CE · OpenVPN
-- **Identity:** Active Directory (Windows Server 2022)
-- **Endpoints:** Windows 11 Pro · Ubuntu Desktop 24.04
-- **SIEM / EDR:** Wazuh Manager + Indexer + Dashboard (all-in-one)
-- **Endpoint telemetry:** Sysmon (Windows) · Auditd (Linux)
-- **Case management:** TheHive
-- **Analysis / enrichment:** Cortex + analyzers (VirusTotal · AbuseIPDB)
-- **Containerization:** Docker · Docker Compose
-- **Adversary:** Kali Linux · Sliver C2 · offensive toolkit
-- **Virtualization:** Oracle VirtualBox
+**Perimeter:** pfSense CE · OpenVPN
+**Identity:** Active Directory (Windows Server 2022)
+**Endpoints:** Windows 11 Pro · Ubuntu Desktop 24.04
+**SIEM / EDR:** Wazuh Manager + Indexer + Dashboard (all-in-one)
+**Endpoint telemetry:** Sysmon (Windows) · Auditd (Linux)
+**Case management:** TheHive
+**Analysis / enrichment:** Cortex + analyzers (VirusTotal · AbuseIPDB)
+**Containerization:** Docker · Docker Compose
+**Adversary:** Kali Linux · Sliver C2 · offensive toolkit
+**Virtualization:** Oracle VirtualBox
 
 ## Capabilities Demonstrated
 
-- **Network architecture** — VLAN design, firewall policy, inter-segment routing, perimeter detection
-- **SOC operations** — out-of-band management, telemetry pipelines, log forwarding, alert triage
-- **Detection engineering** — custom rule development, MITRE ATT&CK mapping, atomic testing, threshold calibration
-- **Blue Team operations** — alert triage, incident investigation, forensic timeline reconstruction
-- **Purple Team workflow** — offensive simulation feeding detection improvement
-- **Incident response** — automated case creation, observable enrichment, alert deduplication
-- **SOAR-style integration** — Wazuh-to-TheHive alert forwarding, Cortex-driven enrichment
-- **Container operations** — Docker Compose deployment, multi-service stack orchestration
+**Network architecture** — VLAN design, firewall policy, inter-segment routing, perimeter detection
+**SOC operations** — out-of-band management, telemetry pipelines, log forwarding, alert triage
+**Detection engineering** — custom rule development, MITRE ATT&CK mapping, atomic testing, threshold calibration
+**Blue Team operations** — alert triage, incident investigation, forensic timeline reconstruction
+**Purple Team workflow** — offensive simulation feeding detection improvement
+**Incident response** — automated case creation, observable enrichment, alert deduplication
+**Threat intelligence** — feed aggregation, IoC contextualization
+**Container operations** — Docker Compose deployment, multi-service stack orchestration
 
 ##  Project Phases
 
