@@ -229,7 +229,7 @@ netstat -ano                         → active connections (confirmed Wazuh age
 ![Enumeration 1](../../screenshots/04-attack/02-insider/13-enumeration-1.png)
 ![Enumeration 2](../../screenshots/04-attack/02-insider/14-enumeration-2.png)
 ![Enumeration 3](../../screenshots/04-attack/02-insider/15-enumeration-3.png)
-![Enumeration 3-2](../../screenshots/04-attack/02-insider/16-enumeration-3-2.png))
+![Enumeration 3-2](../../screenshots/04-attack/02-insider/16-enumeration-3-2.png)
 ![Enumeration 4](../../screenshots/04-attack/02-insider/17-enumeration-4.png)
  
 **Domain enumeration:**
@@ -249,7 +249,7 @@ Key intelligence gathered:
 | Domain | soclab.local, single DC (DC01, 10.10.10.10) |
 | Domain Admin | Administrator (sole member) |
 | Current user | dbandarica — domain user, local admin, SeDebugPrivilege |
-| LSASS PID | 848 (later 852 after reboot) |
+| LSASS PID | 848 |
 | Wazuh agent | Active, reporting to 10.10.99.10:1514 |
  
 ### Wazuh detection
@@ -318,8 +318,6 @@ The password `Admin!23` was recovered **in cleartext** from the Kerberos credent
 **Key observation:** the Administrator account was not present in the dump because it had not authenticated on WS-CORP-01 since the last reboot. The attack succeeded not through dumping the Administrator's credentials directly, but through password reuse between the `dbandarica` and `Administrator` accounts.
 
 The dump file was deleted from the victim host immediately after download to minimise forensic evidence on disk.
-
-### Wazuh detection
 
 ### Wazuh detection
 
@@ -417,8 +415,6 @@ The beacon was running as the domain Administrator account on the Domain Control
 **Network enumeration:**
  
 ![Domain Compromise](../../screenshots/04-attack/02-insider/36-domain-compromise.png)
- 
-The output confirmed full context: the beacon was operating on DC01 (10.10.10.10), the primary DNS server and domain controller for `soclab.local`, running as `soclab\administrator`.
  
 **Proof of domain control — domain account creation and deletion:**
  
@@ -541,7 +537,7 @@ The following detection rules were identified as gaps during the scenario. Each 
 - **Wazuh built-in rules provide strong Windows/Sysmon coverage — but the MITRE mapping is misleading.** Rule 92213 (Ingress Tool Transfer, level 15) detected the implant on both hosts without any custom engineering. However, the MITRE tactic dashboard over-reports Privilege Escalation (+244), Persistence (+194), and Lateral Movement (+27) due to built-in rules mapping legitimate Windows activity to attack tactics. An analyst must read the rule description, not the tactic label.
 - **The C2 parent-child chain is the strongest behavioural indicator.** Individual commands (`systeminfo`, `net user`, `tasklist`) are not suspicious. But `update.exe → cmd.exe → net.exe` is a clear signature of C2-driven activity. Detection rules should target the parent process — a non-standard executable in a user directory spawning system utilities — rather than the individual commands.
 - **Credential dumping requires multiple defensive layers.** Defender blocked the payload. PPL blocked LSASS access. Each layer had to be independently defeated. In a production environment with both layers active (and without the operator's ability to disable them), the attack chain would have stalled at Phase 1 or Phase 5. Defence in depth works — when every layer is actually enabled.
-- **Operating through a beacon is operationally slow and error-prone.** The 60-second check-in interval means every command takes 1-2 minutes to return results. Sliver's argument escaping strips backslashes from Windows paths, requiring double or quadruple escaping. Remote execution via `wmic` is deprecated in 24H2 and `schtasks` returned compatibility errors. These operational frictions are real constraints that slow an attacker down — and are themselves a form of defensive friction that organisations underestimate.
+- **Operating through a beacon is operationally slow and error-prone.** The 60-second check-in interval means every command takes 1-2 minutes to return results. Sliver's argument escaping strips backslashes from Windows paths, requiring double or quadruple escaping. These operational frictions are real constraints that slow an attacker down — and are themselves a form of defensive friction that organisations underestimate.
 ---
  
 ## Result
