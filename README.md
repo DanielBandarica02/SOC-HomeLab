@@ -132,7 +132,7 @@ SOC-HomeLab/
     │   └── 01-adversary-environment.md
     ├── 04-attack-scenarios/                                                
     │   ├── 01-full-kill-chain.md
-    │   └── 02-phishing-c2-persistence.md
+    │   └── 02-insider-local-admin.md
     ├── 05-detection-rules/
     │   ├── Rule-100010-pfSense-Firewall-Block-Base.md
     │   ├── Rule-100011-VLAN20-to-VLAN10-Segmentation.md
@@ -147,8 +147,9 @@ SOC-HomeLab/
     │   ├── Rule-100019-SSH-Authorized-Keys-Modification.md
     │   └── Rule-100020-Discover-Command-Sequence-Detection.md 
     ├── 06-incident-reports/
-    │   └── INC-2026-07-08-001.md
-    └── 07-soc-platform/                                                                <---- Working on updates to improve the HomeLab
+    │   ├── INC-2026-07-08-001.md 
+    │   └── INC-2026-10-09-002.md
+    └── 07-soc-platform/                                                             
 
 ```
 
