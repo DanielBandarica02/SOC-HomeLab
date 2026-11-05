@@ -14,13 +14,13 @@ I want to demonstrate that I understand the full security operations cycle: how 
 
 A course teaches you to use tools. This lab forces me to use them in a system I built myself.
 
-## What I'm going to do
+## What I built
 
-1. **Build** a segmented corporate network with an Active Directory domain, Windows and Linux endpoints, and a pfSense + Suricata perimeter.
-2. **Deploy** a full SIEM/EDR stack (Wazuh all-in-one) with telemetry from every host.
-3. **Attack** from a DMZ with Kali, executing techniques mapped to MITRE ATT&CK.
-4. **Detect** those techniques in Wazuh, and write custom rules where the baseline detection falls short.
-5. **Report** every incident using the format a real L1 analyst would use.
+1. **Built** a segmented corporate network with an Active Directory domain, Windows and Linux endpoints, and a pfSense + Suricata perimeter.
+2. **Deployed** a full SIEM/EDR stack (Wazuh all-in-one) with telemetry from every host.
+3. **Attacked** from a DMZ with Kali, executing techniques mapped to MITRE ATT&CK.
+4. **Detected** those techniques in Wazuh, and wrote custom rules where the baseline detection fell short.
+5. **Reported** every incident using the format a real L1 analyst would use.
 
 ## Architecture
 
@@ -31,23 +31,23 @@ A course teaches you to use tools. This lab forces me to use them in a system I 
 | VLAN 10  | 10.10.10.0/24  | Corporate domain (AD DC + workstation)            |
 | VLAN 20  | 10.10.20.0/24  | Software Development (Windows + Ubuntu)           |
 | VLAN 66  | 10.10.66.0/24  | Attacker DMZ (Kali Linux)                         |
-| VLAN 99  | 10.10.99.0/24  | SOC Management (Wazuh SIEM + TheHive/Cortex/MISP) |
+| VLAN 99  | 10.10.99.0/24  | SOC Management (Wazuh SIEM + TheHive/Cortex)      |
 
 
 Full reasoning behind each choice in [`docs/00-architecture/design-decisions.md`](docs/00-architecture/design-decisions.md).
 
-## Planned attack scenarios
+## Attack scenarios
 
 Each scenario includes: attack execution, observed detection, custom detection rule (where the native one isn't enough), and an L1-format incident report.
 
-| #  | Scenario                                     | 
-| -- | -------------------------------------------- | 
-| 01 | Full kill chain against Dev workstation      | 
-| 02 | Phishing with macro payload and C2 callback  | 
-| 03 | Active Directory attack chain                | 
-| 04 | Lateral movement via SMB and RDP             | 
-| 05 | Ransomware simulation with impact detection  | 
-| 06 | Data exfiltration over alternative channel   | 
+| #  | Scenario                                                  | Status    |
+| -- | --------------------------------------------------------- | --------- |
+| 01 | Full kill chain against Dev workstation (Linux)           | Completed |
+| 02 | Insider threat — local admin compromise (Windows/AD)      | Completed |
+| 03 | Active Directory attack chain                             | Planned   |
+| 04 | Lateral movement via SMB and RDP                          | Planned   |
+| 05 | Ransomware simulation with impact detection               | Planned   |
+| 06 | Data exfiltration over alternative channel                | Planned   |
 
 As I continue my cybersecurity journey, new attack methods and techniques will be added to this homelab.
 
@@ -72,7 +72,7 @@ As I continue my cybersecurity journey, new attack methods and techniques will b
 **Blue Team operations** — alert triage, incident investigation, forensic timeline reconstruction
 **Purple Team workflow** — offensive simulation feeding detection improvement
 **Incident response** — automated case creation, observable enrichment, alert deduplication
-**Threat intelligence** — feed aggregation, IoC contextualization
+**Threat intelligence** — IoC enrichment via Cortex analyzers (VirusTotal, AbuseIPDB, WHOIS)
 **Container operations** — Docker Compose deployment, multi-service stack orchestration
 
 ##  Project Phases
@@ -104,7 +104,7 @@ Post-incident analytical reports written from the SOC L1 analyst perspective. Ea
  `docs/06-incident-reports/`
 
 ### Phase 7 — SOC Platform
-Extension of the SIEM-only environment into a complete SOC platform response tooling. TheHive deployed as case management platform, with Cortex as analysis engine and MISP as threat intelligence platform, all containerized via Docker Compose on a dedicated `soc-platform` VM (10.10.99.20) under the SOC Management VLAN. 
+Extension of the SIEM-only environment into a complete SOC platform with response tooling. TheHive deployed as case management platform, with Cortex as analysis and enrichment engine, all containerized via Docker Compose on a dedicated `soc-platform` VM (10.10.99.20) under the SOC Management VLAN. MISP was evaluated and intentionally excluded — full reasoning documented in [`design-decisions.md`](docs/00-architecture/design-decisions.md).
  `docs/07-soc-platform/`
 
 ## Repository structure
@@ -120,7 +120,7 @@ SOC-HomeLab/
     │   └── prerequisites.md
     ├── 01-infrastructure/
     │   ├── 01-pfsense.md
-    │   └── 02-vlan10.md
+    │   ├── 02-vlan10.md
     │   └── 03-vlan20.md
     ├── 02-soc-stack/
     │   ├── 01-wazuh-manager.md
@@ -130,7 +130,7 @@ SOC-HomeLab/
     │   └── 05-soc-dashboard.md
     ├── 03-adversary/
     │   └── 01-adversary-environment.md
-    ├── 04-attack-scenarios/                                                
+    ├── 04-attack-scenarios/
     │   ├── 01-full-kill-chain.md
     │   └── 02-insider-local-admin.md
     ├── 05-detection-rules/
@@ -139,20 +139,22 @@ SOC-HomeLab/
     │   ├── Rule-100012-VLAN10-to-VLAN20-Segmentation.md
     │   ├── Rule-100013-Port-Scan-Detection.md
     │   ├── Rule-100014-Multi-Target-Port-Scan.md
-    │   ├── Rule-100015-SSH-Brute-Force.md 
-    │   ├── Rule-100016-Brute-Force-Successful-Login.md
+    │   ├── Rule-100015-SSH-Brute-Force.md
     │   ├── Rule-100016-Brute-Force-Successful-Login.md
     │   ├── Rule-100017-Credential-Files-Access.md
     │   ├── Rule-100018-Cron-Configuration-Modification.md
     │   ├── Rule-100019-SSH-Authorized-Keys-Modification.md
-    │   └── Rule-100020-Discover-Command-Sequence-Detection.md 
+    │   └── Rule-100020-Discover-Command-Sequence-Detection.md
     ├── 06-incident-reports/
-    │   ├── INC-2026-07-08-001.md 
+    │   ├── INC-2026-07-08-001.md
     │   └── INC-2026-10-09-002.md
-    └── 07-soc-platform/                                                             
-
+    └── 07-soc-platform/
+        ├── 01-architecture.md
+        ├── 02-docker-infrastructure.md
+        ├── 03-cortex-analyzers.md
+        └── 04-wazuh-thehive-integration.md
 ```
 
 ## About This Project
  
-Built as a personal cyber range to develop and demonstrate the full skill set required for SOC Analyst and Detection Engineer roles. The lab is continuously evolving , new rules, attack scenarios, and automation playbooks are added as part of ongoing learning. Network segmentation, out-of-band SOC management, and a dedicated attacker DMZ make this lab a realistic environment for both detection engineering and incident response practice. All documentation is written in English to align with international industry standards.
+Built as a personal cyber range to develop and demonstrate the full skill set required for SOC Analyst and Detection Engineer roles. The project covers the complete security operations cycle: network architecture, SIEM deployment, attack simulation, detection engineering, incident reporting, and SOC platform integration. Network segmentation, out-of-band SOC management, and a dedicated attacker DMZ make this lab a realistic environment for both detection engineering and incident response practice. All documentation is written in English to align with international industry standards.
